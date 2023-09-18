@@ -1,28 +1,17 @@
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+
+import Home from './pages/home';
+import Questions from './pages/questions';
 
 function App() {
-
-  const [backendData, setBackendData] = useState('');
-
-  useEffect(() => {
-    fetch("/test").then(
-      response => response.json()
-    ).then(
-      data => {
-        setBackendData(data)
-      }
-    )
-  }, []);
-
   return (
     <div className="App">
-      <p>peerprep WOO</p>
-      {(typeof backendData == 'undefined') ? (
-        <p>Loading...</p>
-      ) : (
-        <p>{backendData}</p>
-      )}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="questions" element={<Questions />} />
+      </Routes>
     </div>
   );
 }
