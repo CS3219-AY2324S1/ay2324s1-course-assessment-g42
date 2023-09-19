@@ -1,8 +1,8 @@
 import '../App.css';
 import React, { useState } from 'react';
 
-import FormDialog from './questions/formDialog.js';
-import QuestionsTable from './questions/questionsTable.js';
+import FormDialog from '../components/questions/formDialog.js';
+import QuestionsTable from '../components/questions/questionsTable.js';
 
 // helper functions for table
 function createQuestion(id, title, description, category, complexity) {
