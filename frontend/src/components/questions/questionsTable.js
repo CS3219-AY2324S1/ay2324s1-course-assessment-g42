@@ -47,7 +47,10 @@ function QuestionsTable({ questions }) {
           {questions.map((question) => (
             <TableRow
               key={question.id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              sx={{
+                '&:last-child td, &:last-child th': { border: 0 },
+                '&:hover': { cursor: 'pointer' }
+              }}
               onClick={() => handleClickOpen(question.id)}
             >
               {/* Add table cells */}
