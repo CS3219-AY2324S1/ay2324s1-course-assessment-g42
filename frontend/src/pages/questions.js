@@ -20,13 +20,18 @@ const rows = [
 function Questions() {
   const [questions, setQuestions] = useState(rows);
 
+  const handleDelete = (questionId) => {
+    const updatedQuestions = questions.filter((question) => question.id !== questionId);
+    setQuestions(updatedQuestions);
+  };
+
   return (
     <div className="wrapper">
       <h1>Questions Repository</h1>
       {/* Button to add a new question */}
       <FormDialog questions={questions} setQuestions={setQuestions} createQuestion={createQuestion} />
       {/* Table displaying questions */}
-      <QuestionsTable questions={questions} />
+      <QuestionsTable questions={questions} handleDelete={handleDelete} />
     </div>
   );
 }

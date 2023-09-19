@@ -18,7 +18,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-function QuestionInfo({ open, handleClose, question }) {
+function QuestionInfo({ open, handleClose, question, handleDelete }) {
   // if there is no selected question, return null
   if (question === undefined) {
     return null;
@@ -30,11 +30,14 @@ function QuestionInfo({ open, handleClose, question }) {
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
+        fullWidth
       >
+        {/* Question title */}
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
           {question.title}
         </DialogTitle>
 
+        {/* Rest of question contents in dialog box */}
         <DialogContent dividers>
         <Typography gutterBottom>
             ID: {question.id}
@@ -49,9 +52,20 @@ function QuestionInfo({ open, handleClose, question }) {
             Complexity: {question.complexity}
           </Typography>
         </DialogContent>
+
+        {/* Action buttons in bottom right of the dialog */}
         <DialogActions>
           <Button onClick={handleClose}>
             Close
+          </Button>
+
+          <Button color="error"
+            onClick={() => {
+              handleDelete(question.id);
+              handleClose();
+            }}
+          >
+            Delete
           </Button>
         </DialogActions>
       </BootstrapDialog>

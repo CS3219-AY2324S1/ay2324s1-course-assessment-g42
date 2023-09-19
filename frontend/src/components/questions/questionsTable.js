@@ -11,7 +11,7 @@ import Paper from '@mui/material/Paper';
 
 import QuestionInfo from './questionInfo';
 
-function QuestionsTable({ questions }) {
+function QuestionsTable({ questions, handleDelete }) {
   const [open, setOpen] = useState(false);
   const [targetQuestion, setTargetQuestion] = useState();
 
@@ -27,7 +27,7 @@ function QuestionsTable({ questions }) {
   return (
     <div>
       {/* Dialog popup for question information */}
-      <QuestionInfo open={open} handleClose={handleClose} question={targetQuestion} />
+      <QuestionInfo open={open} handleClose={handleClose} question={targetQuestion} handleDelete={handleDelete} />
 
       {/* Table component below*/}
       <TableContainer component={Paper}>
