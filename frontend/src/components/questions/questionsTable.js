@@ -25,7 +25,7 @@ function QuestionsTable({ questions }) {
   };
 
   return (
-    <div className="wrapper">
+    <div>
       {/* Dialog popup for question information */}
       <QuestionInfo open={open} handleClose={handleClose} question={targetQuestion} />
 

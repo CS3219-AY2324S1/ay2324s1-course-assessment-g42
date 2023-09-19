@@ -34,7 +34,7 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
   }
 
   return (
-    <div className="wrapper">
+    <div>
     {/* Button to add a new question */}
     <Button variant="outlined" onClick={handleClickOpen}>
         Open form dialog
