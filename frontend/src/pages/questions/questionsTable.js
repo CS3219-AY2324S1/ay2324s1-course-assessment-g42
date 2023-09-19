@@ -1,5 +1,5 @@
 import '../../App.css';
-import React from 'react';
+import React, { useState } from 'react';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -9,9 +9,27 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+import QuestionInfo from './questionInfo';
+
 function QuestionsTable({ questions }) {
+  const [open, setOpen] = useState(false);
+  const [targetQuestion, setTargetQuestion] = useState();
+
+  const handleClickOpen = (questionId) => {
+    setOpen(true);
+    const target = questions.find(question => question.id === questionId);
+    setTargetQuestion(target);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <div className="wrapper">
+      {/* Dialog popup for question information */}
+      <QuestionInfo open={open} handleClose={handleClose} question={targetQuestion} />
+
+      {/* Table component below*/}
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 400 }} aria-label="simple table">
 
@@ -30,6 +48,7 @@ function QuestionsTable({ questions }) {
             <TableRow
               key={question.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              onClick={() => handleClickOpen(question.id)}
             >
               {/* Add table cells */}
               <TableCell component="th" scope="row">
