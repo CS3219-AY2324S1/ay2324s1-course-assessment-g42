@@ -25,9 +25,19 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleAddQuestion = () => {
-    // dummy question
-    const newQuestion = createQuestion(idRef.current.value, titleRef.current.value,
+  const handleAddQuestion = (event) => {
+    event.preventDefault(); // prevent page from refreshing
+
+    // prevent adding if question ID already exists
+    const idValue = parseInt(idRef.current.value, 10); // convert to integer
+    if (questions.some((question) => question.id === idValue)) {
+      console.log('Question with this ID already exists');
+      alert('Question with this ID already exists. Please enter another ID.');
+      return;
+    }
+
+    // add question
+    const newQuestion = createQuestion(idValue, titleRef.current.value,
       descRef.current.value, catRef.current.value, compRef.current.value);
     setQuestions([...questions, newQuestion]);
     setOpen(false);
@@ -35,27 +45,32 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
 
   return (
     <div>
-    {/* Button to add a new question */}
-    <Button variant="outlined" onClick={handleClickOpen}>
-        Open form dialog
-        </Button>
-        {/* Form dialog box to submit a question */}
-        <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add a new question</DialogTitle>
+      {/* Button to add a new question */}
+      <Button variant="outlined" onClick={handleClickOpen}>
+        Add new question
+      </Button>
+
+      {/* Form dialog box to submit a question */}
+      <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>Add a new question</DialogTitle>
+
+      <form onSubmit={handleAddQuestion}>
         <DialogContent>
           <DialogContentText>
             Enter the details of your new question here.
           </DialogContentText>
           <TextField
+            required
             autoFocus
             margin="dense"
             id="id"
             label="ID"
-            fullWidth
             variant="standard"
+            type="number"
             inputRef={idRef}
           />
           <TextField
+            required
             autoFocus
             margin="dense"
             id="title"
@@ -65,6 +80,7 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
             inputRef={titleRef}
           />
           <TextField
+            required
             autoFocus
             margin="dense"
             id="description"
@@ -74,6 +90,7 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
             inputRef={descRef}
           />
           <TextField
+            required
             autoFocus
             margin="dense"
             id="category"
@@ -83,6 +100,7 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
             inputRef={catRef}
           />
           <TextField
+            required
             autoFocus
             margin="dense"
             id="complexity"
@@ -92,11 +110,15 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
             inputRef={compRef}
           />
         </DialogContent>
+
+        {/* Buttons in the bottom right */}
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleAddQuestion}>Add</Button>
+          <Button type="submit">Add</Button>
         </DialogActions>
-        </Dialog>
+      </form>
+
+      </Dialog>
     </div>
   );
 }
