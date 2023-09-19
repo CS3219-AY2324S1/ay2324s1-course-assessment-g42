@@ -27,9 +27,9 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
   };
   const handleAddQuestion = (event) => {
     event.preventDefault(); // prevent page from refreshing
+    const idValue = parseInt(idRef.current.value, 10); // convert to integer
 
     // prevent adding if question ID already exists
-    const idValue = parseInt(idRef.current.value, 10); // convert to integer
     if (questions.some((question) => question.id === idValue)) {
       console.log('Question with this ID already exists');
       alert('Question with this ID already exists. Please enter another ID.');
