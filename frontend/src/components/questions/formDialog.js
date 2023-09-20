@@ -78,6 +78,7 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
             fullWidth
             variant="standard"
             inputRef={titleRef}
+            inputProps={{ maxLength: 50 }}
           />
           <TextField
             required

@@ -42,13 +42,13 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
         <Typography gutterBottom>
             ID: {question.id}
           </Typography>
-          <Typography gutterBottom>
+          <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
             {question.description}
           </Typography>
-          <Typography gutterBottom>
+          <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
             Category: {question.category}
           </Typography>
-          <Typography gutterBottom>
+          <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
             Complexity: {question.complexity}
           </Typography>
         </DialogContent>
