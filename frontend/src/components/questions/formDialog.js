@@ -12,7 +12,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 function FormDialog({ questions, setQuestions, createQuestion }) {
   const [open, setOpen] = useState(false);
   // below are input references used for the form dialog
-  const idRef = useRef();
   const titleRef = useRef();
   const descRef = useRef();
   const catRef = useRef();
@@ -27,12 +26,16 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
   };
   const handleAddQuestion = (event) => {
     event.preventDefault(); // prevent page from refreshing
-    const idValue = parseInt(idRef.current.value, 10); // convert to integer
 
-    // prevent adding if question ID already exists
-    if (questions.some((question) => question.id === idValue)) {
-      console.log('Question with this ID already exists');
-      alert('Question with this ID already exists. Please enter another ID.');
+    const maxId = questions.reduce((max, question) => {
+      return question.id > max ? question.id : max;
+    }, 0);
+    const idValue = maxId + 1;
+
+    // prevent adding if question title already exists
+    if (questions.some((question) => question.title.toLowerCase() === titleRef.current.value.toLowerCase())) {
+      console.log('Question with this title already exists');
+      alert('Question with this title already exists. Please enter another title.');
       return;
     }
 
@@ -59,16 +62,6 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
           <DialogContentText>
             Enter the details of your new question here.
           </DialogContentText>
-          <TextField
-            required
-            autoFocus
-            margin="dense"
-            id="id"
-            label="ID"
-            variant="standard"
-            type="number"
-            inputRef={idRef}
-          />
           <TextField
             required
             autoFocus
