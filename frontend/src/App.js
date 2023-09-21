@@ -3,6 +3,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import Questions from './pages/questions';
+import User from './pages/user';
 
 function App() {
   return (
