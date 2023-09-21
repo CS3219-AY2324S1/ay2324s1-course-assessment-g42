@@ -26,6 +26,7 @@ function Home() {
           {backendData}<br />
           <Link to='/questions'>Question Repository</Link> |
           Another page here
+          <Link to='/user'>register</Link>
         </p>
       )}
     </div>
