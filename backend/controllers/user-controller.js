@@ -1,5 +1,4 @@
 const pool = require("../psql-db.js");
-const bcrypt = require("bcrypt");
 const express = require("express");
 const router = express.Router();
 
@@ -20,8 +19,7 @@ async function registerUser(req, res) {
             error: "Password not long enough"
         })
     }
-    
-    let hashedPassword = await bcrypt.hash(password, 10);
+
     // Check if the user with the provided email already exists in the database
     pool.query(
         `SELECT * FROM users
@@ -33,19 +31,18 @@ async function registerUser(req, res) {
                 return res.status(400).json({
                     error: "Email already exists."
                 });
-            } else {
-                //register user
-                pool.query(
-                    `INSERT INTO users (username, email, password) 
-                    VALUES ($1, $2, $3)`, [username, email, hashedPassword], (err) => {
-                        if (err) {
-                            throw err;
-                        } else {
-                            return res.status(200).json({username, email});
-                        }
-                    }
-                )
             }
+            //register user
+            pool.query(
+                `INSERT INTO users (username, email, password) 
+                VALUES ($1, $2, $3)`, [username, email, password], (err) => {
+                    if (err) {
+                        throw err;
+                    } else {
+                        return res.status(200).json({username, email});
+                    }
+                }
+            )
         }
     )
 }
@@ -59,21 +56,14 @@ async function loginUser (req, res) {
                     error: "User does not exist."
                 });
             } else if (result.rows.length > 0) {
-                console.log(result.rows[0]);
                 const user = result.rows[0];
-                bcrypt.compare(password, result.rows[0].password, (err, result) => {
-                    if (err) {
-                        throw err;
-                    }
-                    if (result) {
-                        return res.status(200).json({user});
-
-                    } else {
-                        return res.status(400).json({
-                            error:"incorrect password"
-                        });
-                    }
-                })
+                if (user.password == password) {
+                    return res.status(200).json({ user });
+                } else {
+                    return res.status(401).json({
+                        error: "incorrect password"
+                    });
+                }
             }
         }
     )
@@ -87,7 +77,7 @@ async function deleteUser (req, res) {
             if (err) {
                 console.log(err);
             } else {
-                return res.status(200).send({message:"user deleted successfully"});
+                return res.status(200).send({message: "user deleted successfully"});
             }
         }
     )
@@ -95,9 +85,8 @@ async function deleteUser (req, res) {
 
 async function updateUser (req, res) {
     let {newUsername, newPassword, email} = req.body;
-    let hashedPassword = await bcrypt.hash(newPassword, 10);
     pool.query(
-        `UPDATE users SET username=$1, password=$2 WHERE email=$3`, [newUsername, hashedPassword, email], (error, result) => {
+        `UPDATE users SET username=$1, password=$2 WHERE email=$3`, [newUsername, newPassword, email], (error, result) => {
             if (error) {
                 console.log(error);
             } else {

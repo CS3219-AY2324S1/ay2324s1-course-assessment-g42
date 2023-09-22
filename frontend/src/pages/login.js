@@ -21,8 +21,11 @@ function Login() {
             //store user details in local storage for login persistence
             localStorage.setItem('user', userJsonString);
             
-            navigate("/userProfile");
+            navigate("/userprofile");
         }
+        //reset login state
+        setPassword("");
+        setEmail("");
     }
 
     useEffect(() => {
@@ -30,7 +33,7 @@ function Login() {
         if (loggedInUser) {
             //if there is already a user logged in
             //navigate to user profile page
-            navigate("/userProfile");
+            navigate("/userprofile");
         }
     }, [navigate]);
 

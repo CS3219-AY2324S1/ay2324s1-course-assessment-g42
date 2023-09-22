@@ -22,7 +22,7 @@ function Home() {
     } else {
       setIsLoggedIn(false);
     }
-  }, [setIsLoggedIn, setBackendData]);
+  }, []);
 
   return (
     <div className="App">
@@ -35,7 +35,7 @@ function Home() {
           <Link to='/questions'>Question Repository</Link> 
           |
           {isLoggedIn ? (
-            <><Link to='/userProfile'>User Profile</Link></>
+            <><Link to='/userprofile'>User Profile</Link></>
           ) : (
             <>
             <Link to='/login'>Login</Link> |

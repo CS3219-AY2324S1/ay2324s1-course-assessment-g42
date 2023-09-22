@@ -37,7 +37,7 @@ function UserProfile() {
             //if no user session
             navigate('/login');
         }
-    }, [navigate, setUser]);
+    }, [navigate]);
 
     return (
         <div className='App'>

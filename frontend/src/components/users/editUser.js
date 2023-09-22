@@ -17,6 +17,7 @@ function EditUser({ user }) {
               "/user/update",
               newDetails
             );
+            navigate('/userprofile');
         } else {
             console.log("no user");
             navigate('/login');
