@@ -2,6 +2,7 @@ import '../../App.css';
 import React from 'react';
 
 import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -45,8 +46,10 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
           <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
             {question.description}
           </Typography>
-          <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
-            Category: {question.category}
+          <Typography gutterBottom sx={{ wordBreak: "break-word" }} component={'span'}>
+            Category: {question.categories.map((category) => (
+              <Chip key={category} label={category}></Chip>
+            ))}
           </Typography>
           <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
             Complexity: {question.complexity}
