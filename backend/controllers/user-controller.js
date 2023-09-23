@@ -15,7 +15,7 @@ async function registerUser(req, res) {
         });
     }
     if (password.length < 8) {
-        return res.status(400).json({
+        return res.status(401).json({
             error: "Password not long enough"
         })
     }
@@ -28,16 +28,17 @@ async function registerUser(req, res) {
                 throw err;
             }
             if (result.rows.length > 0) {
-                return res.status(400).json({
+                return res.status(402).json({
                     error: "Email already exists."
                 });
             }
+
             //register user
             pool.query(
                 `INSERT INTO users (username, email, password) 
                 VALUES ($1, $2, $3)`, [username, email, password], (err) => {
                     if (err) {
-                        throw err;
+                        return res.status(403);
                     } else {
                         return res.status(200).json({username, email});
                     }
@@ -76,6 +77,7 @@ async function deleteUser (req, res) {
         `DELETE FROM users WHERE email = $1`, [email], (err, result) => {
             if (err) {
                 console.log(err);
+                return res.status(400).send({error: "error deleting account"});
             } else {
                 return res.status(200).send({message: "user deleted successfully"});
             }
@@ -83,17 +85,41 @@ async function deleteUser (req, res) {
     )
 }
 
-async function updateUser (req, res) {
-    let {newUsername, newPassword, email} = req.body;
+async function updateUsername (req, res) {
+    let {newUsername, email} = req.body;
+
     pool.query(
-        `UPDATE users SET username=$1, password=$2 WHERE email=$3`, [newUsername, newPassword, email], (error, result) => {
+        `UPDATE users SET username=$1 WHERE email=$2`,
+        [newUsername, email],
+        (error, result) => {
             if (error) {
-                console.log(error);
+                return res.status(400).send({ message: "Error updating username" });
             } else {
-                return res.status(200).send({message: "account details updated successfully"});
+                return res.status(200).send({ message: "Account details updated successfully" });
             }
         }
-    )
+    );
+}
+
+async function updatePassword (req, res) {
+    let {newPassword, email} = req.body;
+    
+    if (newPassword.length < 8) {
+        return res.status(401).json({
+            error: "new Password too short"
+        })
+    }
+    pool.query(
+        `UPDATE users SET password=$1 WHERE email=$2`,
+        [newPassword, email],
+        (error, result) => {
+            if (error) {
+                return res.status(400).send({ message: "Error updating password" });
+            } else {
+                return res.status(200).send({ message: "Account details updated successfully" });
+            }
+        }
+    );
 }
 
 async function findByEmail (req, res) {
@@ -119,6 +145,7 @@ module.exports = {
     registerUser,
     loginUser,
     deleteUser,
-    updateUser,
+    updateUsername,
+    updatePassword,
     findByEmail,
 };
