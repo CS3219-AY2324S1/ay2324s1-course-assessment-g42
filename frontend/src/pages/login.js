@@ -6,116 +6,116 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function Login() {
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
-	const handleLogin = async (e) => {
-		e.preventDefault();
-		const user = { email, password };
-		try {
-			const response = await axios.post('/user/login', user);
-			if (response.status === 200) {
-				const userJsonString = JSON.stringify(response.data.user);
-				// Store user details in local storage for login persistence
-				localStorage.setItem('user', userJsonString);
-				navigate('/');
-				// Refresh the page
-				window.location.reload();
-				// Reset login state
-				setPassword('');
-				setEmail('');
-			}
-		} catch (error) {
-			if (error.response.status === 401) {
-				//incorrect password entered
-				toast.error("incorrect password", {
-					position: "top-center",
-					autoClose: 3000,
-					theme: "dark",
-				});
-				return;
-			} else if (error.response.status === 400) {
-				//email not registered
-				toast.error("Email does not exist", {
-					position: "top-center",
-					autoclose: 3000,
-					theme: "dark",
-				});
-				return;
-			}
-		}
-	};
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        const user = { email, password };
+        try {
+            const response = await axios.post('/user/login', user);
+            if (response.status === 200) {
+                const userJsonString = JSON.stringify(response.data.user);
+                // Store user details in local storage for login persistence
+                localStorage.setItem('user', userJsonString);
+                navigate('/');
+                // Refresh the page
+                window.location.reload();
+                // Reset login state
+                setPassword('');
+                setEmail('');
+            }
+        } catch (error) {
+            if (error.response.status === 401) {
+                //incorrect password entered
+                toast.error("incorrect password", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    theme: "dark",
+                });
+                return;
+            } else if (error.response.status === 400) {
+                //email not registered
+                toast.error("Email does not exist", {
+                    position: "top-center",
+                    autoclose: 3000,
+                    theme: "dark",
+                });
+                return;
+            }
+        }
+    };
 
-	useEffect(() => {
-		const loggedInUser = localStorage.getItem('user');
-		if (loggedInUser) {
-			// If there is already a user logged in, navigate to the user profile page
-			navigate('/');
-		}
-	}, [navigate]);
+    useEffect(() => {
+        const loggedInUser = localStorage.getItem('user');
+        if (loggedInUser) {
+            // If there is already a user logged in, navigate to the user profile page
+            navigate('/');
+        }
+    }, [navigate]);
 
-	return (
-		<div>
-			<Container
-				style={{
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center',
-				justifyContent: 'center',
-				minHeight: '80vh',
-				}}
-			>
-				<Paper
-				style={{
-					padding: '24px',
-					width: '300px',
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					backgroundColor: 'white',
-					borderRadius: '8px',
-				}}
-				elevation={3}
-				>
-					<Typography variant="h6" component="div" mb={2}>
-						Log in
-					</Typography>
-					<form onSubmit={handleLogin}>
-						<TextField
-							type="email"
-							id="email"
-							name="email"
-							label="Email"
-							variant="outlined"
-							style={{ marginBottom: '16px', width: '100%' }}
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-							InputProps={{ style: { color: 'black' } }}
-						/>
-						<TextField
-							type="password"
-							id="password"
-							name="password"
-							label="Password"
-							variant="outlined"
-							style={{ marginBottom: '16px', width: '100%' }}
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							InputProps={{ style: { color: 'black' } }}
-						/>
-						<Button
-							type="submit"
-							variant="contained"
-							style={{ backgroundColor: 'black', color: 'white', width: '100%' }}
-						>
-							Login
-						</Button>
-					</form>
-				</Paper>
-			</Container>
-		</div>
-	);
+    return (
+        <div>
+            <Container
+                style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '80vh',
+                }}
+            >
+                <Paper
+                style={{
+                    padding: '24px',
+                    width: '300px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    backgroundColor: 'white',
+                    borderRadius: '8px',
+                }}
+                elevation={3}
+                >
+                    <Typography variant="h6" component="div" mb={2}>
+                        Log in
+                    </Typography>
+                    <form onSubmit={handleLogin}>
+                        <TextField
+                            type="email"
+                            id="email"
+                            name="email"
+                            label="Email"
+                            variant="outlined"
+                            style={{ marginBottom: '16px', width: '100%' }}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            InputProps={{ style: { color: 'black' } }}
+                        />
+                        <TextField
+                            type="password"
+                            id="password"
+                            name="password"
+                            label="Password"
+                            variant="outlined"
+                            style={{ marginBottom: '16px', width: '100%' }}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            InputProps={{ style: { color: 'black' } }}
+                        />
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            style={{ backgroundColor: 'black', color: 'white', width: '100%' }}
+                        >
+                            Login
+                        </Button>
+                    </form>
+                </Paper>
+            </Container>
+        </div>
+    );
 }
 
 export default Login;
