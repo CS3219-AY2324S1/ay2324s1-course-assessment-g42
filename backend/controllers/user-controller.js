@@ -95,7 +95,15 @@ async function updateUsername (req, res) {
             if (error) {
                 return res.status(400).send({ message: "Error updating username" });
             } else {
-                return res.status(200).send({ message: "Account details updated successfully" });
+                pool.query(
+                    `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
+                        if (err) {
+                            return res.status(400).send({ message: "Error updating username" });
+                        }
+                        const user = result.rows[0];
+                        return res.status(200).json({ user });
+                    }
+                )
             }
         }
     );
@@ -106,7 +114,7 @@ async function updatePassword (req, res) {
     
     if (newPassword.length < 8) {
         return res.status(401).json({
-            error: "new Password too short"
+            error: "New password too short"
         })
     }
     pool.query(
@@ -116,7 +124,15 @@ async function updatePassword (req, res) {
             if (error) {
                 return res.status(400).send({ message: "Error updating password" });
             } else {
-                return res.status(200).send({ message: "Account details updated successfully" });
+                pool.query(
+                    `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
+                        if (err) {
+                            return res.status(402);
+                        }
+                        const user = result.rows[0];
+                        return res.status(200).json({ user });
+                    }
+                )
             }
         }
     );

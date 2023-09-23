@@ -1,6 +1,6 @@
 import Home from './pages/home';
 import Questions from './pages/questions';
-import UserProfile from'./pages/userprofile';
+import UserProfile from'./pages/UserProfile';
 import Login from './pages/login';
 import Signup from './pages/signup';
 import { Route, Routes } from 'react-router-dom';
