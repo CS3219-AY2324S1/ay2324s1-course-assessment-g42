@@ -2,6 +2,8 @@ import '../../App.css';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import { Button } from '@mui/material';
 
 function DeleteUser({ user }) {
     const navigate = useNavigate();
@@ -11,22 +13,34 @@ function DeleteUser({ user }) {
             //only delete if user is logged in
             const email = user.email;
             //delete user by email
-            await axios.post(
-                "/user/delete",
-                { email }
-            );
-            //clear user from local storage
-            localStorage.clear();
+            try {
+                const res = await axios.post(
+                    "/user/delete",
+                    { email }
+                );
+                if (res.status === 200) {
+                     //clear user from local storage
+                    localStorage.clear();
+                    navigate('/');
+                    // Refresh the page
+                    window.location.reload();
+                }   
+            } catch (err) {
+                toast.error("Unknown error occurred", {
+                    position: 'top-center',
+                    autoClose: 3000,
+                    theme: 'dark'
+                });
+            };
         } else {
             //if user not logged in, redirect to home
             console.log("no user");
         }
-        navigate('/');
     }
 
     return(
         <div>
-            <button onClick={handleDelete}>Delete Account</button>
+            <Button variant="text" sx = {{ color: 'black' }} onClick={handleDelete}> Delete Account </Button>
         </div>
     )
 }
