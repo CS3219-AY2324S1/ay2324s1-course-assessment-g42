@@ -1,6 +1,7 @@
 import '../../App.css';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
 
 function LogoutUser({ user }) {
     const navigate = useNavigate();
@@ -12,6 +13,8 @@ function LogoutUser({ user }) {
             console.log("logged out");
             //navigate user to home
             navigate('/')
+            // Refresh the page
+            window.location.reload();
         } else {
             console.log("not logged in");
         }
@@ -19,7 +22,7 @@ function LogoutUser({ user }) {
 
     return(
         <div>
-            <button onClick={handleLogout}>Logout</button>
+            <Button variant="text" sx = {{ color:'black' }} onClick={handleLogout}>Logout</Button>
         </div>
     )
 }
