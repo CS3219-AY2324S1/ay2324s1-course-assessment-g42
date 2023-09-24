@@ -9,13 +9,15 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-function FormDialog({ questions, setQuestions, createQuestion }) {
+import FormAddCategories from './formAddCategories';
+
+function FormDialog({ questions, setQuestions, addQuestionToDb }) {
   const [open, setOpen] = useState(false);
   // below are input references used for the form dialog
   const titleRef = useRef();
   const descRef = useRef();
-  const catRef = useRef();
   const compRef = useRef();
+  const [categories, setCategories] = useState([]);
 
   // handle toggling the form dialog box
   const handleClickOpen = () => {
@@ -39,9 +41,18 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
       return;
     }
 
+    // map titles of categories into a regular array
+    const categoriesToAdd = categories.map(category => category.title);
+
     // add question
-    const newQuestion = createQuestion(idValue, titleRef.current.value,
-      descRef.current.value, catRef.current.value, compRef.current.value);
+    const newQuestion = {
+      id: idValue,
+      title: titleRef.current.value,
+      description: descRef.current.value,
+      categories: categoriesToAdd,
+      complexity: compRef.current.value
+    }
+    addQuestionToDb(newQuestion);
     setQuestions([...questions, newQuestion]);
     setOpen(false);
   }
@@ -83,16 +94,7 @@ function FormDialog({ questions, setQuestions, createQuestion }) {
             variant="standard"
             inputRef={descRef}
           />
-          <TextField
-            required
-            autoFocus
-            margin="dense"
-            id="category"
-            label="Category"
-            fullWidth
-            variant="standard"
-            inputRef={catRef}
-          />
+          <FormAddCategories setCategories={setCategories} />
           <TextField
             required
             autoFocus

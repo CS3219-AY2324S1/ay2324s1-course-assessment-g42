@@ -1,6 +1,7 @@
 import '../../App.css';
 import React, { useState } from 'react';
 
+import Chip from '@mui/material/Chip';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -37,7 +38,7 @@ function QuestionsTable({ questions, handleDelete }) {
         <TableHead>
           <TableRow key="header">
             <TableCell style={{ fontWeight: 'bold' }}>Question Title</TableCell>
-            <TableCell align="center" style={{ fontWeight: 'bold' }}>Category</TableCell>
+            <TableCell align="center" style={{ fontWeight: 'bold' }}>Categories</TableCell>
             <TableCell align="center" style={{ fontWeight: 'bold' }}>Complexity</TableCell>
           </TableRow>
         </TableHead>
@@ -57,7 +58,11 @@ function QuestionsTable({ questions, handleDelete }) {
               <TableCell component="th" scope="row">
                 {question.title}
               </TableCell>
-              <TableCell align="center">{question.category}</TableCell>
+              <TableCell align="center">
+                {question.categories.map((category) => (
+                  <Chip key={category} label={category}></Chip>
+                ))}
+              </TableCell>
               <TableCell align="center">{question.complexity}</TableCell>
             </TableRow>
           ))}

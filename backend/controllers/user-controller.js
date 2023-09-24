@@ -3,15 +3,33 @@ const express = require("express");
 const router = express.Router();
 
 async function registerUser(req, res) {
-    let { username, email, password, password2 } = req.body;
+  let { username, email, password, password2 } = req.body;
 
-    console.log ({
-        username, email, password, password2
+  console.log ({
+    username, email, password, password2
+  });
+
+  if (password != password2) {
+    return res.status(400).json({
+      error: "Passwords do not match",
     });
+  }
+  if (password.length < 8) {
+    return res.status(400).json({
+      error: "Password not long enough"
+    })
+  }
 
-    if (password != password2) {
+  // Check if the user with the provided email already exists in the database
+  pool.query(
+    `SELECT * FROM users
+    WHERE email = $1`, [email], (err, result) => {
+      if (err) {
+        throw err;
+      }
+      if (result.rows.length > 0) {
         return res.status(400).json({
-            error: "Passwords do not match",
+          error: "Email already exists."
         });
     }
     if (password.length < 8) {
@@ -45,33 +63,35 @@ async function registerUser(req, res) {
                 }
             )
         }
-    )
+      )
+    }
+  )
 }
 
 async function loginUser (req, res) {
-    let  { email, password } = req.body;
-    pool.query( 
-        `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
-            if (result.rows.length == 0) {
-                return res.status(400).json({
-                    error: "User does not exist."
-                });
-            } else if (result.rows.length > 0) {
-                const user = result.rows[0];
-                if (user.password == password) {
-                    return res.status(200).json({ user });
-                } else {
-                    return res.status(401).json({
-                        error: "incorrect password"
-                    });
-                }
-            }
+  let  { email, password } = req.body;
+  pool.query( 
+    `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
+      if (result.rows.length == 0) {
+        return res.status(400).json({
+          error: "User does not exist."
+        });
+      } else if (result.rows.length > 0) {
+        const user = result.rows[0];
+        if (user.password == password) {
+          return res.status(200).json({ user });
+        } else {
+          return res.status(401).json({
+            error: "incorrect password"
+          });
         }
-    )
+      }
+    }
+  )
 }
 
 async function deleteUser (req, res) {
-    let { email } = req.body;
+  let { email } = req.body;
 
     pool.query(
         `DELETE FROM users WHERE email = $1`, [email], (err, result) => {
@@ -139,22 +159,22 @@ async function updatePassword (req, res) {
 }
 
 async function findByEmail (req, res) {
-    let { email } = req.body;
-    pool.query(
-        `SELECT * FROM users WHERE email=$1`, [email], (err, result) => {
-            if (err) {
-                console.log(err);
-            } else {
-                if (result.rows.length >0) {
-                    const user = result.rows[0];
-                    console.log(user);
-                    return res.status(200).json({user});
-                } else {
-                    return res.status(400);
-                }
-            }
-        }   
-    )
+  let { email } = req.body;
+  pool.query(
+    `SELECT * FROM users WHERE email=$1`, [email], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        if (result.rows.length >0) {
+          const user = result.rows[0];
+          console.log(user);
+          return res.status(200).json({user});
+        } else {
+          return res.status(400);
+        }
+      }
+    }
+  )
 }
 
 module.exports = {
