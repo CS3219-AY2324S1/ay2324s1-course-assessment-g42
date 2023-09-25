@@ -5,3 +5,6 @@ Below are the most relevant files/folders for each assignment. There may have be
 - frontend/src/App.js
 - frontend/src/pages/questions.js
 - frontend/src/components/questions
+
+## Assignment 2
+All files included in the tagged commit is involved in Assignment 2
