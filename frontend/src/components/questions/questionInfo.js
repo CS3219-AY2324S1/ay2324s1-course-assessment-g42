@@ -10,6 +10,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Typography from '@mui/material/Typography';
 
+import ComplexityChip from './complexityChip';
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -51,8 +53,9 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
               <Chip key={category} label={category}></Chip>
             ))}
           </Typography>
-          <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
-            Complexity: {question.complexity}
+          <br />
+          <Typography gutterBottom sx={{ wordBreak: "break-word" }} component={'span'}>
+            Complexity: <ComplexityChip complexity={question.complexity} />
           </Typography>
         </DialogContent>
 
