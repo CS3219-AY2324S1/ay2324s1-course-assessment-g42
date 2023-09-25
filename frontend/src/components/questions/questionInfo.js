@@ -42,20 +42,20 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
 
         {/* Rest of question contents in dialog box */}
         <DialogContent dividers>
-        <Typography gutterBottom>
-            ID: {question.id}
-          </Typography>
-          <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
+          <Typography gutterBottom sx={{ whiteSpace: "pre-line" }}>
             {question.description}
           </Typography>
+          <Typography gutterBottom>
+            <b>ID:</b> {question.id}
+          </Typography>
           <Typography gutterBottom sx={{ wordBreak: "break-word" }} component={'span'}>
-            Category: {question.categories.map((category) => (
+            <b>Category:</b> {question.categories.map((category) => (
               <Chip key={category} label={category}></Chip>
             ))}
           </Typography>
           <br />
           <Typography gutterBottom sx={{ wordBreak: "break-word" }} component={'span'}>
-            Complexity: <ComplexityChip complexity={question.complexity} />
+            <b>Complexity:</b> <ComplexityChip complexity={question.complexity} />
           </Typography>
         </DialogContent>
 

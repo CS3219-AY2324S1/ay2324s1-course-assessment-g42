@@ -92,6 +92,7 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
             id="description"
             label="Description"
             fullWidth
+            multiline
             variant="standard"
             inputRef={descRef}
           />
