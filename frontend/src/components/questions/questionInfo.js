@@ -10,6 +10,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Typography from '@mui/material/Typography';
 
+import ComplexityChip from './complexityChip';
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
@@ -40,19 +42,20 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
 
         {/* Rest of question contents in dialog box */}
         <DialogContent dividers>
-        <Typography gutterBottom>
-            ID: {question.id}
-          </Typography>
-          <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
+          <Typography gutterBottom sx={{ whiteSpace: "pre-line" }}>
             {question.description}
           </Typography>
+          <Typography gutterBottom>
+            <b>ID:</b> {question.id}
+          </Typography>
           <Typography gutterBottom sx={{ wordBreak: "break-word" }} component={'span'}>
-            Category: {question.categories.map((category) => (
+            <b>Category:</b> {question.categories.map((category) => (
               <Chip key={category} label={category}></Chip>
             ))}
           </Typography>
-          <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
-            Complexity: {question.complexity}
+          <br />
+          <Typography gutterBottom sx={{ wordBreak: "break-word" }} component={'span'}>
+            <b>Complexity:</b> <ComplexityChip complexity={question.complexity} />
           </Typography>
         </DialogContent>
 

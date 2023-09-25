@@ -10,6 +10,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+import ComplexityChip from './complexityChip';
 import QuestionInfo from './questionInfo';
 
 function QuestionsTable({ questions, handleDelete }) {
@@ -63,7 +64,9 @@ function QuestionsTable({ questions, handleDelete }) {
                   <Chip key={category} label={category}></Chip>
                 ))}
               </TableCell>
-              <TableCell align="center">{question.complexity}</TableCell>
+              <TableCell align="center">
+                <ComplexityChip complexity={question.complexity} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

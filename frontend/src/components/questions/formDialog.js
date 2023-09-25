@@ -10,14 +10,15 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 import FormAddCategories from './formAddCategories';
+import FormComplexitySelect from './formComplexitySelect';
 
 function FormDialog({ questions, setQuestions, addQuestionToDb }) {
   const [open, setOpen] = useState(false);
   // below are input references used for the form dialog
   const titleRef = useRef();
   const descRef = useRef();
-  const compRef = useRef();
   const [categories, setCategories] = useState([]);
+  const [complexity, setComplexity] = useState("Easy");
 
   // handle toggling the form dialog box
   const handleClickOpen = () => {
@@ -50,7 +51,7 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
       title: titleRef.current.value,
       description: descRef.current.value,
       categories: categoriesToAdd,
-      complexity: compRef.current.value
+      complexity: complexity
     }
     addQuestionToDb(newQuestion);
     setQuestions([...questions, newQuestion]);
@@ -91,20 +92,12 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
             id="description"
             label="Description"
             fullWidth
+            multiline
             variant="standard"
             inputRef={descRef}
           />
           <FormAddCategories setCategories={setCategories} />
-          <TextField
-            required
-            autoFocus
-            margin="dense"
-            id="complexity"
-            label="Complexity"
-            fullWidth
-            variant="standard"
-            inputRef={compRef}
-          />
+          <FormComplexitySelect complexity={complexity} setComplexity={setComplexity} />
         </DialogContent>
 
         {/* Buttons in the bottom right */}
