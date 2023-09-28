@@ -1,6 +1,7 @@
 const pool = require("../psql-db.js");
 const express = require("express");
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 
 async function registerUser(req, res) {
     let { username, email, password, password2 } = req.body;
@@ -70,7 +71,17 @@ async function loginUser (req, res) {
       } else if (result.rows.length > 0) {
         const user = result.rows[0];
         if (user.password == password) {
-          return res.status(200).json({ user });
+            let jwtSecretKey = process.env.JWT_SECRET_KEY;
+            let data = {
+                email: email,
+                password: password,
+            };
+            
+            const token = jwt.sign(data, jwtSecretKey, {expiresIn: '5d'});
+            return res.status(200).json({ 
+                user: user,
+                token: token
+            });
         } else {
           return res.status(401).json({
             error: "incorrect password"
@@ -168,6 +179,27 @@ async function findByEmail (req, res) {
     )
 }
 
+
+async function validateToken (req, res) {
+    let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
+    let jwtSecretKey = process.env.JWT_SECRET_KEY;
+  
+    try {
+        const token = req.header(tokenHeaderKey);
+  
+        const verified = jwt.verify(token, jwtSecretKey);
+        if(verified){
+            return res.send("Successfully Verified");
+        }else{
+            // Access Denied
+            return res.status(401).send({error: 'Invalid token'});
+        }
+    } catch (error) {
+        // Access Denied
+        return res.status(401).send({error: 'Invalid token'});
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
@@ -175,4 +207,5 @@ module.exports = {
     updateUsername,
     updatePassword,
     findByEmail,
+    validateToken
 };
