@@ -1,14 +1,12 @@
 import '../App.css';
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
 
 import FormDialog from '../components/questions/formDialog.js';
 import QuestionsTable from '../components/questions/questionsTable.js';
 
 function Questions() {
   const [questions, setQuestions] = useState([]);
-  const navigate = useNavigate();
 
   const handleDelete = (questionId) => {
     const updatedQuestions = questions.filter((question) => question.id !== questionId);
@@ -27,22 +25,11 @@ function Questions() {
 
   useEffect(() => {
     // retrieve questions from database
-    const user = localStorage.getItem('user');
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    const getUser = JSON.parse(user);
-    if (getUser.role == 'admin') {
       axios.post("/question/getQuestions")
       .then(response => {       
         setQuestions(response.data)
       })
       .catch(error => console.error(error));
-    } else {
-      navigate('/');
-      return;
-    }
     
   }, []);
 
