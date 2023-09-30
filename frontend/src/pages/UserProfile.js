@@ -19,6 +19,7 @@ function UserProfile() {
             const user = JSON.parse(loggedInUser);
             console.log(user);
             const email = user.email;
+
             //find user by stored email
             axios.post("/user/findByEmail", { email })
                 .then((response) => {
@@ -84,6 +85,13 @@ function UserProfile() {
                                         sx={{ fontWeight: 200, marginLeft: 7 }} 
                                     >
                                         {user.email}
+                                    </Typography>
+                                    <Typography
+                                        variant="body1"
+                                        component="div"
+                                        sx={{ fontWeight: 200, marginLeft: 7 }} 
+                                    >
+                                        {user.role}
                                     </Typography>
                                 </div>
                             </>

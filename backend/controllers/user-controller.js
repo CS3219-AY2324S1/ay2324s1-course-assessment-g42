@@ -4,10 +4,10 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 
 async function registerUser(req, res) {
-    let { username, email, password, password2 } = req.body;
+    let { username, email, password, password2, role } = req.body;
 
     console.log ({
-        username, email, password, password2
+        username, email, password, password2, role
     });
 
     // Check if email already registered
@@ -43,14 +43,22 @@ async function registerUser(req, res) {
 
             // Register user
             pool.query(
-                `INSERT INTO users (username, email, password) 
-                VALUES ($1, $2, $3)`, [username, email, password], (err) => {
+                `INSERT INTO users (username, email, password, role) 
+                VALUES ($1, $2, $3, $4)`, [username, email, password, role], (err) => {
                     if (err) {
                         return res.status(403).json({
                             error: "Failed to register user."
                         });
                     } else {
-                        return res.status(200).json({ username, email });
+                        const token = jwt.sign(
+                            { username : username, email: email },
+                            process.env.JWT_SECRET_KEY,
+                            {
+                              expiresIn: "2h",
+                            }
+                          );
+
+                        return res.status(200).json({ username, email, token });
                     }
                 }
             );
@@ -180,7 +188,7 @@ async function findByEmail (req, res) {
 }
 
 
-async function validateToken (req, res) {
+async function validateToken (req, res, next) {
     let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
     let jwtSecretKey = process.env.JWT_SECRET_KEY;
   
@@ -189,7 +197,8 @@ async function validateToken (req, res) {
   
         const verified = jwt.verify(token, jwtSecretKey);
         if(verified){
-            return res.send("Successfully Verified");
+            next();
+            return;
         }else{
             // Access Denied
             return res.status(401).send({error: 'Invalid token'});
@@ -200,6 +209,14 @@ async function validateToken (req, res) {
     }
 }
 
+// async function isAdmin(req, res) {
+//     let {user} = req.body;
+//     if (user.role == 'admin') {
+//         return res.status(200);
+//     }
+//     return res.status(403).send ({error: "Require Admin Role!"});
+// }
+
 module.exports = {
     registerUser,
     loginUser,
@@ -207,5 +224,6 @@ module.exports = {
     updateUsername,
     updatePassword,
     findByEmail,
-    validateToken
+    validateToken,
+    //isAdmin
 };

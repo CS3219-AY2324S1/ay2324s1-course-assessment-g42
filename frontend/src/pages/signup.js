@@ -10,6 +10,8 @@ function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
+    const roles = ['user', 'admin']
+    const role = roles[0];
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,7 +24,7 @@ function Signup() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        const user = { username, email, password, password2 };
+        const user = { username, email, password, password2, role };
         try {
             const response = await axios.post('/user/register', user);
             if (response.status === 200) {
