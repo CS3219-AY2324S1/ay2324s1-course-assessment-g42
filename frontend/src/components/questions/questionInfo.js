@@ -1,5 +1,5 @@
 import '../../App.css';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -23,10 +23,26 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 function QuestionInfo({ open, handleClose, question, handleDelete }) {
   // if there is no selected question, return null
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  useEffect(() => { 
+    const loggedInUser = localStorage.getItem('user');
+    if (loggedInUser) {
+        const user = JSON.parse(loggedInUser);
+
+        if (user.role === 'admin') {
+          setIsAdmin(true);                  
+        } else {
+          setIsAdmin(false);
+        }
+    } else {
+      setIsAdmin(false);
+    }
+
+  }, []);
   if (question === undefined) {
     return null;
   }
-
   return (
     <div>
       <BootstrapDialog
@@ -64,7 +80,7 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
           <Button onClick={handleClose}>
             Close
           </Button>
-
+          {isAdmin &&
           <Button color="error"
             onClick={() => {
               handleDelete(question.id);
@@ -73,6 +89,7 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
           >
             Delete
           </Button>
+          }
         </DialogActions>
       </BootstrapDialog>
     </div>
