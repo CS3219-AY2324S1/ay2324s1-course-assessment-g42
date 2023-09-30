@@ -36,6 +36,7 @@ function Questions() {
         autoClose: 3000,
         theme: "dark",
       });
+      toast.clearWaitingQueue();
       navigate('/login');
       return;
     }
