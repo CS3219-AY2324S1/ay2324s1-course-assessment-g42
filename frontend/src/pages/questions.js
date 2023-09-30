@@ -1,5 +1,6 @@
 import '../App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 import FormDialog from '../components/questions/formDialog.js';
@@ -7,6 +8,7 @@ import QuestionsTable from '../components/questions/questionsTable.js';
 
 function Questions() {
   const [questions, setQuestions] = useState([]);
+  const navigate = useNavigate();
 
   const handleDelete = (questionId) => {
     const updatedQuestions = questions.filter((question) => question.id !== questionId);
@@ -23,8 +25,14 @@ function Questions() {
       .catch(error => console.error(error));
   };
 
+  useLayoutEffect(() => {
+    const loggedInUser = localStorage.getItem('user');
+    if (!loggedInUser) {
+      navigate('/login');
+      return;
+    }
+  })
   useEffect(() => {
-    // retrieve questions from database
       axios.post("/question/getQuestions")
       .then(response => {       
         setQuestions(response.data)
