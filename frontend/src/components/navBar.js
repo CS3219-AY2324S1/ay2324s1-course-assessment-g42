@@ -8,6 +8,7 @@ function NavBar() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({});
+    const [isAdmin, setIsAdmin] = useState(false);
     const open = Boolean(anchorEl);
 
     const handleMenuClick = (event) => {
@@ -23,6 +24,13 @@ function NavBar() {
         if (loggedInUser) {
             setIsLoggedIn(true);
             setUser(JSON.parse(loggedInUser));
+            if (user.role === 'admin') {
+                setIsAdmin(true);                  
+              } else {
+                setIsAdmin(false);
+              }
+        } else {
+            setIsAdmin(false);
         }
     }, [setIsLoggedIn]);
 
@@ -43,6 +51,14 @@ function NavBar() {
                     }}>
                         Questions
                     </Typography>
+                    {isAdmin &&
+                    <Typography variant="text" component={Link} to="/updateroles" 
+                    sx={{ textDecoration: 'none', color: 'white', 
+                        marginLeft: 8, fontWeight: 400, fontSize: 18 
+                    }}>
+                        Users
+                    </Typography>
+                    }
                 </div>
                 {isLoggedIn ? (
                 <div>

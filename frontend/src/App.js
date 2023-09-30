@@ -6,6 +6,7 @@ import Signup from './pages/signup';
 import { Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import NavBar from './components/navBar';
+import UpdateRoles from './pages/updateRoles';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
         <Route path="userprofile" element={<UserProfile />}/>
+        <Route path="updateroles" element={<UpdateRoles />}/>
       </Routes>
     </div>
   );
