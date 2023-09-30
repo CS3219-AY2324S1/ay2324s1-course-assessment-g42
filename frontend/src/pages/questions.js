@@ -2,6 +2,8 @@ import '../App.css';
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import FormDialog from '../components/questions/formDialog.js';
 import QuestionsTable from '../components/questions/questionsTable.js';
@@ -28,6 +30,12 @@ function Questions() {
   useLayoutEffect(() => {
     const loggedInUser = localStorage.getItem('user');
     if (!loggedInUser) {
+      
+      toast.error("Not signed in!", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "dark",
+      });
       navigate('/login');
       return;
     }

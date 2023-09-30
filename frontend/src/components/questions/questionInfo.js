@@ -23,20 +23,20 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 function QuestionInfo({ open, handleClose, question, handleDelete }) {
   // if there is no selected question, return null
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isModerator, setIsModerator] = useState(false);
   
   useEffect(() => { 
     const loggedInUser = localStorage.getItem('user');
     if (loggedInUser) {
         const user = JSON.parse(loggedInUser);
 
-        if (user.role === 'admin') {
-          setIsAdmin(true);                  
+        if (user.role === 'moderator' || user.role === 'admin') {
+          setIsModerator(true);                  
         } else {
-          setIsAdmin(false);
+          setIsModerator(false);
         }
     } else {
-      setIsAdmin(false);
+      setIsModerator(false);
     }
 
   }, []);
@@ -80,7 +80,7 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
           <Button onClick={handleClose}>
             Close
           </Button>
-          {isAdmin &&
+          {isModerator &&
           <Button color="error"
             onClick={() => {
               handleDelete(question.id);

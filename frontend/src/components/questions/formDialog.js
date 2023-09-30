@@ -18,7 +18,7 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
   const descRef = useRef();
   const [categories, setCategories] = useState([]);
   const [complexity, setComplexity] = useState("Easy");
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isModerator, setIsModerator] = useState(false);
  
   // handle toggling the form dialog box
   const handleClickOpen = () => {
@@ -63,20 +63,20 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
     if (loggedInUser) {
         const user = JSON.parse(loggedInUser);
 
-        if (user.role === 'admin') {
-          setIsAdmin(true);                  
+        if (user.role === 'moderator' || user.role === 'admin') {
+          setIsModerator(true);                  
         } else {
-          setIsAdmin(false);
+          setIsModerator(false);
         }
     } else {
-      setIsAdmin(false);
+      setIsModerator(false);
     }
   }, []);
 
   return (
     <div>
       {/* Button to add a new question */}
-      {isAdmin &&
+      {isModerator &&
         <Button variant="outlined" onClick={handleClickOpen}>
         Add new question
         </Button>
