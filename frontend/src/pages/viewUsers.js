@@ -17,7 +17,7 @@ function ViewUsers() {
     const [users, setUsers] = useState([]);
     const handleRoleUpdate = async(e, username, oldRole) => {
         e.preventDefault();
-        var newRole = '';
+        let newRole = '';
         if(oldRole === 'user') {
             newRole = "moderator";
         } else if (oldRole === "moderator") {
@@ -27,10 +27,12 @@ function ViewUsers() {
         try {
             const response = await axios.post('/user/updateRole', currUser);
             if (response.status === 200) {
-                const userJsonString = JSON.stringify(response.data.user);
-                localStorage.setItem('user', userJsonString);
-                //reload page to update role
-                window.location.reload();
+                toast.success("Updated role successfully", {
+                    position: 'top-center',
+                    autoClose: 3000,
+                    theme: 'dark',
+                });
+                setUsers(response.data)
                 
             }
         } catch (error) {

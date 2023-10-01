@@ -179,15 +179,7 @@ async function updateRole (req, res) {
             if (error) {
                 return res.status(400).send({message: "Error updating role"});
             } else {
-                pool.query(
-                    `SELECT * FROM users WHERE username = $1`, [username], (err, result) => {
-                        if(err) {
-                            return res.status(402);
-                        }
-                        const user = result.rows[0];
-                        return res.status(200).json({user});
-                    }
-                )
+                return getUsers(req, res);
             }
         }
     )
@@ -248,13 +240,6 @@ async function validateToken (req, res, next) {
     }
 }
 
-// async function isAdmin(req, res) {
-//     let {user} = req.body;
-//     if (user.role == 'admin') {
-//         return res.status(200);
-//     }
-//     return res.status(403).send ({error: "Require Admin Role!"});
-// }
 
 module.exports = {
     registerUser,
