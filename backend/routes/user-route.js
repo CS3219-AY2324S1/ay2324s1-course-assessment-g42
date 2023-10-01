@@ -8,7 +8,9 @@ router.post("/login", userController.loginUser);
 router.post("/delete", userController.deleteUser);
 router.post("/updateUsername", userController.updateUsername);
 router.post("/updatePassword", userController.updatePassword);
+router.post("/updateRoles", userController.updateRole);
 router.post("/findByEmail", userController.findByEmail);
 router.post("/validateToken", userController.validateToken);
+router.post("/getUsers", userController.getUsers);
 
 module.exports=router;

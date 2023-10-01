@@ -168,6 +168,29 @@ async function updatePassword (req, res) {
     );
 }
 
+async function updateRole (req, res) {
+    let {newRole, username } = req.body;
+
+    pool.query(
+        `UPDATE users SET role=$1 WHERE username=$2`,
+        [newRole, username],
+        (error, result) => {
+            if (error) {
+                return res.status(400).send({message: "Error updating role"});
+            } else {
+                pool.query(
+                    `SELECT * FROM users WHERE username = $1`, [username], (err, result) => {
+                        if(err) {
+                            return res.status(402);
+                        }
+                        const user = result.rows[0];
+                        return res.status(200).json({user});
+                    }
+                )
+            }
+        }
+    )
+}
 async function findByEmail (req, res) {
     let { email } = req.body;
     pool.query(
@@ -187,6 +210,21 @@ async function findByEmail (req, res) {
     )
 }
 
+async function getUsers (req, res) {
+
+    pool.query(
+        `SELECT * FROM users`, (err, result) => {
+            if (err) {
+                console.log(err);
+            } else {
+                if (result.rows.length > 0) {
+                    return res.status(200).json(result.rows);
+                } else {
+                    return res.status(400) // chng to show that there are no users
+                }
+            }
+        })
+}
 
 async function validateToken (req, res, next) {
     let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
@@ -223,7 +261,8 @@ module.exports = {
     deleteUser,
     updateUsername,
     updatePassword,
+    updateRole,
     findByEmail,
     validateToken,
-    //isAdmin
+    getUsers
 };
