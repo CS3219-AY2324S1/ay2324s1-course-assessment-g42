@@ -169,7 +169,8 @@ async function updatePassword (req, res) {
 }
 
 async function updateRole (req, res) {
-    let {newRole, username } = req.body;
+    let {username, newRole} = req.body;
+    console.log("Change to: " + newRole);
 
     pool.query(
         `UPDATE users SET role=$1 WHERE username=$2`,
