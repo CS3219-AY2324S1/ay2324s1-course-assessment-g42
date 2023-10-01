@@ -23,7 +23,7 @@ function NavBar() {
         const loggedInUser = localStorage.getItem('user');
         if (loggedInUser) {
             setIsLoggedIn(true);
-            setUser(JSON.parse(loggedInUser));
+            const user = JSON.parse(loggedInUser);
             if (user.role === 'admin') {
                 setIsAdmin(true);                  
               } else {
@@ -52,7 +52,7 @@ function NavBar() {
                         Questions
                     </Typography>
                     {isAdmin &&
-                    <Typography variant="text" component={Link} to="/updateroles" 
+                    <Typography variant="text" component={Link} to="/viewusers" 
                     sx={{ textDecoration: 'none', color: 'white', 
                         marginLeft: 8, fontWeight: 400, fontSize: 18 
                     }}>

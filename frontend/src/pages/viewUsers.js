@@ -9,7 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-function UpdateRoles() {
+function ViewUsers() {
 
     const [users, setUsers] = useState([]);
     useEffect(() => {
@@ -71,4 +71,4 @@ function UpdateRoles() {
       );    
 }
 
-export default UpdateRoles;
+export default ViewUsers;
