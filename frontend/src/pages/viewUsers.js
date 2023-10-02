@@ -1,5 +1,6 @@
 import '../App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import {useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -15,6 +16,7 @@ import { Button } from '@mui/material';
 function ViewUsers() {
 
     const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
     const handleRoleUpdate = async(e, username, oldRole) => {
         e.preventDefault();
         let newRole = '';
@@ -29,7 +31,7 @@ function ViewUsers() {
             if (response.status === 200) {
                 toast.success("Updated role successfully", {
                     position: 'top-center',
-                    autoClose: 3000,
+                    autoClose: 1000,
                     theme: 'dark',
                 });
                 setUsers(response.data)
@@ -44,6 +46,26 @@ function ViewUsers() {
         }
         
     }
+    useLayoutEffect(() => {
+        const loggedInUser = localStorage.getItem('user');
+        if (!loggedInUser) {
+          
+          toast.error("Not signed in!", {
+            position: "top-center",
+            autoClose: 3000,
+            theme: "dark",
+          });
+          toast.clearWaitingQueue();
+          navigate('/login');
+          return;
+        } else {
+            const user = JSON.parse(loggedInUser);
+            if (user.role !== "admin") {
+                navigate('/');
+                return;
+            }
+        }
+    })
     useEffect(() => {
         axios.post("/user/getUsers")
         .then(response => {       

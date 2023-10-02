@@ -213,7 +213,7 @@ async function getUsers (req, res) {
                 if (result.rows.length > 0) {
                     return res.status(200).json(result.rows);
                 } else {
-                    return res.status(400) // chng to show that there are no users
+                    return res.status(400) 
                 }
             }
         })
