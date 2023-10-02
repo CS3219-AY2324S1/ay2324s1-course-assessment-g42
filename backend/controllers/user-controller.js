@@ -50,15 +50,7 @@ async function registerUser(req, res) {
                             error: "Failed to register user."
                         });
                     } else {
-                        const token = jwt.sign(
-                            { username : username, email: email },
-                            process.env.JWT_SECRET_KEY,
-                            {
-                              expiresIn: "2h",
-                            }
-                          );
-
-                        return res.status(200).json({ username, email, token });
+                        return res.status(200).json({ username, email });
                     }
                 }
             );
@@ -86,10 +78,8 @@ async function loginUser (req, res) {
             };
             
             const token = jwt.sign(data, jwtSecretKey, {expiresIn: '5d'});
-            return res.status(200).json({ 
-                user: user,
-                token: token
-            });
+            
+            return res.cookie("token", token, {path: '/'}).status(200).json({user});
         } else {
           return res.status(401).json({
             error: "incorrect password"
@@ -109,6 +99,7 @@ async function deleteUser (req, res) {
                 console.log(err);
                 return res.status(400).send({error: "error deleting account"});
             } else {
+                res.clearCookie('token');
                 return res.status(200).send({message: "user deleted successfully"});
             }
         }
@@ -219,28 +210,6 @@ async function getUsers (req, res) {
         })
 }
 
-async function validateToken (req, res, next) {
-    let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
-    let jwtSecretKey = process.env.JWT_SECRET_KEY;
-  
-    try {
-        const token = req.header(tokenHeaderKey);
-  
-        const verified = jwt.verify(token, jwtSecretKey);
-        if(verified){
-            next();
-            return;
-        }else{
-            // Access Denied
-            return res.status(401).send({error: 'Invalid token'});
-        }
-    } catch (error) {
-        // Access Denied
-        return res.status(401).send({error: 'Invalid token'});
-    }
-}
-
-
 module.exports = {
     registerUser,
     loginUser,
@@ -249,6 +218,5 @@ module.exports = {
     updatePassword,
     updateRole,
     findByEmail,
-    validateToken,
     getUsers
 };
