@@ -79,7 +79,11 @@ async function loginUser (req, res) {
             
             const token = jwt.sign(data, jwtSecretKey, {expiresIn: '5d'});
             
-            return res.cookie("token", token, {path: '/'}).status(200).json({user});
+            return res.cookie("token", token, {
+                path: '/',
+                httpOnly: true,
+                maxAge : 7 * 24 * 60 * 60 * 1000 // 7 days expiry
+            }).status(200).json({user});
         } else {
           return res.status(401).json({
             error: "incorrect password"

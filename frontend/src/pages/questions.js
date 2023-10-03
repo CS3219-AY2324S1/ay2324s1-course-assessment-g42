@@ -1,5 +1,5 @@
 import '../App.css';
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
@@ -41,13 +41,13 @@ function Questions() {
       navigate('/login');
       return;
     }
-      axios.post("/question/getQuestions")
-      .then(response => {       
-        setQuestions(response.data)
-      })
-      .catch(error => console.error(error));
+    axios.post("/question/getQuestions")
+    .then(response => {       
+      setQuestions(response.data)
+    })
+    .catch(error => console.error(error));
     
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="wrapper">

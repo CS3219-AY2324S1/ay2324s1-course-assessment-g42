@@ -1,5 +1,5 @@
 import '../App.css';
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {useNavigate } from 'react-router-dom';
 import axios from "axios";
 import Cookies from 'js-cookie';
@@ -82,7 +82,7 @@ function ViewUsers() {
         })
         .catch(error => console.error(error));
       
-    }, []);
+    }, [navigate]);
 
     return (
         <div className='wrapper'>
