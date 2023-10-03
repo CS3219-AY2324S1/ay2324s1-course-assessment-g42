@@ -22,7 +22,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 function QuestionInfo({ open, handleClose, question, handleDelete }) {
-  // if there is no selected question, return null
+
   const [isModerator, setIsModerator] = useState(false);
   
   useEffect(() => { 
@@ -40,6 +40,8 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
     }
 
   }, []);
+
+  // if there is no selected question, return null
   if (question === undefined) {
     return null;
   }
