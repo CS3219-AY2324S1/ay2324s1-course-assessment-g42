@@ -18,6 +18,7 @@ function ViewUsers() {
 
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
+    
     const handleRoleUpdate = async(e, username, oldRole) => {
         e.preventDefault();
         let newRole = '';
@@ -47,28 +48,34 @@ function ViewUsers() {
         }
         
     }
-    useLayoutEffect(() => {
+    
+    useEffect(() => {
         const loggedInUser = Cookies.get('user');
         if (!loggedInUser) {
-          
-          toast.error("Not signed in!", {
-            position: "top-center",
-            autoClose: 3000,
-            theme: "dark",
-          });
-          toast.clearWaitingQueue();
-          navigate('/login');
-          window.location.reload();
-          return;
+            navigate('/login');
+            toast.error("Not signed in!", {
+                position: "top-center",
+                autoClose: 3000,
+                theme: "dark",
+            });
+            toast.clearWaitingQueue();
+            
+            return;
         } else {
             const user = JSON.parse(loggedInUser);
             if (user.role !== "admin") {
                 navigate('/');
+                toast.error("Unauthorised access!", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    theme: "dark",
+                });
+                toast.clearWaitingQueue();
+                
                 return;
             }
         }
-    }, [navigate]);
-    useEffect(() => {
+
         axios.post("/user/getUsers")
         .then(response => {       
           setUsers(response.data)

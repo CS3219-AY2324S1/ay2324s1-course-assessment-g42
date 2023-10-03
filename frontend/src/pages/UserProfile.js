@@ -47,6 +47,8 @@ function UserProfile() {
                 autoClose: 3000,
                 theme: "dark",
             });
+            toast.clearWaitingQueue();
+            return;
         }
     }, [navigate]);
 

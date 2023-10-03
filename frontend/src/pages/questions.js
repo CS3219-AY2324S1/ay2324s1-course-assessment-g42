@@ -28,7 +28,7 @@ function Questions() {
       .catch(error => console.error(error));
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const loggedInUser = Cookies.get('user');
     if (!loggedInUser) {
       
@@ -39,11 +39,8 @@ function Questions() {
       });
       toast.clearWaitingQueue();
       navigate('/login');
-      window.location.reload();
       return;
     }
-  });
-  useEffect(() => {
       axios.post("/question/getQuestions")
       .then(response => {       
         setQuestions(response.data)
