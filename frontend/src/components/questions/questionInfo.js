@@ -27,16 +27,12 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
   
   useEffect(() => { 
     const loggedInUser = localStorage.getItem('user');
+    setIsModerator(false);
     if (loggedInUser) {
         const user = JSON.parse(loggedInUser);
-
-        if (user.role === 'moderator' || user.role === 'admin') {
-          setIsModerator(true);                  
-        } else {
-          setIsModerator(false);
-        }
-    } else {
-      setIsModerator(false);
+        if (user.role !== 'user') {
+          setIsModerator(true);   
+        }               
     }
 
   }, []);

@@ -21,16 +21,13 @@ function NavBar() {
 
     useEffect(() => {
         const loggedInUser = localStorage.getItem('user');
+        setIsAdmin(false);
         if (loggedInUser) {
             setIsLoggedIn(true);
             const user = JSON.parse(loggedInUser);
             if (user.role === 'admin') {
                 setIsAdmin(true);                  
-              } else {
-                setIsAdmin(false);
-              }
-        } else {
-            setIsAdmin(false);
+            } 
         }
     }, [setIsLoggedIn]);
 
