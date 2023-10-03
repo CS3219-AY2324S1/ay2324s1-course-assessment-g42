@@ -15,7 +15,7 @@ const verifyToken = (req, res, next) => {
         }else{
             // Access Denied
             console.log("error");
-            return res.json({
+            return res.status(403).json({
                 login: false,
                 data: 'error'
             })

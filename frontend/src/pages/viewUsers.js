@@ -2,6 +2,7 @@ import '../App.css';
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {useNavigate } from 'react-router-dom';
 import axios from "axios";
+import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Table from '@mui/material/Table';
@@ -47,7 +48,7 @@ function ViewUsers() {
         
     }
     useLayoutEffect(() => {
-        const loggedInUser = localStorage.getItem('user');
+        const loggedInUser = Cookies.get('user');
         if (!loggedInUser) {
           
           toast.error("Not signed in!", {
@@ -57,6 +58,7 @@ function ViewUsers() {
           });
           toast.clearWaitingQueue();
           navigate('/login');
+          window.location.reload();
           return;
         } else {
             const user = JSON.parse(loggedInUser);
@@ -65,7 +67,7 @@ function ViewUsers() {
                 return;
             }
         }
-    })
+    }, [navigate]);
     useEffect(() => {
         axios.post("/user/getUsers")
         .then(response => {       

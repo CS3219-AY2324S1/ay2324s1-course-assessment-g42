@@ -1,6 +1,9 @@
 import '../App.css';
 import axios from "axios";
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { Paper, Typography, Grid, Container } from '@mui/material';
 
@@ -14,7 +17,8 @@ function UserProfile() {
     const navigate = useNavigate();
     
     useEffect(() => {
-        const loggedInUser = localStorage.getItem('user'); 
+        const loggedInUser = Cookies.get('user');
+        
         const getUser = async () => {
             const user = JSON.parse(loggedInUser);
             console.log(user);
@@ -38,6 +42,11 @@ function UserProfile() {
         } else {
             //if no user session
             navigate('/login');
+            toast.error("Not signed in!", {
+                position: "top-center",
+                autoClose: 3000,
+                theme: "dark",
+            });
         }
     }, [navigate]);
 

@@ -1,5 +1,6 @@
 import '../../App.css';
 import React, { useEffect, useState, useRef } from 'react';
+import Cookies from 'js-cookie';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -59,7 +60,7 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
   }
 
   useEffect(() => {
-    const loggedInUser = localStorage.getItem('user');
+    const loggedInUser = Cookies.get('user');
     setIsModerator(false);
     if (loggedInUser) {
         const user = JSON.parse(loggedInUser);

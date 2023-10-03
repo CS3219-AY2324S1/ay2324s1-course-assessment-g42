@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Button } from '@mui/material';
+import Cookies from 'js-cookie';
 
 function DeleteUser({ user }) {
     const navigate = useNavigate();
@@ -19,8 +20,8 @@ function DeleteUser({ user }) {
                     { email }
                 );
                 if (res.status === 200) {
-                     //clear user from local storage
-                    localStorage.clear();
+                    //clear user from cookie
+                    Cookies.remove('user');
                     navigate('/');
                     // Refresh the page
                     window.location.reload();

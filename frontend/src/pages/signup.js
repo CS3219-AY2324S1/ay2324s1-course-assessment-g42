@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import axios from 'axios';
 import { Paper, Typography, TextField, Button, Container } from '@mui/material';
 import { toast } from 'react-toastify';
@@ -15,7 +16,7 @@ function Signup() {
 
     useEffect(() => {
         // If there is already a user logged in, navigate to the user profile page
-        const loggedInUser = localStorage.getItem('user');
+        const loggedInUser = Cookies.get('user');
         if (loggedInUser) {
             navigate('/');
         }

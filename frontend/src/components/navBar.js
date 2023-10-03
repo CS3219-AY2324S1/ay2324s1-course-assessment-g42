@@ -3,6 +3,7 @@ import { AppBar, Toolbar, Typography, IconButton, Button, Popover } from '@mui/m
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import LogoutUser from './users/logoutUser';
+import Cookies from 'js-cookie';
 
 function NavBar() {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -20,10 +21,11 @@ function NavBar() {
     };
 
     useEffect(() => {
-        const loggedInUser = localStorage.getItem('user');
+        const loggedInUser = Cookies.get('user');
         setIsAdmin(false);
         if (loggedInUser) {
             setIsLoggedIn(true);
+            setUser(loggedInUser);
             const user = JSON.parse(loggedInUser);
             if (user.role === 'admin') {
                 setIsAdmin(true);                  

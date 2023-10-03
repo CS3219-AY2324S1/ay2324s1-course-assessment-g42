@@ -1,6 +1,7 @@
 import '../../App.css';
 import React, { useState } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button, TextField  } from '@mui/material';
@@ -29,9 +30,9 @@ function EditUser({ user }) {
             const response = await axios.post('/user/updateUsername', newDetails);
             if (response.status === 200) {
                 setNewUsername('');
-                //update user details in local storage
+                //update user details in cookie
                 const userJsonString = JSON.stringify(response.data.user);
-                localStorage.setItem('user', userJsonString);
+                Cookies.set('user', userJsonString, {expires: 7});
                 //reload page to update username
                 window.location.reload();
             }
@@ -57,9 +58,9 @@ function EditUser({ user }) {
                     theme: 'dark',
                 });
                 setNewPassword('');
-                //update user details in local storage
+                //update user details in cookie
                 const userJsonString = JSON.stringify(response.data.user);
-                localStorage.setItem('user', userJsonString);
+                Cookies.set('user', userJsonString, {expires: 7});
             }
         } catch (error) {
             if (error.response.status === 401) {

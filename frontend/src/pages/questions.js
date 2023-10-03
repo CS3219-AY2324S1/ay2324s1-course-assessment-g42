@@ -1,5 +1,6 @@
 import '../App.css';
 import React, { useState, useEffect, useLayoutEffect } from 'react';
+import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { toast } from 'react-toastify';
@@ -28,7 +29,7 @@ function Questions() {
   };
 
   useLayoutEffect(() => {
-    const loggedInUser = localStorage.getItem('user');
+    const loggedInUser = Cookies.get('user');
     if (!loggedInUser) {
       
       toast.error("Not signed in!", {
@@ -38,9 +39,10 @@ function Questions() {
       });
       toast.clearWaitingQueue();
       navigate('/login');
+      window.location.reload();
       return;
     }
-  })
+  });
   useEffect(() => {
       axios.post("/question/getQuestions")
       .then(response => {       

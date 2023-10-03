@@ -1,5 +1,6 @@
 import '../../App.css';
 import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -26,7 +27,7 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
   const [isModerator, setIsModerator] = useState(false);
   
   useEffect(() => { 
-    const loggedInUser = localStorage.getItem('user');
+    const loggedInUser = Cookies.get('user');
     setIsModerator(false);
     if (loggedInUser) {
         const user = JSON.parse(loggedInUser);

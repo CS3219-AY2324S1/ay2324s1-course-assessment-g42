@@ -12,5 +12,6 @@ router.post("/updatePassword", auth, userController.updatePassword);
 router.post("/updateRole", auth, userController.updateRole);
 router.post("/findByEmail", auth, userController.findByEmail);
 router.post("/getUsers", auth, userController.getUsers);
+router.post("/clearCookie", userController.clearCookie);
 
 module.exports=router;

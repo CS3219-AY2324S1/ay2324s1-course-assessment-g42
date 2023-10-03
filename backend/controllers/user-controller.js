@@ -210,6 +210,11 @@ async function getUsers (req, res) {
         })
 }
 
+async function clearCookie(req, res) {
+    res.clearCookie('token');
+    return res.status(200).send({message: "logged out successfully"});
+}
+
 module.exports = {
     registerUser,
     loginUser,
@@ -218,5 +223,6 @@ module.exports = {
     updatePassword,
     updateRole,
     findByEmail,
-    getUsers
+    getUsers,
+    clearCookie
 };
