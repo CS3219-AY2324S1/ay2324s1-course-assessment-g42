@@ -1,12 +1,17 @@
 import '../App.css';
 import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import FormDialog from '../components/questions/formDialog.js';
 import QuestionsTable from '../components/questions/questionsTable.js';
 
 function Questions() {
   const [questions, setQuestions] = useState([]);
+  const navigate = useNavigate();
 
   const handleDelete = (questionId) => {
     const updatedQuestions = questions.filter((question) => question.id !== questionId);
@@ -24,13 +29,25 @@ function Questions() {
   };
 
   useEffect(() => {
-    // retrieve questions from database
+    const loggedInUser = Cookies.get('user');
+    if (!loggedInUser) {
+      
+      toast.error("Not signed in!", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "dark",
+      });
+      toast.clearWaitingQueue();
+      navigate('/login');
+      return;
+    }
     axios.post("/question/getQuestions")
-      .then(response => {
-        setQuestions(response.data)
-      })
-      .catch(error => console.error(error));
-  }, []);
+    .then(response => {       
+      setQuestions(response.data)
+    })
+    .catch(error => console.error(error));
+    
+  }, [navigate]);
 
   return (
     <div className="wrapper">

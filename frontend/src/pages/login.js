@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import axios from 'axios';
 import { Paper, Typography, TextField, Button, Container } from '@mui/material';
 import { toast } from 'react-toastify';
@@ -17,8 +18,8 @@ function Login() {
             const response = await axios.post('/user/login', user);
             if (response.status === 200) {
                 const userJsonString = JSON.stringify(response.data.user);
-                // Store user details in local storage for login persistence
-                localStorage.setItem('user', userJsonString);
+                // Store user details in cookie for login persistence
+                Cookies.set('user', userJsonString, {expires: 7});
                 navigate('/');
                 // Refresh the page
                 window.location.reload();
@@ -48,7 +49,7 @@ function Login() {
     };
 
     useEffect(() => {
-        const loggedInUser = localStorage.getItem('user');
+        const loggedInUser = Cookies.get('user');
         if (loggedInUser) {
             // If there is already a user logged in, navigate to the user profile page
             navigate('/');

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import axios from 'axios';
 import { Paper, Typography, TextField, Button, Container } from '@mui/material';
 import { toast } from 'react-toastify';
@@ -10,11 +11,12 @@ function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
+    const role = 'user';
     const navigate = useNavigate();
 
     useEffect(() => {
         // If there is already a user logged in, navigate to the user profile page
-        const loggedInUser = localStorage.getItem('user');
+        const loggedInUser = Cookies.get('user');
         if (loggedInUser) {
             navigate('/');
         }
@@ -22,7 +24,7 @@ function Signup() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        const user = { username, email, password, password2 };
+        const user = { username, email, password, password2, role };
         try {
             const response = await axios.post('/user/register', user);
             if (response.status === 200) {

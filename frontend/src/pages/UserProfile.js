@@ -1,6 +1,9 @@
 import '../App.css';
 import axios from "axios";
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { Paper, Typography, Grid, Container } from '@mui/material';
 
@@ -14,11 +17,13 @@ function UserProfile() {
     const navigate = useNavigate();
     
     useEffect(() => {
-        const loggedInUser = localStorage.getItem('user'); 
+        const loggedInUser = Cookies.get('user');
+        
         const getUser = async () => {
             const user = JSON.parse(loggedInUser);
             console.log(user);
             const email = user.email;
+
             //find user by stored email
             axios.post("/user/findByEmail", { email })
                 .then((response) => {
@@ -37,6 +42,13 @@ function UserProfile() {
         } else {
             //if no user session
             navigate('/login');
+            toast.error("Not signed in!", {
+                position: "top-center",
+                autoClose: 3000,
+                theme: "dark",
+            });
+            toast.clearWaitingQueue();
+            return;
         }
     }, [navigate]);
 
@@ -84,6 +96,13 @@ function UserProfile() {
                                         sx={{ fontWeight: 200, marginLeft: 7 }} 
                                     >
                                         {user.email}
+                                    </Typography>
+                                    <Typography
+                                        variant="body1"
+                                        component="div"
+                                        sx={{ fontWeight: 200, marginLeft: 7 }} 
+                                    >
+                                        {user.role}
                                     </Typography>
                                 </div>
                             </>

@@ -1,5 +1,6 @@
 import '../../App.css';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -22,11 +23,25 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 function QuestionInfo({ open, handleClose, question, handleDelete }) {
+
+  const [isModerator, setIsModerator] = useState(false);
+  
+  useEffect(() => { 
+    const loggedInUser = Cookies.get('user');
+    setIsModerator(false);
+    if (loggedInUser) {
+        const user = JSON.parse(loggedInUser);
+        if (user.role !== 'user') {
+          setIsModerator(true);   
+        }               
+    }
+
+  }, []);
+
   // if there is no selected question, return null
   if (question === undefined) {
     return null;
   }
-
   return (
     <div>
       <BootstrapDialog
@@ -64,7 +79,7 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
           <Button onClick={handleClose}>
             Close
           </Button>
-
+          {isModerator &&
           <Button color="error"
             onClick={() => {
               handleDelete(question.id);
@@ -73,6 +88,7 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
           >
             Delete
           </Button>
+          }
         </DialogActions>
       </BootstrapDialog>
     </div>

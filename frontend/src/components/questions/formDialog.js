@@ -1,6 +1,6 @@
 import '../../App.css';
-import React, { useState, useRef } from 'react';
-
+import React, { useEffect, useState, useRef } from 'react';
+import Cookies from 'js-cookie';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -19,7 +19,8 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
   const descRef = useRef();
   const [categories, setCategories] = useState([]);
   const [complexity, setComplexity] = useState("Easy");
-
+  const [isModerator, setIsModerator] = useState(false);
+ 
   // handle toggling the form dialog box
   const handleClickOpen = () => {
     setOpen(true);
@@ -58,13 +59,27 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
     setOpen(false);
   }
 
+  useEffect(() => {
+    const loggedInUser = Cookies.get('user');
+    setIsModerator(false);
+    if (loggedInUser) {
+        const user = JSON.parse(loggedInUser);
+
+        if (user.role !== 'user') {
+          setIsModerator(true);                  
+        } 
+    }
+  }, []);
+
   return (
     <div>
       {/* Button to add a new question */}
-      <Button variant="outlined" onClick={handleClickOpen}>
+      {isModerator &&
+        <Button variant="outlined" onClick={handleClickOpen}>
         Add new question
-      </Button>
-
+        </Button>
+      }
+      
       {/* Form dialog box to submit a question */}
       <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Add a new question</DialogTitle>

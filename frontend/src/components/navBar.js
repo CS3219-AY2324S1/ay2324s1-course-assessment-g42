@@ -3,11 +3,13 @@ import { AppBar, Toolbar, Typography, IconButton, Button, Popover } from '@mui/m
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import LogoutUser from './users/logoutUser';
+import Cookies from 'js-cookie';
 
 function NavBar() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({});
+    const [isAdmin, setIsAdmin] = useState(false);
     const open = Boolean(anchorEl);
 
     const handleMenuClick = (event) => {
@@ -19,10 +21,15 @@ function NavBar() {
     };
 
     useEffect(() => {
-        const loggedInUser = localStorage.getItem('user');
+        const loggedInUser = Cookies.get('user');
+        setIsAdmin(false);
         if (loggedInUser) {
             setIsLoggedIn(true);
-            setUser(JSON.parse(loggedInUser));
+            setUser(loggedInUser);
+            const user = JSON.parse(loggedInUser);
+            if (user.role === 'admin') {
+                setIsAdmin(true);                  
+            } 
         }
     }, [setIsLoggedIn]);
 
@@ -43,6 +50,14 @@ function NavBar() {
                     }}>
                         Questions
                     </Typography>
+                    {isAdmin &&
+                    <Typography variant="text" component={Link} to="/viewusers" 
+                    sx={{ textDecoration: 'none', color: 'white', 
+                        marginLeft: 8, fontWeight: 400, fontSize: 18 
+                    }}>
+                        Users
+                    </Typography>
+                    }
                 </div>
                 {isLoggedIn ? (
                 <div>
