@@ -6,13 +6,13 @@ const verifyToken = (req, res, next) => {
     try {
         const token = req.cookies.token;
 
-        if(token) {
+        if (token) {
             const decode = jwt.verify(token, jwtSecretKey);
-            if(decode) {
+            if (decode) {
                 console.log("verified");
                 next();
             }
-        }else{
+        } else {
             // Access Denied
             console.log("error");
             return res.status(403).json({
