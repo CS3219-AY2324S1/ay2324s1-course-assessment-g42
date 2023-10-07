@@ -41,7 +41,7 @@ function Signup() {
                 setPassword2('');
             }
         } catch (error) {
-            if (error.response.status === 401) {
+            if (error.response.status === 403) {
                 toast.error('Password must have at least 8 characters', {
                     position: 'top-center',
                     autoClose: 3000,
@@ -53,13 +53,13 @@ function Signup() {
                 autoClose: 3000,
                 theme: 'dark',
                 });
-            } else if (error.response.status === 402) {
+            } else if (error.response.status === 409) {
                 toast.error('Email already registered. Login?', {
                     position: 'top-center',
                     autoClose: 3000,
                     theme: 'dark',
                 });
-            } else if (error.response.status === 403) {
+            } else if (error.response.status === 500) {
                 toast.error('Unknown error occured', {
                     position: 'top-center',
                     autoClose: 3000,

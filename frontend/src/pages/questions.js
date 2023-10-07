@@ -17,7 +17,24 @@ function Questions() {
     const updatedQuestions = questions.filter((question) => question.id !== questionId);
     axios.post("/question/deleteQuestion", { id: questionId })
       .then((response) => console.log(response.status))
-      .catch(error => console.error(error));
+      .catch(error => {
+        if (error.response.status === 401) {
+          navigate('/');
+          Cookies.remove('user');                
+          window.location.reload();
+          axios.post("/user/clearCookie");
+          
+          console.log("Unauthorised Access. Logged out");
+          
+          toast.error("Unauthorised Access", {
+              position: "top-center",
+              autoClose: 3000,
+              theme: "dark",
+          });
+          
+          return;
+      }
+      console.error(error)});
     setQuestions(updatedQuestions);
   };
 
@@ -25,7 +42,24 @@ function Questions() {
   const addQuestionToDb = (question) => {
     axios.post("/question/addQuestion", question)
       .then((response) => console.log(response.status))
-      .catch(error => console.error(error));
+      .catch(error => {
+        if (error.response.status === 401) {
+          navigate('/');
+          Cookies.remove('user');                
+          window.location.reload();
+          axios.post("/user/clearCookie");
+          
+          console.log("Unauthorised Access. Logged out");
+          
+          toast.error("Unauthorised Access", {
+              position: "top-center",
+              autoClose: 3000,
+              theme: "dark",
+          });
+          
+          return;
+      }
+      console.error(error)});
   };
 
   useEffect(() => {
@@ -45,7 +79,24 @@ function Questions() {
     .then(response => {       
       setQuestions(response.data)
     })
-    .catch(error => console.error(error));
+    .catch(error => {
+      if (error.response.status === 401) {
+        navigate('/');
+        Cookies.remove('user');                
+        window.location.reload();
+        axios.post("/user/clearCookie");
+        
+        console.log("Unauthorised Access. Logged out");
+        
+        toast.error("Unauthorised Access", {
+            position: "top-center",
+            autoClose: 3000,
+            theme: "dark",
+        });
+        
+        return;
+    }
+    console.error(error)});
     
   }, [navigate]);
 

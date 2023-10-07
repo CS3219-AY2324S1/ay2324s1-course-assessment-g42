@@ -32,6 +32,22 @@ function UserProfile() {
                     setIsLoading(false); // Set loading state to false after data is fetched
                 })
                 .catch((error) => {
+                    if (error.response.status === 401) {
+                        navigate('/');
+                        Cookies.remove('user');                
+                        window.location.reload();
+                        axios.post("/user/clearCookie");
+                        
+                        console.log("Unauthorised Access, Logged out");
+                        
+                        toast.error("Unauthorised Access", {
+                            position: "top-center",
+                            autoClose: 3000,
+                            theme: "dark",
+                        });
+                        
+                        return;
+                    }
                     console.error('Error fetching user:', error);
                     setIsLoading(false); // Set loading state to false in case of an error
                 }
@@ -123,7 +139,7 @@ function UserProfile() {
                                 marginBottom: '10px',
                                 marginTop: '10px' 
                             }}>
-                                <LogoutUser user={user} />
+                                <LogoutUser />
                             </div>
                             <div style={{ border: '1px solid rgba(0, 0, 0, 0.4)', borderRadius: '6px' }}>
                                 <DeleteUser user={user} />

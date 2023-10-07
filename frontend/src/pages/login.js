@@ -28,7 +28,7 @@ function Login() {
                 setEmail('');
             }
         } catch (error) {
-            if (error.response.status === 401) {
+            if (error.response.status === 422) {
                 //incorrect password entered
                 toast.error("incorrect password", {
                     position: "top-center",
@@ -36,7 +36,7 @@ function Login() {
                     theme: "dark",
                 });
                 return;
-            } else if (error.response.status === 400) {
+            } else if (error.response.status === 404) {
                 //email not registered
                 toast.error("Email does not exist", {
                     position: "top-center",

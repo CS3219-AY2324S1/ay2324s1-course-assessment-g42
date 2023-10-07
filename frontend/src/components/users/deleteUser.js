@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 import { Button } from '@mui/material';
 import Cookies from 'js-cookie';
 
+//import handleLogout from './logoutUser';
+
 function DeleteUser({ user }) {
     const navigate = useNavigate();
 
@@ -27,6 +29,22 @@ function DeleteUser({ user }) {
                     window.location.reload();
                 }   
             } catch (err) {
+                if (err.response.status === 401) {
+                    navigate('/');
+                    Cookies.remove('user');                
+                    window.location.reload();
+                    axios.post("/user/clearCookie");
+                    
+                    console.log("logged out");
+                    
+                    toast.error("Unauthorised Access", {
+                        position: "top-center",
+                        autoClose: 3000,
+                        theme: "dark",
+                    });
+                    
+                    return;
+                }
                 toast.error("Unknown error occurred", {
                     position: 'top-center',
                     autoClose: 3000,

@@ -40,6 +40,22 @@ function ViewUsers() {
                 
             }
         } catch (error) {
+            if (error.response.status === 401) {
+                navigate('/');
+                Cookies.remove('user');                
+                window.location.reload();
+                axios.post("/user/clearCookie");
+                
+                console.log("Unauthorised Access, Logged out");
+                
+                toast.error("Unauthorised Access", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    theme: "dark",
+                });
+                
+                return;
+            } 
             toast.error("Unknown error occurred", {
                 position: 'top-center',
                 autoClose: 3000,
@@ -80,7 +96,29 @@ function ViewUsers() {
         .then(response => {       
           setUsers(response.data)
         })
-        .catch(error => console.error(error));
+        .catch(error => {
+            if (error.response.status === 401) {
+                
+                navigate('/');
+                Cookies.remove('user');                
+                window.location.reload();
+                axios.post("/user/clearCookie");
+                
+                console.log("Unauthorised Access, Logged out");
+                toast.error("Unauthorised Access", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    theme: "dark",
+                });
+
+                return;
+            } 
+            toast.error("Unknown error occurred", {
+                position: 'top-center',
+                autoClose: 3000,
+                theme: 'dark',
+            });
+        } );
       
     }, [navigate]);
 

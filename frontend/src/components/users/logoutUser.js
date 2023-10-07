@@ -5,13 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import Cookies from 'js-cookie';
 
-function LogoutUser({ user }) {
+function LogoutUser() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        if (user) {
+        const cookie = Cookies.get('user');
+        if (cookie) {
             //clear user from cookie
-            axios.post("/user/clearCookie", user);
+            axios.post("/user/clearCookie");
             Cookies.remove('user');
             console.log("logged out");
             //navigate user to home

@@ -14,8 +14,8 @@ const verifyToken = (req, res, next) => {
             }
         } else {
             // Access Denied
-            console.log("error");
-            return res.status(403).json({
+            console.log("Access Denied");
+            return res.status(401).json({
                 login: false,
                 data: 'error'
             })
@@ -23,7 +23,7 @@ const verifyToken = (req, res, next) => {
         }
     } catch (error) {
         // Access Denied
-        console.log("invalid");
+        console.log("Token Invalid");
         return res.status(401).send({error: 'Invalid token'});
     }
 }
