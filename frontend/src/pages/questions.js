@@ -71,6 +71,7 @@ function Questions() {
         autoClose: 3000,
         theme: "dark",
       });
+      console.log("Not signed in!");
       toast.clearWaitingQueue();
       navigate('/login');
       return;
