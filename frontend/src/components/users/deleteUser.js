@@ -35,7 +35,7 @@ function DeleteUser({ user }) {
                     window.location.reload();
                     axios.post("/user/clearCookie");
                     
-                    console.log("logged out");
+                    console.log("Unauthorised Access, Logged out");
                     
                     toast.error("Unauthorised Access", {
                         position: "top-center",
