@@ -1,3 +1,4 @@
+import Collaborate from './pages/collaborate';
 import Home from './pages/home';
 import Questions from './pages/questions';
 import UserProfile from'./pages/UserProfile';
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="questions" element={<Questions />} />
+        <Route path="collaborate" element={<Collaborate />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
         <Route path="userprofile" element={<UserProfile />}/>
