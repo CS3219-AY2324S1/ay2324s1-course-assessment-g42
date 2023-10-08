@@ -8,7 +8,6 @@ import Cookies from 'js-cookie';
 function NavBar() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState({});
     const [isAdmin, setIsAdmin] = useState(false);
     const open = Boolean(anchorEl);
 
@@ -25,7 +24,6 @@ function NavBar() {
         setIsAdmin(false);
         if (loggedInUser) {
             setIsLoggedIn(true);
-            setUser(loggedInUser);
             const user = JSON.parse(loggedInUser);
             if (user.role === 'admin') {
                 setIsAdmin(true);                  

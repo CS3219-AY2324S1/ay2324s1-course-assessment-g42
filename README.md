@@ -8,3 +8,6 @@ Below are the most relevant files/folders for each assignment. There may have be
 
 ## Assignment 2
 All files included in the tagged commit is involved in Assignment 2
+
+## Assignment 3
+All files included in the tagged commit is involved in Assignment 3
