@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import FormDialog from '../components/questions/formDialog.js';
 import QuestionsTable from '../components/questions/questionsTable.js';
+import { logout } from '../helpers';
 
 function Questions() {
   const [questions, setQuestions] = useState([]);
@@ -20,9 +21,7 @@ function Questions() {
       .catch(error => {
         if (error.response.status === 401) {
           navigate('/');
-          Cookies.remove('user');                
-          window.location.reload();
-          axios.post("/user/clearCookie");
+          logout();
           
           console.log("Unauthorised Access. Logged out");
           
@@ -45,9 +44,7 @@ function Questions() {
       .catch(error => {
         if (error.response.status === 401) {
           navigate('/');
-          Cookies.remove('user');                
-          window.location.reload();
-          axios.post("/user/clearCookie");
+          logout();
           
           console.log("Unauthorised Access. Logged out");
           
@@ -83,9 +80,10 @@ function Questions() {
     .catch(error => {
       if (error.response.status === 401) {
         navigate('/');
-        Cookies.remove('user');                
-        window.location.reload();
-        axios.post("/user/clearCookie");
+        // Cookies.remove('user');                
+        // window.location.reload();
+        // axios.post("/user/clearCookie");
+        logout();
         
         console.log("Unauthorised Access. Logged out");
         

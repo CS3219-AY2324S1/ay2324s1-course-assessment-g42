@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button, TextField  } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../helpers';
 
 function EditUser({ user }) {
     const [newUsername, setNewUsername] = useState('');
@@ -41,10 +42,7 @@ function EditUser({ user }) {
         } catch (error) {
             if (error.response.status === 401) {
                 navigate('/');
-                
-                Cookies.remove('user');                
-                window.location.reload();
-                axios.post("/user/clearCookie");
+                logout();        
                 
                 console.log("Unauthorised Access, Logged out");
                 
@@ -84,9 +82,10 @@ function EditUser({ user }) {
         } catch (error) {
             if (error.response.status === 401) {
                 navigate('/');
-                Cookies.remove('user');                
-                window.location.reload();
-                axios.post("/user/clearCookie");
+                // Cookies.remove('user');                
+                // window.location.reload();
+                // axios.post("/user/clearCookie");
+                logout();
                 
                 console.log("Unauthorised Access, Logged out");
                 

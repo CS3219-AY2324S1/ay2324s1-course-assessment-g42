@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { Button } from '@mui/material';
 import Cookies from 'js-cookie';
 
-//import handleLogout from './logoutUser';
+import { logout } from '../../helpers';
 
 function DeleteUser({ user }) {
     const navigate = useNavigate();
@@ -31,9 +31,7 @@ function DeleteUser({ user }) {
             } catch (err) {
                 if (err.response.status === 401) {
                     navigate('/');
-                    Cookies.remove('user');                
-                    window.location.reload();
-                    axios.post("/user/clearCookie");
+                    logout();
                     
                     console.log("Unauthorised Access, Logged out");
                     

@@ -14,6 +14,9 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 
+import { logout } from '../helpers';
+//import HandleLogout from '../components/users/handleLogout';
+
 function ViewUsers() {
 
     const [users, setUsers] = useState([]);
@@ -41,11 +44,12 @@ function ViewUsers() {
             }
         } catch (error) {
             if (error.response.status === 401) {
+                // navigate('/');
+                // Cookies.remove('user');                
+                // window.location.reload();
+                // axios.post("/user/clearCookie");
                 navigate('/');
-                Cookies.remove('user');                
-                window.location.reload();
-                axios.post("/user/clearCookie");
-                
+                logout();
                 console.log("Unauthorised Access, Logged out");
                 
                 toast.error("Unauthorised Access", {
@@ -98,11 +102,8 @@ function ViewUsers() {
         })
         .catch(error => {
             if (error.response.status === 401) {
-                
                 navigate('/');
-                Cookies.remove('user');                
-                window.location.reload();
-                axios.post("/user/clearCookie");
+                logout();
                 
                 console.log("Unauthorised Access, Logged out");
                 toast.error("Unauthorised Access", {

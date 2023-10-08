@@ -10,6 +10,7 @@ import { Paper, Typography, Grid, Container } from '@mui/material';
 import EditUser from '../components/users/editUser';
 import LogoutUser from '../components/users/logoutUser';
 import DeleteUser from '../components/users/deleteUser';
+import { logout } from '../helpers';
 
 function UserProfile() {
     const [user, setUser] = useState({});
@@ -34,9 +35,7 @@ function UserProfile() {
                 .catch((error) => {
                     if (error.response.status === 401) {
                         navigate('/');
-                        Cookies.remove('user');                
-                        window.location.reload();
-                        axios.post("/user/clearCookie");
+                        logout();
                         
                         console.log("Unauthorised Access, Logged out");
                         
