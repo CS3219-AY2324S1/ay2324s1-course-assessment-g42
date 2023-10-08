@@ -82,9 +82,6 @@ function EditUser({ user }) {
         } catch (error) {
             if (error.response.status === 401) {
                 navigate('/');
-                // Cookies.remove('user');                
-                // window.location.reload();
-                // axios.post("/user/clearCookie");
                 logout();
                 
                 console.log("Unauthorised Access, Logged out");

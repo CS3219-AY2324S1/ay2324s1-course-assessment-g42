@@ -15,7 +15,6 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 
 import { logout } from '../helpers';
-//import HandleLogout from '../components/users/handleLogout';
 
 function ViewUsers() {
 
@@ -44,10 +43,6 @@ function ViewUsers() {
             }
         } catch (error) {
             if (error.response.status === 401) {
-                // navigate('/');
-                // Cookies.remove('user');                
-                // window.location.reload();
-                // axios.post("/user/clearCookie");
                 navigate('/');
                 logout();
                 console.log("Unauthorised Access, Logged out");
