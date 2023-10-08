@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import FormDialog from '../components/questions/formDialog.js';
 import QuestionsTable from '../components/questions/questionsTable.js';
+import { logout } from '../helpers';
 
 function Questions() {
   const [questions, setQuestions] = useState([]);
@@ -17,7 +18,22 @@ function Questions() {
     const updatedQuestions = questions.filter((question) => question.id !== questionId);
     axios.post("/question/deleteQuestion", { id: questionId })
       .then((response) => console.log(response.status))
-      .catch(error => console.error(error));
+      .catch(error => {
+        if (error.response.status === 401) {
+          navigate('/');
+          logout();
+          
+          console.log("Unauthorised Access. Logged out");
+          
+          toast.error("Unauthorised Access", {
+              position: "top-center",
+              autoClose: 3000,
+              theme: "dark",
+          });
+          
+          return;
+      }
+      console.error(error)});
     setQuestions(updatedQuestions);
   };
 
@@ -25,7 +41,22 @@ function Questions() {
   const addQuestionToDb = (question) => {
     axios.post("/question/addQuestion", question)
       .then((response) => console.log(response.status))
-      .catch(error => console.error(error));
+      .catch(error => {
+        if (error.response.status === 401) {
+          navigate('/');
+          logout();
+          
+          console.log("Unauthorised Access. Logged out");
+          
+          toast.error("Unauthorised Access", {
+              position: "top-center",
+              autoClose: 3000,
+              theme: "dark",
+          });
+          
+          return;
+      }
+      console.error(error)});
   };
 
   useEffect(() => {
@@ -37,6 +68,7 @@ function Questions() {
         autoClose: 3000,
         theme: "dark",
       });
+      console.log("Not signed in!");
       toast.clearWaitingQueue();
       navigate('/login');
       return;
@@ -45,7 +77,22 @@ function Questions() {
     .then(response => {       
       setQuestions(response.data)
     })
-    .catch(error => console.error(error));
+    .catch(error => {
+      if (error.response.status === 401) {
+        navigate('/');
+        logout();
+        
+        console.log("Unauthorised Access. Logged out");
+        
+        toast.error("Unauthorised Access", {
+            position: "top-center",
+            autoClose: 3000,
+            theme: "dark",
+        });
+        
+        return;
+    }
+    console.error(error)});
     
   }, [navigate]);
 
