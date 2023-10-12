@@ -6,6 +6,8 @@ import { Paper, Typography, TextField, Button, Container } from '@mui/material';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { USER_API_URL } from '../config';
+
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -15,7 +17,11 @@ function Login() {
         e.preventDefault();
         const user = { email, password };
         try {
-            const response = await axios.post('/user/login', user);
+            const response = await axios.post(
+              USER_API_URL + '/user/login',
+              user,
+              { withCredentials: true, credentials: 'include' }
+            );
             if (response.status === 200) {
                 const userJsonString = JSON.stringify(response.data.user);
                 // Store user details in cookie for login persistence

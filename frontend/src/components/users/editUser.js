@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Button, TextField  } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../helpers';
+import { USER_API_URL } from '../../config';
 
 function EditUser({ user }) {
     const [newUsername, setNewUsername] = useState('');
@@ -30,7 +31,11 @@ function EditUser({ user }) {
 
         try {
             //update with new user details
-            const response = await axios.post('/user/updateUsername', newDetails);
+            const response = await axios.post(
+              USER_API_URL + '/user/updateUsername',
+              newDetails,
+              { withCredentials: true, credentials: 'include' }
+            );
             if (response.status === 200) {
                 setNewUsername('');
                 //update user details in cookie
@@ -67,7 +72,11 @@ function EditUser({ user }) {
         const email = user.email;
         const newDetails = { newPassword, email };
         try {
-            const response = await axios.post('/user/updatePassword', newDetails);
+            const response = await axios.post(
+              USER_API_URL + '/user/updatePassword',
+              newDetails,
+              { withCredentials: true, credentials: 'include' }
+            );
             if (response.status === 200) {
                 toast.success('Password updated successfully', {
                     position: 'top-center',

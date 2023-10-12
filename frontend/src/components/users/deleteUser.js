@@ -7,6 +7,7 @@ import { Button } from '@mui/material';
 import Cookies from 'js-cookie';
 
 import { logout } from '../../helpers';
+import { USER_API_URL } from '../../config';
 
 function DeleteUser({ user }) {
     const navigate = useNavigate();
@@ -18,8 +19,9 @@ function DeleteUser({ user }) {
             //delete user by email
             try {
                 const res = await axios.post(
-                    "/user/delete",
-                    { email }
+                    USER_API_URL + "/user/delete",
+                    { email },
+                    { withCredentials: true, credentials: 'include' }
                 );
                 if (res.status === 200) {
                     //clear user from cookie
