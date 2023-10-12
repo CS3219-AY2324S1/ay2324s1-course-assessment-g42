@@ -6,6 +6,8 @@ import { Paper, Typography, TextField, Button, Container } from '@mui/material';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { USER_API_URL } from '../config';
+
 function Signup() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -26,7 +28,11 @@ function Signup() {
         e.preventDefault();
         const user = { username, email, password, password2, role };
         try {
-            const response = await axios.post('/user/register', user);
+            const response = await axios.post(
+              USER_API_URL + '/user/register',
+              user,
+              { withCredentials: true, credentials: 'include' }
+            );
             if (response.status === 200) {
                 toast.success('Account created successfully', {
                     position: 'top-center',

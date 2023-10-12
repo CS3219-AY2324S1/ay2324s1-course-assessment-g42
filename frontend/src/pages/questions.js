@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import FormDialog from '../components/questions/formDialog.js';
 import QuestionsTable from '../components/questions/questionsTable.js';
 import { logout } from '../helpers';
+import { QUESTION_API_URL } from '../config';
 
 function Questions() {
   const [questions, setQuestions] = useState([]);
@@ -16,7 +17,11 @@ function Questions() {
 
   const handleDelete = (questionId) => {
     const updatedQuestions = questions.filter((question) => question.id !== questionId);
-    axios.post("/question/deleteQuestion", { id: questionId })
+    axios.post(
+      QUESTION_API_URL + "/question/deleteQuestion",
+      { id: questionId },
+      { withCredentials: true, credentials: 'include' }
+    )
       .then((response) => console.log(response.status))
       .catch(error => {
         if (error.response.status === 401) {
@@ -39,7 +44,11 @@ function Questions() {
 
   // do setQuestions and also save the questions to database
   const addQuestionToDb = (question) => {
-    axios.post("/question/addQuestion", question)
+    axios.post(
+      QUESTION_API_URL + "/question/addQuestion",
+      question,
+      { withCredentials: true, credentials: 'include' }
+    )
       .then((response) => console.log(response.status))
       .catch(error => {
         if (error.response.status === 401) {
@@ -73,7 +82,11 @@ function Questions() {
       navigate('/login');
       return;
     }
-    axios.post("/question/getQuestions")
+    axios.post(
+      QUESTION_API_URL + "/question/getQuestions",
+      null,
+      { withCredentials: true, credentials: 'include' }
+    )
     .then(response => {       
       setQuestions(response.data)
     })

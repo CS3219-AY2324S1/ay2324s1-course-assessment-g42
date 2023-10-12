@@ -3,7 +3,13 @@ const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: true,
+    optionsSuccessStatus: 200,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -14,7 +20,5 @@ app.get("/test", (req, res) => {
 
 //routes for user behaviour
 app.use("/user", require('./routes/user-route'));
-// routes for questions
-app.use("/question", require('./routes/question-route'));
 
 app.listen(5000, () => {console.log("Server Started on Port 5000")});

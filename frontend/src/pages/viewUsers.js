@@ -15,6 +15,7 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 
 import { logout } from '../helpers';
+import { USER_API_URL } from '../config';
 
 function ViewUsers() {
 
@@ -31,7 +32,11 @@ function ViewUsers() {
         }
         const currUser = {username, newRole};
         try {
-            const response = await axios.post('/user/updateRole', currUser);
+            const response = await axios.post(
+              USER_API_URL + '/user/updateRole',
+              currUser,
+              { withCredentials: true, credentials: 'include' }
+            );
             if (response.status === 200) {
                 toast.success("Updated role successfully", {
                     position: 'top-center',
@@ -91,7 +96,11 @@ function ViewUsers() {
             }
         }
 
-        axios.post("/user/getUsers")
+        axios.post(
+          USER_API_URL + "/user/getUsers",
+          null,
+          { withCredentials: true, credentials: 'include' }
+        )
         .then(response => {       
           setUsers(response.data)
         })

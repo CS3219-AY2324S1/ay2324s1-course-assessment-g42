@@ -11,6 +11,7 @@ import EditUser from '../components/users/editUser';
 import LogoutUser from '../components/users/logoutUser';
 import DeleteUser from '../components/users/deleteUser';
 import { logout } from '../helpers';
+import { USER_API_URL } from '../config';
 
 function UserProfile() {
     const [user, setUser] = useState({});
@@ -26,7 +27,11 @@ function UserProfile() {
             const email = user.email;
 
             //find user by stored email
-            axios.post("/user/findByEmail", { email })
+            axios.post(
+              USER_API_URL + "/user/findByEmail",
+              { email },
+              { withCredentials: true, credentials: 'include' }
+            )
                 .then((response) => {
                     const userObject = response.data.user; // Access the user object from the response
                     setUser(userObject);
