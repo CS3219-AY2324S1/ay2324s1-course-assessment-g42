@@ -1,0 +1,44 @@
+version: '3'
+services:
+  users:
+    container_name: users
+    hostname: users
+    build:
+      context: ./user-service
+    env_file:
+      - ./user-service/.env
+    ports:
+      - "5000:5000"
+
+  questions:
+    container_name: questions
+    hostname: questions
+    build:
+      context: ./question-service
+    env_file:
+      - ./question-service/.env
+    ports:
+      - "8030:8030"
+
+  frontend:
+    container_name: frontend
+    hostname: frontend
+    build:
+      context: ./frontend
+    volumes:
+      - /app/node_modules
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+
+  nginx:
+    container_name: nginx
+    hostname: nginx
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - users
+      - questions
