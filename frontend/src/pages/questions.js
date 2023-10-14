@@ -82,9 +82,8 @@ function Questions() {
       navigate('/login');
       return;
     }
-    axios.post(
+    axios.get(
       QUESTION_API_URL + "/question/getQuestions",
-      null,
       { withCredentials: true, credentials: 'include' }
     )
     .then(response => {       
