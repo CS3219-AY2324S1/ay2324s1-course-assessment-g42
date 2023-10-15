@@ -12,6 +12,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormAddCategories from './formAddCategories';
 import FormComplexitySelect from './formComplexitySelect';
 
+import { standardButton } from '../../styles/muiButtonStyles';
+
 function FormDialog({ questions, setQuestions, addQuestionToDb }) {
   const [open, setOpen] = useState(false);
   // below are input references used for the form dialog
@@ -20,7 +22,7 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
   const [categories, setCategories] = useState([]);
   const [complexity, setComplexity] = useState("Easy");
   const [isModerator, setIsModerator] = useState(false);
- 
+
   // handle toggling the form dialog box
   const handleClickOpen = () => {
     setOpen(true);
@@ -73,15 +75,17 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
 
   return (
     <div>
-      {/* Button to add a new question */}
+      {/* Button to add a new question, moderator-only */}
       {isModerator &&
-        <Button variant="outlined" onClick={handleClickOpen}>
-        Add new question
-        </Button>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Button style={standardButton} onClick={handleClickOpen}>
+            Add new question
+          </Button>
+        </div>
       }
-      
+
       {/* Form dialog box to submit a question */}
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { minWidth: '50%' } }}>
       <DialogTitle>Add a new question</DialogTitle>
 
       <form onSubmit={handleAddQuestion}>
