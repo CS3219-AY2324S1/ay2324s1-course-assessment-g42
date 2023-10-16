@@ -59,7 +59,7 @@ function Collaborate() {
           console.log(response.data + '!!!');
           setIsMatching(false);
           setMatchedUsername(response.data);
-          if (response.data != 'no match') {
+          if (response.data !== 'no match') {
             setIsMatchFound(true);
           }
           setIsMatchingComplete(true);

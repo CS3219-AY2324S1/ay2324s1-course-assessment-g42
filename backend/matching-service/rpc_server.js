@@ -10,7 +10,7 @@ var matchReqDict = {
 var firstCorrId = null;
 var firstReplyTo = null;
 
-amqp.connect(process.env.CLOUDAMQP_URL, function(error0, connection) {
+amqp.connect(process.env.CLOUDAMQP_URL + "?heartbeat=60", function(error0, connection) {
     if (error0) {
         throw error0;
     }
@@ -30,7 +30,7 @@ amqp.connect(process.env.CLOUDAMQP_URL, function(error0, connection) {
 
             console.log(" [.] username:%s, complexity:%s", username, complexity);
 
-            if (matchReqDict[complexity] != null & matchReqDict[complexity] != username) {
+            if (matchReqDict[complexity] != null && matchReqDict[complexity] != username) {
                 // send to second client
                 channel.sendToQueue(msg.properties.replyTo,
                     Buffer.from(matchReqDict[complexity]), {

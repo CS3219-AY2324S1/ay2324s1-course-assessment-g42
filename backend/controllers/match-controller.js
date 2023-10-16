@@ -1,6 +1,6 @@
 async function sendMatchingRequest(req, res) {
     try {
-      const rpc_client = require('../matching-service/rpc_client.js');
+      const rpc_client = require('../models/rpc_client.js');
       const { username, complexity } = req.body;
       const matchedUsername = await rpc_client.main(username, complexity);
       

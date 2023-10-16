@@ -4,7 +4,7 @@ function main(username, complexity) {
         var amqp = require('amqplib/callback_api');
 
         var ans = 'none';
-        amqp.connect(process.env.COULDAMQP_URL, function(error0, connection) {
+        amqp.connect(process.env.CLOUDAMQP_URL + "?heartbeat=60", function(error0, connection) {
             if (error0) {
                 throw error0;
             }
