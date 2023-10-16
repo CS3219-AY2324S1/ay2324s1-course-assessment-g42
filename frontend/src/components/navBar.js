@@ -34,17 +34,13 @@ function NavBar() {
     return (
         <AppBar position="static" sx={{ backgroundColor: 'black' }}>
             <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
-                <div>
-                    <Typography variant="text" component={Link} to="/" 
-                    sx={{ textDecoration: 'none', 
-                        color: 'white', fontWeight: 600, 
-                        fontSize: 22, marginLeft: 4 
-                    }}>
-                        Peer Prep
-                    </Typography>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <a href="/">
+                        <img src="/peerp.png" alt="peerP" width="100px" />
+                    </a>
                     <Typography variant="text" component={Link} to="/questions" 
                     sx={{ textDecoration: 'none', color: 'white', 
-                        marginLeft: 8, fontWeight: 400, fontSize: 18 
+                        marginLeft: 6, fontWeight: 400, fontSize: 18 
                     }}>
                         Questions
                     </Typography>
