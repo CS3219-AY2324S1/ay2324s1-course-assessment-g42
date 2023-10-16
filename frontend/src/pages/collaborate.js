@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+import WarningIcon from '@mui/icons-material/Warning';
 
 import FormComplexitySelect from '../components/questions/formComplexitySelect';
 
@@ -16,6 +17,8 @@ function Collaborate() {
   const [complexity, setComplexity] = useState("Easy");
   const [isMatching, setIsMatching] = useState(false);
   const [matchedUsername, setMatchedUsername] = useState('');
+  const [isMatchFound, setIsMatchFound] = useState(false);
+  const [isMatchingComplete, setIsMatchingComplete] = useState(false);
 
 
   useEffect(() => {
@@ -39,6 +42,9 @@ function Collaborate() {
   const username = userObj.username
 
   const sendMatchingRequest = () => {
+    if (isMatching) {
+      return ;
+    }
     setIsMatching(true);
     const apiUrl = '/collaborate/api/match'; // Replace with your actual URL
 
@@ -53,6 +59,10 @@ function Collaborate() {
           console.log(response.data + '!!!');
           setIsMatching(false);
           setMatchedUsername(response.data);
+          if (response.data != 'no match') {
+            setIsMatchFound(true);
+          }
+          setIsMatchingComplete(true);
         })
         .catch(error => {
             console.log('ran into error while requesting match')
@@ -67,12 +77,24 @@ function Collaborate() {
       <FormComplexitySelect complexity={complexity} setComplexity={setComplexity} />
       <h2>2. Find a match (this may take up to 30 seconds)</h2>
       <Button variant="contained" onClick={sendMatchingRequest}>Match me!</Button>
-      {isMatching ? (<CircularProgress size={30} sx={{
+      {isMatching ? (
+          <CircularProgress size={30} sx={{
           position: 'relative',
           left: 20,
           top: 10
-        }}/>) : <br></br>}
-      <p>Matched Username: {matchedUsername}</p> 
+          }}/> 
+        ) : <br></br>}
+      {isMatching ? (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <WarningIcon></WarningIcon>
+          <p>Please do not leave this page while waiting for your match.</p> 
+        </div>
+        ) : ''}
+      {isMatchingComplete & !isMatching ? (
+        isMatchFound ? (<p>You were matched with {matchedUsername}!</p>)
+        : (<p>We couldn't find a match for you! Try again in a while.</p>)
+        )
+        : ''}
     </div>
   );
 }
