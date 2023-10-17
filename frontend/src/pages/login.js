@@ -6,6 +6,7 @@ import { Paper, Typography, TextField, Button, Container } from '@mui/material';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { standardToast } from '../styles/toastStyles';
 import { USER_API_URL } from '../config';
 
 function Login() {
@@ -22,6 +23,8 @@ function Login() {
               user,
               { withCredentials: true, credentials: 'include' }
             );
+
+            // if login is successful
             if (response.status === 200) {
                 const userJsonString = JSON.stringify(response.data.user);
                 // Store user details in cookie for login persistence
@@ -35,20 +38,12 @@ function Login() {
             }
         } catch (error) {
             if (error.response.status === 422) {
-                //incorrect password entered
-                toast.error("incorrect password", {
-                    position: "top-center",
-                    autoClose: 3000,
-                    theme: "dark",
-                });
+                // incorrect password entered
+                toast.error("Incorrect password.", standardToast);
                 return;
             } else if (error.response.status === 404) {
-                //email not registered
-                toast.error("Email does not exist", {
-                    position: "top-center",
-                    autoclose: 3000,
-                    theme: "dark",
-                });
+                // email not registered
+                toast.error("Email does not exist.", standardToast);
                 return;
             }
         }
