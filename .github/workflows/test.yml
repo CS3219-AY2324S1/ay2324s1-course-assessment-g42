@@ -17,9 +17,9 @@ jobs:
       PSQL_PASSWORD: ${{ secrets.PSQL_PASSWORD }}
       PSQL_PORT: ${{ secrets.PSQL_PORT }}
   
-  defaults:
-    run:
-      working-directory: ./user-service/
+    defaults:
+      run:
+        working-directory: ./user-service/
 
     steps:
       - uses: actions/checkout@v3
@@ -32,4 +32,3 @@ jobs:
       - name: Run user service test cases
         run: |
           npm test
-
