@@ -7,6 +7,7 @@ on:
 
 jobs:
   test-user-service
+    name: test user service
     runs-on: ubuntu-latest
 
     env:
