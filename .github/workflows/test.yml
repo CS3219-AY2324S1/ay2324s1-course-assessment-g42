@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     branches:
-      - main
+      - test
 
 env:
   JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
