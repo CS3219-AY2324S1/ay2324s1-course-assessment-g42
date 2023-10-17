@@ -1,12 +1,32 @@
-name: test
-run-name: ${{ github.actor }} is learning GitHub Actions
-on: [push]
+name: Test and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
-  echo-job:
-    name: Echo Message
+  test-user-service
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Echo Hello
-      run: echo "Hello, GitHub Actions!"
+    env:
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      PSQL_USERNAME: ${{ secrets.PSQL_USERNAME }}
+      PSQL_HOSTNAME: ${{ secrets.PSQL_HOSTNAME }}
+      PSQL_PASSWORD: ${{ secrets.PSQL_PASSWORD }}
+      PSQL_PORT: ${{ secrets.PSQL_PORT }}
   
+  defaults:
+    run:
+      working-directory: user-service
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - name: Download Dependencies
+        run: |
+            npm install
+      - name: Run user service test cases
+          run: npm test
