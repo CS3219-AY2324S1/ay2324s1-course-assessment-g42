@@ -19,19 +19,16 @@ jobs:
   
   defaults:
     run:
-      working-directory: user-service
+      working-directory: ./user-service/
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
-      - name: Set up PostgreSQL
-        uses: ajeetshah/setup-postgres@v2
-        with:
-          postgres-version: '13' 
+          node-version: 16.x 
       - name: Download Dependencies
         run: |
             npm install
       - name: Run user service test cases
-          run: npm test
+          run: |
+            npm test
