@@ -5,23 +5,21 @@ on:
     branches:
       - main
 
+env:
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  PSQL_USERNAME: ${{ secrets.PSQL_USERNAME }}
+  PSQL_HOSTNAME: ${{ secrets.PSQL_HOSTNAME }}
+  PSQL_PASSWORD: ${{ secrets.PSQL_PASSWORD }}
+  PSQL_PORT: ${{ secrets.PSQL_PORT }}
+
 jobs:
-  user-service-test:
-    name: test user service
+  build: 
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./user-service/
 
-    env:
-      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-      PSQL_USERNAME: ${{ secrets.PSQL_USERNAME }}
-      PSQL_HOSTNAME: ${{ secrets.PSQL_HOSTNAME }}
-      PSQL_PASSWORD: ${{ secrets.PSQL_PASSWORD }}
-      PSQL_PORT: ${{ secrets.PSQL_PORT }}
-  
-  defaults:
-    run:
-      working-directory: user-service
-
-  steps:
+    steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
