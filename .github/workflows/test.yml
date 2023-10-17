@@ -19,16 +19,15 @@ jobs:
   
   defaults:
     run:
-      working-directory: ./user-service/
+      working-directory: user-service
 
     steps:
-      - name: CheckoutC Code
-        uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16.x 
+          node-version: 16.x
       - name: Download Dependencies
         run: |
-          npm install
-      - run: npm test
+            npm install
+      - name: Run user service test cases
+          run: npm test
