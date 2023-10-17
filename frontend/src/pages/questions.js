@@ -70,7 +70,6 @@ function Questions() {
 
         if (error.response.status === 500) {
           navigate('/');
-          logout();
 
           console.log("An error occurred.");
           toast.error("An error occurred.", standardToast);
@@ -115,7 +114,6 @@ function Questions() {
 
       if (error.response.status === 500) {
         navigate('/');
-        logout();
 
         console.log("There was an error loading the questions.");
         toast.error("There was an error loading the questions.", standardToast);
