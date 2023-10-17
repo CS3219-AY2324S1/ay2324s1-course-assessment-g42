@@ -22,8 +22,10 @@ jobs:
       working-directory: ./user-service/
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: CheckoutC Code
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
           node-version: 16.x 
       - name: Download Dependencies
