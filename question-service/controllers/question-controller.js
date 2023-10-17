@@ -4,7 +4,7 @@ const QuestionModel = require('../models/questions.js');
 async function getQuestions(req, res) {
   try {
     const result = await QuestionModel.find();
-    res.json(result);
+    res.status(200).json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred' });
@@ -42,7 +42,7 @@ async function deleteQuestion(req, res) {
       return res.status(404).json({ error: 'Question not found' });
     }
 
-    res.json(deletedQuestion); // Respond with the deleted document
+    res.status(201).json(deletedQuestion); // Respond with the deleted document
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred' });

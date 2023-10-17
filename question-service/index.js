@@ -22,3 +22,5 @@ app.get("/test", (req, res) => {
 app.use("/question", require('./routes/question-route'));
 
 app.listen(8030, () => {console.log("Question server started on Port 8030")});
+
+module.exports = app;
