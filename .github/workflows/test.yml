@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test-user-service:
+  user-service-test:
     name: test user service
     runs-on: ubuntu-latest
 
