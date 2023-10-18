@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-function main(username, complexity) {
+require('dotenv').config();
+function main(userObj, complexity, timeOfReq) {
     return new Promise((resolve, reject) => {
         var amqp = require('amqplib/callback_api');
 
@@ -8,6 +9,7 @@ function main(username, complexity) {
             if (error0) {
                 throw error0;
             }
+            console.log('Client connected to Cloud AMQP');
             connection.createChannel(function(error1, channel) {
                 if (error1) {
                     throw error1;
@@ -20,7 +22,7 @@ function main(username, complexity) {
                     }
                     var correlationId = generateUuid();
 
-                    console.log(' [x] Requesting user(%s)', username);
+                    console.log(' [x] Requesting user: %s, complexity: %s, time of request: %s', userObj.username.toString(), complexity, timeOfReq.toString());
                     
                     channel.consume(q.queue, function(msg) {
                         if (msg.properties.correlationId === correlationId) {
@@ -34,12 +36,14 @@ function main(username, complexity) {
                     }, {
                         noAck: true
                     });
-                    const message = JSON.stringify({ username, complexity });
+                    const message = JSON.stringify({ userObj, complexity, timeOfReq });
+                    
                     channel.sendToQueue('rpc_queue',
                         Buffer.from(message), {
                             correlationId: correlationId,
                             replyTo: q.queue
                         });
+                    console.log('[c] sent to rpc_queue');
                 });
             });
         });

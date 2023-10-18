@@ -37,19 +37,22 @@ function Collaborate() {
     
   }, [navigate]);
 
-  const user = Cookies.get('user')
-  const userObj = JSON.parse(user)
-  const username = userObj.username
+  const user = Cookies.get('user');
+  const userObj = JSON.parse(user);
+  const username = userObj.username;
+  const [timeLeft, setTimeLeft] = useState(30);
 
   const sendMatchingRequest = () => {
+    setTimeLeft(30);
     if (isMatching) {
       return ;
     }
     setIsMatching(true);
     const apiUrl = '/collaborate/api/match'; // Replace with your actual URL
-
+    const timeOfReq = new Date().getTime();
+    console.log(timeOfReq);
     // Define the data to send in the request body
-    const data = { username, complexity };
+    const data = { userObj, complexity, timeOfReq };
     console.log('sending matching request from frontend')
 
 
@@ -68,6 +71,18 @@ function Collaborate() {
             console.log('ran into error while requesting match')
             console.log(error)
         });
+    const timer = setInterval(() => {
+      setTimeLeft((prevTimeLeft) => {
+        if (prevTimeLeft > 0) {
+          return prevTimeLeft - 1;
+        } else {
+          clearInterval(timer); // Stop the timer when time runs out
+          setIsMatching(false);
+          setIsMatchingComplete(true);
+          return 0;
+        }
+      });
+    }, 1000);
   }
 
   return (
@@ -84,6 +99,7 @@ function Collaborate() {
           top: 10
           }}/> 
         ) : <br></br>}
+      {isMatching ? <p>Waiting for a match... Time left: {timeLeft} seconds</p> : null}
       {isMatching ? (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <WarningIcon></WarningIcon>

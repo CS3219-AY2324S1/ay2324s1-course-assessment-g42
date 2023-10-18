@@ -17,6 +17,6 @@ app.use("/user", require('./routes/user-route'));
 // routes for questions
 app.use("/question", require('./routes/question-route'));
 // routes for matching
-app.use("/collaborate", require('./routes/matching-route'));
+app.use("/collaborate", require('./matching-service/routes/matching-route'));
 
 app.listen(5000, () => {console.log("Server Started on Port 5000")});
