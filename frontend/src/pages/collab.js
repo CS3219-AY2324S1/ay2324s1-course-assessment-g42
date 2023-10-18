@@ -19,10 +19,15 @@ function Collab() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // generate a random question from db
+    const ids = [1, 2, 13, 20]; // list of sample ids currently in db
+    const randomIndex = Math.floor(Math.random() * ids.length);
+    const randomId = ids[randomIndex];
+
     // get questions from database
     axios.post(
       QUESTION_API_URL + "/question/getQuestionById",
-      { id: 1 },
+      { id: randomId },
       { withCredentials: true, credentials: 'include' }
     )
     .then(response => {       
