@@ -5,6 +5,7 @@ const questionController = require("../controllers/question-controller.js");
 const auth = require("../middleware/auth.js");
 
 router.get("/getQuestions", auth, questionController.getQuestions);
+router.post("/getQuestionById", auth, questionController.getQuestionById);
 router.post("/addQuestion", auth, questionController.addQuestion);
 router.post("/deleteQuestion", auth, questionController.deleteQuestion);
 
