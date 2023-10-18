@@ -5,10 +5,14 @@ import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button, TextField  } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { logout } from '../../helpers';
+import { USER_API_URL } from '../../config';
 
 function EditUser({ user }) {
     const [newUsername, setNewUsername] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const navigate = useNavigate();
 
     const handleUpdateUsername = async (e) => {
         e.preventDefault();
@@ -27,7 +31,11 @@ function EditUser({ user }) {
 
         try {
             //update with new user details
-            const response = await axios.post('/user/updateUsername', newDetails);
+            const response = await axios.post(
+              USER_API_URL + '/user/updateUsername',
+              newDetails,
+              { withCredentials: true, credentials: 'include' }
+            );
             if (response.status === 200) {
                 setNewUsername('');
                 //update user details in cookie
@@ -37,6 +45,20 @@ function EditUser({ user }) {
                 window.location.reload();
             }
         } catch (error) {
+            if (error.response.status === 401) {
+                navigate('/');
+                logout();        
+                
+                console.log("Unauthorised Access, Logged out");
+                
+                toast.error("Unauthorised Access", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    theme: "dark",
+                });
+                
+                return;
+            }
             toast.error("Unknown error occurred", {
                 position: 'top-center',
                 autoClose: 3000,
@@ -50,7 +72,11 @@ function EditUser({ user }) {
         const email = user.email;
         const newDetails = { newPassword, email };
         try {
-            const response = await axios.post('/user/updatePassword', newDetails);
+            const response = await axios.post(
+              USER_API_URL + '/user/updatePassword',
+              newDetails,
+              { withCredentials: true, credentials: 'include' }
+            );
             if (response.status === 200) {
                 toast.success('Password updated successfully', {
                     position: 'top-center',
@@ -64,6 +90,19 @@ function EditUser({ user }) {
             }
         } catch (error) {
             if (error.response.status === 401) {
+                navigate('/');
+                logout();
+                
+                console.log("Unauthorised Access, Logged out");
+                
+                toast.error("Unauthorised Access", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    theme: "dark",
+                });
+                
+                return;
+            } else if (error.response.status === 403) {
                 toast.error('New password must be at least 8 characters', {
                     position: 'top-center',
                     autoClose: 3000,

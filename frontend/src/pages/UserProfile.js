@@ -10,6 +10,8 @@ import { Paper, Typography, Grid, Container } from '@mui/material';
 import EditUser from '../components/users/editUser';
 import LogoutUser from '../components/users/logoutUser';
 import DeleteUser from '../components/users/deleteUser';
+import { logout } from '../helpers';
+import { USER_API_URL } from '../config';
 
 function UserProfile() {
     const [user, setUser] = useState({});
@@ -25,13 +27,31 @@ function UserProfile() {
             const email = user.email;
 
             //find user by stored email
-            axios.post("/user/findByEmail", { email })
+            axios.post(
+              USER_API_URL + "/user/findByEmail",
+              { email },
+              { withCredentials: true, credentials: 'include' }
+            )
                 .then((response) => {
                     const userObject = response.data.user; // Access the user object from the response
                     setUser(userObject);
                     setIsLoading(false); // Set loading state to false after data is fetched
                 })
                 .catch((error) => {
+                    if (error.response.status === 401) {
+                        navigate('/');
+                        logout();
+                        
+                        console.log("Unauthorised Access, Logged out");
+                        
+                        toast.error("Unauthorised Access", {
+                            position: "top-center",
+                            autoClose: 3000,
+                            theme: "dark",
+                        });
+                        
+                        return;
+                    }
                     console.error('Error fetching user:', error);
                     setIsLoading(false); // Set loading state to false in case of an error
                 }
@@ -123,7 +143,7 @@ function UserProfile() {
                                 marginBottom: '10px',
                                 marginTop: '10px' 
                             }}>
-                                <LogoutUser user={user} />
+                                <LogoutUser />
                             </div>
                             <div style={{ border: '1px solid rgba(0, 0, 0, 0.4)', borderRadius: '6px' }}>
                                 <DeleteUser user={user} />

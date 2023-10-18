@@ -6,6 +6,9 @@ import { Paper, Typography, TextField, Button, Container } from '@mui/material';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { standardToast } from '../styles/toastStyles';
+import { USER_API_URL } from '../config';
+
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -15,7 +18,13 @@ function Login() {
         e.preventDefault();
         const user = { email, password };
         try {
-            const response = await axios.post('/user/login', user);
+            const response = await axios.post(
+              USER_API_URL + '/user/login',
+              user,
+              { withCredentials: true, credentials: 'include' }
+            );
+
+            // if login is successful
             if (response.status === 200) {
                 const userJsonString = JSON.stringify(response.data.user);
                 // Store user details in cookie for login persistence
@@ -28,21 +37,13 @@ function Login() {
                 setEmail('');
             }
         } catch (error) {
-            if (error.response.status === 401) {
-                //incorrect password entered
-                toast.error("incorrect password", {
-                    position: "top-center",
-                    autoClose: 3000,
-                    theme: "dark",
-                });
+            if (error.response.status === 422) {
+                // incorrect password entered
+                toast.error("Incorrect password.", standardToast);
                 return;
-            } else if (error.response.status === 400) {
-                //email not registered
-                toast.error("Email does not exist", {
-                    position: "top-center",
-                    autoclose: 3000,
-                    theme: "dark",
-                });
+            } else if (error.response.status === 404) {
+                // email not registered
+                toast.error("Email does not exist.", standardToast);
                 return;
             }
         }

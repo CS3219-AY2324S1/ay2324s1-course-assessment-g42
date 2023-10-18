@@ -14,6 +14,9 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 
+import { logout } from '../helpers';
+import { USER_API_URL } from '../config';
+
 function ViewUsers() {
 
     const [users, setUsers] = useState([]);
@@ -29,7 +32,11 @@ function ViewUsers() {
         }
         const currUser = {username, newRole};
         try {
-            const response = await axios.post('/user/updateRole', currUser);
+            const response = await axios.post(
+              USER_API_URL + '/user/updateRole',
+              currUser,
+              { withCredentials: true, credentials: 'include' }
+            );
             if (response.status === 200) {
                 toast.success("Updated role successfully", {
                     position: 'top-center',
@@ -40,6 +47,19 @@ function ViewUsers() {
                 
             }
         } catch (error) {
+            if (error.response.status === 401) {
+                navigate('/');
+                logout();
+                console.log("Unauthorised Access, Logged out");
+                
+                toast.error("Unauthorised Access", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    theme: "dark",
+                });
+                
+                return;
+            } 
             toast.error("Unknown error occurred", {
                 position: 'top-center',
                 autoClose: 3000,
@@ -76,11 +96,34 @@ function ViewUsers() {
             }
         }
 
-        axios.post("/user/getUsers")
+        axios.post(
+          USER_API_URL + "/user/getUsers",
+          null,
+          { withCredentials: true, credentials: 'include' }
+        )
         .then(response => {       
           setUsers(response.data)
         })
-        .catch(error => console.error(error));
+        .catch(error => {
+            if (error.response.status === 401) {
+                navigate('/');
+                logout();
+                
+                console.log("Unauthorised Access, Logged out");
+                toast.error("Unauthorised Access", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    theme: "dark",
+                });
+
+                return;
+            } 
+            toast.error("Unknown error occurred", {
+                position: 'top-center',
+                autoClose: 3000,
+                theme: 'dark',
+            });
+        } );
       
     }, [navigate]);
 

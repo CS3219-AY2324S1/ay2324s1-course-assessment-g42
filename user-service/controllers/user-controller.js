@@ -15,13 +15,13 @@ async function registerUser(req, res) {
         `SELECT * FROM users
         WHERE email = $1`, [email], (err, result) => {
             if (err) {
-                return res.status(403).json({
+                return res.status(500).json({
                     error: "An error occurred while checking for email existence."
                 });
             }
     
             if (result.rows.length > 0) {
-                return res.status(402).json({
+                return res.status(409).json({
                     error: "Email already exists."
                 });
             }
@@ -29,7 +29,7 @@ async function registerUser(req, res) {
             // Continue with the registration process if the email is not found
             // Check password length < 8
             if (password.length < 8) {
-                return res.status(401).json({
+                return res.status(403).json({
                     error: "Password not long enough"
                 });
             }
@@ -46,7 +46,7 @@ async function registerUser(req, res) {
                 `INSERT INTO users (username, email, password, role) 
                 VALUES ($1, $2, $3, $4)`, [username, email, password, role], (err) => {
                     if (err) {
-                        return res.status(403).json({
+                        return res.status(500).json({
                             error: "Failed to register user."
                         });
                     } else {
@@ -65,7 +65,7 @@ async function loginUser (req, res) {
   pool.query( 
     `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
       if (result.rows.length == 0) {
-        return res.status(400).json({
+        return res.status(404).json({
           error: "User does not exist."
         });
       } else if (result.rows.length > 0) {
@@ -85,7 +85,7 @@ async function loginUser (req, res) {
                 maxAge : 7 * 24 * 60 * 60 * 1000 // 7 days expiry
             }).status(200).json({user});
         } else {
-          return res.status(401).json({
+          return res.status(422).json({
             error: "incorrect password"
           });
         }
@@ -101,7 +101,7 @@ async function deleteUser (req, res) {
         `DELETE FROM users WHERE email = $1`, [email], (err, result) => {
             if (err) {
                 console.log(err);
-                return res.status(400).send({error: "error deleting account"});
+                return res.status(500).send({error: "error deleting account"});
             } else {
                 res.clearCookie('token');
                 return res.status(200).send({message: "user deleted successfully"});
@@ -118,12 +118,12 @@ async function updateUsername (req, res) {
         [newUsername, email],
         (error, result) => {
             if (error) {
-                return res.status(400).send({ message: "Error updating username" });
+                return res.status(500).send({ message: "Error updating username" });
             } else {
                 pool.query(
                     `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
                         if (err) {
-                            return res.status(400).send({ message: "Error updating username" });
+                            return res.status(500).send({ message: "Error updating username" });
                         }
                         const user = result.rows[0];
                         return res.status(200).json({ user });
@@ -138,7 +138,7 @@ async function updatePassword (req, res) {
     let {newPassword, email} = req.body;
     
     if (newPassword.length < 8) {
-        return res.status(401).json({
+        return res.status(403).json({
             error: "New password too short"
         })
     }
@@ -147,12 +147,12 @@ async function updatePassword (req, res) {
         [newPassword, email],
         (error, result) => {
             if (error) {
-                return res.status(400).send({ message: "Error updating password" });
+                return res.status(500).send({ message: "Error updating password" });
             } else {
                 pool.query(
                     `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
                         if (err) {
-                            return res.status(402);
+                            return res.status(500);
                         }
                         const user = result.rows[0];
                         return res.status(200).json({ user });
@@ -172,7 +172,7 @@ async function updateRole (req, res) {
         [newRole, username],
         (error, result) => {
             if (error) {
-                return res.status(400).send({message: "Error updating role"});
+                return res.status(500).send({message: "Error updating role"});
             } else {
                 return getUsers(req, res);
             }
@@ -185,13 +185,14 @@ async function findByEmail (req, res) {
         `SELECT * FROM users WHERE email=$1`, [email], (err, result) => {
         if (err) {
             console.log(err);
+            return res.status(500);
         } else {
             if (result.rows.length >0) {
-            const user = result.rows[0];
-            console.log(user);
-            return res.status(200).json({user});
+                const user = result.rows[0];
+                console.log(user);
+                return res.status(200).json({user});
             } else {
-            return res.status(400);
+                return res.status(404);
             }
         }
         }
@@ -204,11 +205,12 @@ async function getUsers (req, res) {
         `SELECT * FROM users`, (err, result) => {
             if (err) {
                 console.log(err);
+                return res.status(500);
             } else {
                 if (result.rows.length > 0) {
                     return res.status(200).json(result.rows);
                 } else {
-                    return res.status(400) 
+                    return res.status(404);
                 }
             }
         })

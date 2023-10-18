@@ -6,6 +6,8 @@ import { Paper, Typography, TextField, Button, Container } from '@mui/material';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { USER_API_URL } from '../config';
+
 function Signup() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -26,7 +28,11 @@ function Signup() {
         e.preventDefault();
         const user = { username, email, password, password2, role };
         try {
-            const response = await axios.post('/user/register', user);
+            const response = await axios.post(
+              USER_API_URL + '/user/register',
+              user,
+              { withCredentials: true, credentials: 'include' }
+            );
             if (response.status === 200) {
                 toast.success('Account created successfully', {
                     position: 'top-center',
@@ -41,7 +47,7 @@ function Signup() {
                 setPassword2('');
             }
         } catch (error) {
-            if (error.response.status === 401) {
+            if (error.response.status === 403) {
                 toast.error('Password must have at least 8 characters', {
                     position: 'top-center',
                     autoClose: 3000,
@@ -53,13 +59,13 @@ function Signup() {
                 autoClose: 3000,
                 theme: 'dark',
                 });
-            } else if (error.response.status === 402) {
+            } else if (error.response.status === 409) {
                 toast.error('Email already registered. Login?', {
                     position: 'top-center',
                     autoClose: 3000,
                     theme: 'dark',
                 });
-            } else if (error.response.status === 403) {
+            } else if (error.response.status === 500) {
                 toast.error('Unknown error occured', {
                     position: 'top-center',
                     autoClose: 3000,

@@ -23,9 +23,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 function QuestionInfo({ open, handleClose, question, handleDelete }) {
-
   const [isModerator, setIsModerator] = useState(false);
-  
+
   useEffect(() => { 
     const loggedInUser = Cookies.get('user');
     setIsModerator(false);
@@ -42,6 +41,9 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
   if (question === undefined) {
     return null;
   }
+
+  const renderedParts = renderDescription(question.description);
+
   return (
     <div>
       <BootstrapDialog
@@ -57,9 +59,6 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
 
         {/* Rest of question contents in dialog box */}
         <DialogContent dividers>
-          <Typography gutterBottom sx={{ whiteSpace: "pre-line" }}>
-            {question.description}
-          </Typography>
           <Typography gutterBottom>
             <b>ID:</b> {question.id}
           </Typography>
@@ -71,6 +70,9 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
           <br />
           <Typography gutterBottom sx={{ wordBreak: "break-word" }} component={'span'}>
             <b>Complexity:</b> <ComplexityChip complexity={question.complexity} />
+          </Typography>
+          <Typography gutterBottom sx={{ whiteSpace: "pre-line" }} component="div">
+            {renderedParts}
           </Typography>
         </DialogContent>
 
@@ -93,6 +95,69 @@ function QuestionInfo({ open, handleClose, question, handleDelete }) {
       </BootstrapDialog>
     </div>
   );
+}
+
+function renderDescription(text) {
+  const description = text.split(/\n\n|\n(?=-)|\n(?=[+|])/);
+
+  const renderedParts = [];
+  let bulletList = null;
+  let consolasText = ''; // To collect lines starting with + or |
+
+  description.forEach((part, index) => {
+    if (part.trim().startsWith('-')) {
+      // If it starts with a bullet point indicator, create a new <ul>
+      if (!bulletList) {
+        bulletList = <ul key={`bullet-${index}`} children={[]} />;
+        renderedParts.push(bulletList);
+      }
+
+      // Add the bullet point as an <li>
+      bulletList.props.children.push(<li key={`bullet-${index}`}>{part.trim().substring(1)}</li>);
+    } else if (part.trim().match(/^[+|]/)) {
+      // If it starts with + or |, add it to the consolasText
+      consolasText += part + '\n';
+    } else {
+      // If the part doesn't start with '-', '+', or '|', render it as a regular text paragraph
+      if (bulletList) {
+        // Close the previous <ul> if we were in a bullet point section
+        bulletList = null;
+      }
+      if (consolasText) {
+        // If there's consolas text collected, render it together with the white-space: pre CSS property
+        renderedParts.push(
+          <p
+            key={`consolas-${index}`}
+            style={{
+              fontFamily: 'Consolas, monospace',
+              whiteSpace: 'pre',
+            }}
+          >
+            {consolasText.trim()}
+          </p>
+        );
+        consolasText = ''; // Reset consolasText
+      }
+      renderedParts.push(<p key={`regular-${index}`}>{part}</p>);
+    }
+  });
+
+  // Check if there's remaining consolasText to render
+  if (consolasText) {
+    renderedParts.push(
+      <p
+        key={`consolas-${description.length}`}
+        style={{
+          fontFamily: 'Consolas, monospace',
+          whiteSpace: 'pre',
+        }}
+      >
+        {consolasText.trim()}
+      </p>
+    );
+  }
+
+  return <div>{renderedParts}</div>;
 }
 
 export default QuestionInfo;
