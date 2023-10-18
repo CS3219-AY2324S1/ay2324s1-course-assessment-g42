@@ -19,15 +19,28 @@ amqp.connect(process.env.CLOUDAMQP_URL + "?heartbeat=60", function(error0, conne
             throw error1;
         }
         var queue = 'rpc_queue';
-
+        var qObj = null;
         channel.assertQueue(queue, {
             durable: false
+        }, function(err, q) {
+            qObj = q;
+            console.log(' [x] Number of messages in queue: ' + q.messageCount);
         });
         channel.prefetch(1);
+        
         console.log(' [x] Awaiting RPC requests');
         channel.consume(queue, function reply(msg) {
+            console.log(' [.] dict before matching process');
+            console.log(matchReqDict);
             const { userObj, complexity, timeOfReq } = JSON.parse(msg.content);
-            console.log(" [.] username:%s, complexity:%s, time of request: %s", userObj.username.toString(), complexity, timeOfReq.toString());
+            console.log(" [.] Got message from queue - username:%s, complexity:%s, time of request: %s", userObj.username.toString(), complexity, timeOfReq.toString());
+            channel.assertQueue(queue, {
+                durable: false
+            }, function(err, q) {
+                qObj = q;
+                console.log(' [.] Number of messages left in queue: ' + q.messageCount);
+            });
+    
             const currTime = new Date().getTime();
             const timeDiff = currTime - timeOfReq;
             const isValidReq = timeDiff < 29500;
@@ -53,14 +66,15 @@ amqp.connect(process.env.CLOUDAMQP_URL + "?heartbeat=60", function(error0, conne
                 firstReplyTo = msg.properties.replyTo;
                 setTimeout(() => {
                     matchReqDict[complexity] = null;
-                    console.log('[s] no match found');
+                    console.log(' [.] no match found, removed user from dict');
+                    console.log(matchReqDict);
                     channel.sendToQueue(msg.properties.replyTo,
                         Buffer.from('no match'), {
                             correlationId: msg.properties.correlationId
                         });
                 }, 29900 - timeDiff);
             }
-            console.log('[after] ');
+            console.log(' [.] dict after matching process');
             console.log(matchReqDict);
 
             channel.ack(msg);

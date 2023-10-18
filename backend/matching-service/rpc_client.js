@@ -22,7 +22,7 @@ function main(userObj, complexity, timeOfReq) {
                     }
                     var correlationId = generateUuid();
 
-                    console.log(' [x] Requesting user: %s, complexity: %s, time of request: %s', userObj.username.toString(), complexity, timeOfReq.toString());
+                    console.log(' [.] Requesting user: %s, complexity: %s, time of request: %s', userObj.username.toString(), complexity, timeOfReq.toString());
                     
                     channel.consume(q.queue, function(msg) {
                         if (msg.properties.correlationId === correlationId) {
@@ -43,7 +43,7 @@ function main(userObj, complexity, timeOfReq) {
                             correlationId: correlationId,
                             replyTo: q.queue
                         });
-                    console.log('[c] sent to rpc_queue');
+                    console.log(' [.] sent to rpc_queue');
                 });
             });
         });

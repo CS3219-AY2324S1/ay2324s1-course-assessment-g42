@@ -39,27 +39,22 @@ function Collaborate() {
 
   const user = Cookies.get('user');
   const userObj = JSON.parse(user);
-  const username = userObj.username;
   const [timeLeft, setTimeLeft] = useState(30);
 
   const sendMatchingRequest = () => {
-    setTimeLeft(30);
     if (isMatching) {
       return ;
     }
+    setMatchedUsername('');
+    setTimeLeft(30);
     setIsMatching(true);
-    const apiUrl = '/collaborate/api/match'; // Replace with your actual URL
+    const apiUrl = '/collaborate/match'; 
     const timeOfReq = new Date().getTime();
-    console.log(timeOfReq);
     // Define the data to send in the request body
-    const data = { userObj, complexity, timeOfReq };
-    console.log('sending matching request from frontend')
+    const data = { userObj, complexity, timeOfReq };  
 
-
-    // Use Axios to send the POST request
     axios.post(apiUrl, data)
         .then(response => { 
-          console.log(response.data + '!!!');
           setIsMatching(false);
           setMatchedUsername(response.data);
           if (response.data !== 'no match') {
