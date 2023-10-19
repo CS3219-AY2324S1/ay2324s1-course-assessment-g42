@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 require('dotenv').config();
+var amqp = require('amqplib/callback_api');
+
 function main(userObj, complexity, timeOfReq) {
     return new Promise((resolve, reject) => {
-        var amqp = require('amqplib/callback_api');
-
         var ans = 'none';
         amqp.connect(process.env.CLOUDAMQP_URL + "?heartbeat=60", function(error0, connection) {
             if (error0) {

@@ -19,7 +19,8 @@ function Collaborate() {
   const [matchedUsername, setMatchedUsername] = useState('');
   const [isMatchFound, setIsMatchFound] = useState(false);
   const [isMatchingComplete, setIsMatchingComplete] = useState(false);
-
+  const [userObj, setUserObj] = useState();
+  const [timeLeft, setTimeLeft] = useState(30);
 
   useEffect(() => {
     const loggedInUser = Cookies.get('user');
@@ -34,12 +35,11 @@ function Collaborate() {
       navigate('/login');
       return;
     }
+    setUserObj(JSON.parse(loggedInUser));
     
   }, [navigate]);
 
-  const user = Cookies.get('user');
-  const userObj = JSON.parse(user);
-  const [timeLeft, setTimeLeft] = useState(30);
+  
 
   const sendMatchingRequest = () => {
     if (isMatching) {
