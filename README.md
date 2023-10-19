@@ -1,6 +1,7 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/6BOvYMwN)
-# PeerPrep <img src="frontend/public/PP.png" width="30" height="30" />
+# <img src="frontend/public/PP.png" width="30" height="30" /> PeerPrep
 PeerPrep is a is a technical interview preparation platform, where students can practise whiteboard-style interview questions together.
+
 <img src="frontend/public/peerp_dark.png">
 
 # 📃 Information for Assignments
