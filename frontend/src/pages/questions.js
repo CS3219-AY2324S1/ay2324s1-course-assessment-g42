@@ -1,10 +1,12 @@
 import '../App.css';
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
 import FormDialog from '../components/questions/formDialog.js';
 import QuestionsTable from '../components/questions/questionsTable.js';
@@ -14,7 +16,12 @@ import { QUESTION_API_URL } from '../config';
 
 function Questions() {
   const [questions, setQuestions] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
+
+  const { page } = useParams();
+  const pageNumber = parseInt(page) || 1; // default to page one if not a number
+  const questionsPerPage = 10;
 
   const handleDelete = (questionId) => {
     const updatedQuestions = questions.filter((question) => question.id !== questionId);
@@ -79,6 +86,10 @@ function Questions() {
       console.error(error)});
   };
 
+  const handlePageChange = (event, newPage) => {
+    navigate(`/questions/${newPage}`);
+  };
+
   useEffect(() => {
     // check if user is logged in
     const loggedInUser = Cookies.get('user');
@@ -94,12 +105,14 @@ function Questions() {
     }
 
     // get questions from database
-    axios.get(
+    axios.post(
       QUESTION_API_URL + "/question/getQuestions",
+      { page: pageNumber, pageSize: questionsPerPage },
       { withCredentials: true, credentials: 'include' }
     )
     .then(response => {       
-      setQuestions(response.data)
+      setQuestions(response.data.questions);
+      setTotalPages(response.data.totalPages);
     })
     .catch(error => {
       if (error.response.status === 401) {
@@ -122,7 +135,7 @@ function Questions() {
       }
     console.error(error)});
 
-  }, [navigate]);
+  }, [navigate, pageNumber]);
 
   return (
     <div className="wrapper">
@@ -131,6 +144,13 @@ function Questions() {
       <FormDialog questions={questions} setQuestions={setQuestions} addQuestionToDb={addQuestionToDb} />
       {/* Table displaying questions */}
       <QuestionsTable questions={questions} handleDelete={handleDelete} />
+
+      {/** Pagination */}
+      <div style={{ display: 'flex', justifyContent: 'center', margin: "10px" }}>
+        <Stack spacing={2}>
+          <Pagination count={totalPages} page={pageNumber} onChange={handlePageChange} color="primary" />
+        </Stack>
+      </div>
     </div>
   );
 }

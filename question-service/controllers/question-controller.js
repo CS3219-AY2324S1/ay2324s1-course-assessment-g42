@@ -3,8 +3,33 @@ const QuestionModel = require('../models/questions.js');
 
 async function getQuestions(req, res) {
   try {
-    const result = await QuestionModel.find();
-    res.json(result);
+    const { page, pageSize } = req.body || { page: 1, pageSize: 10 };
+
+    // Ensure the values are integers and handle any validation as needed
+    const pageNumber = parseInt(page);
+    const pageSizeNumber = parseInt(pageSize);
+    if (isNaN(pageNumber) || isNaN(pageSizeNumber)) {
+      return res.status(400).json({ error: 'Invalid page or pageSize' });
+    }
+
+    // Calculate the number of documents to skip to reach the requested page
+    const skip = (pageNumber - 1) * pageSizeNumber;
+
+    // Query the database to get a page of documents
+    const result = await QuestionModel.find()
+      .skip(skip)
+      .limit(pageSizeNumber);
+
+    // Count the total number of documents (for pagination controls)
+    const totalDocuments = await QuestionModel.countDocuments();
+
+    res.json({
+      questions: result,
+      currentPage: pageNumber,
+      totalPages: Math.ceil(totalDocuments / pageSizeNumber),
+      pageSize: pageSizeNumber,
+      totalDocuments: totalDocuments,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred' });
