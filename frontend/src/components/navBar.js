@@ -38,7 +38,7 @@ function NavBar() {
                     <a href="/">
                         <img src="/peerp.png" alt="peerP" width="100px" />
                     </a>
-                    <Typography variant="text" component={Link} to="/questions" 
+                    <Typography variant="text" component={Link} to="/questions/1" 
                     sx={{ textDecoration: 'none', color: 'white', 
                         marginLeft: 6, fontWeight: 400, fontSize: 18 
                     }}>
