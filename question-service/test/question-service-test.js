@@ -20,22 +20,28 @@ const generateAuthToken = (user) => {
 };
 
 describe("Test Question Service", function () {
-    let addQuestion = {
-        id: 999,
-        title: 'Test Question',
-        description: 'Test Description',
-        categories: 'Data Structures',
-        complexity: 'Hard'
-    };
+    let addQuestion;
+    let deleteQuestion;
 
-    let deleteQuestion = {
-        id: 999
-    };
+    beforeEach(() => {
+        // Create addQuestion and deleteQuestion objects within a beforeEach block
+        addQuestion = {
+            id: 12345,
+            title: 'Test Question',
+            description: 'Test Description',
+            categories: ['Data Structures', 'Algorithms'],
+            complexity: 'Hard'
+        };
+
+        deleteQuestion = {
+            id: 12345
+        };
+    });
+
 
     it("Should get questions", done => {
         // Generate an authentication token for the test user
         const authToken = generateAuthToken(testUser);
-
         chai
             .request(index)
             .get("/question/getQuestions")
