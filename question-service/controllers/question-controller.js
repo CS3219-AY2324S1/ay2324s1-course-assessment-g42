@@ -78,7 +78,7 @@ async function deleteQuestion(req, res) {
       return res.status(404).json({ error: 'Question not found' });
     }
 
-    res.json(deletedQuestion); // Respond with the deleted document
+    res.status(201).json(deletedQuestion); // Respond with the deleted document
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred' });

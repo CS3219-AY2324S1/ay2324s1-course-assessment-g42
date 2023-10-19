@@ -1,0 +1,48 @@
+name: Test
+on:
+  push:
+    branches:
+      - test
+
+env:
+  JWT_SECRET_KEY: '${{ secrets.JWT_SECRET_KEY }}'
+  PSQL_USERNAME: '${{ secrets.PSQL_USERNAME }}'
+  PSQL_HOSTNAME: '${{ secrets.PSQL_HOSTNAME }}'
+  PSQL_PASSWORD: '${{ secrets.PSQL_PASSWORD }}'
+  PSQL_PORT: '${{ secrets.PSQL_PORT }}'
+  MONGODB_URI: '${{ secrets.MONGODB_URI }}'
+
+jobs:
+  test-user-service:
+    runs-on: ubuntu-latest
+      
+    defaults:
+      run:
+        working-directory: ./user-service/
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    - name: Download Dependencies
+      run: npm install
+    - name: Run user service test cases
+      run: npm test
+
+  test-question-service:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./question-service/
+      
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    - name: Download Dependencies
+      run: npm install
+    - name: Run question service test cases
+      run: npm test
