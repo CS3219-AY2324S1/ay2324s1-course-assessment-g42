@@ -58,32 +58,51 @@ function Questions() {
 
   // do setQuestions and also save the questions to database
   const addQuestionToDb = (question) => {
-    axios.post(
-      QUESTION_API_URL + "/question/addQuestion",
-      question,
+    // Get the new id which is maximum id in database + 1
+    axios.get(
+      QUESTION_API_URL + "/question/getMaxQuestionId",
       { withCredentials: true, credentials: 'include' }
     )
-      .then((response) => console.log(response.status))
+      .then((response) => {
+        const newId = parseInt(response.data.maxQuestionId) + 1;
+        console.log(newId)
+        question.id = newId;
+
+        // Add the question to the database
+        axios.post(
+          QUESTION_API_URL + "/question/addQuestion",
+          question,
+          { withCredentials: true, credentials: 'include' }
+        )
+          .then((response) =>  {
+            console.log(response.status);
+            window.location.reload(); // Reload page
+          })
+          .catch(error => {
+            if (error.response.status === 401) {
+              navigate('/');
+              logout();
+    
+              console.log("Unauthorized access. Logged out.");
+              toast.error("Unauthorized access.", standardToast);
+    
+              return;
+            }
+    
+            if (error.response.status === 500) {
+              navigate('/');
+    
+              console.log("An error occurred.");
+              toast.error("An error occurred.", standardToast);
+    
+              return;
+            }
+          console.error(error)});
+      })
       .catch(error => {
-        if (error.response.status === 401) {
-          navigate('/');
-          logout();
-
-          console.log("Unauthorized access. Logged out.");
-          toast.error("Unauthorized access.", standardToast);
-
-          return;
-        }
-
-        if (error.response.status === 500) {
-          navigate('/');
-
-          console.log("An error occurred.");
-          toast.error("An error occurred.", standardToast);
-
-          return;
-        }
-      console.error(error)});
+        console.error(error);
+        toast.error("An error occurred", standardToast);
+      })
   };
 
   const handlePageChange = (event, newPage) => {
