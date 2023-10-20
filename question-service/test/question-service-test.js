@@ -19,66 +19,94 @@ const generateAuthToken = (user) => {
     return jwt.sign({ user }, jwtSecretKey);
 };
 
-describe("Test Question Service", function () {
-    let addQuestion;
-    let deleteQuestion;
+const authToken = generateAuthToken(testUser);
 
-    beforeEach(() => {
-        // Create addQuestion and deleteQuestion objects within a beforeEach block
-        addQuestion = {
-            id: 12345,
+describe("Test Question Service", function () {
+    let nextQuestionId;
+
+    before(async () => {
+        const response = await chai
+            .request(index)
+            .get("/question/getMaxQuestionId")
+            .set('Cookie', `token=${authToken}`);
+
+        expect(response.status).to.equal(200);
+        nextQuestionId = response.body.maxQuestionId + 1;
+    });
+
+    it("Should add a new question", async () => {
+        const addQuestion = {
+            id: nextQuestionId,
             title: 'Test Question',
             description: 'Test Description',
-            categories: ['Data Structures', 'Algorithms'],
+            categories: ['Data Structures'],
             complexity: 'Hard'
         };
 
-        deleteQuestion = {
-            id: 12345
-        };
-    });
-
-
-    it("Should get questions", done => {
-        // Generate an authentication token for the test user
-        const authToken = generateAuthToken(testUser);
-        chai
-            .request(index)
-            .get("/question/getQuestions")
-            .set('Cookie', `token=${authToken}`) 
-            .end((err, res) => {
-                expect(res.status).to.equal(200); 
-                done();
-            });
-    });
-
-    it("Should add question", done => {
-        // Generate an authentication token for the test user
-        const authToken = generateAuthToken(testUser);
-
-        chai
+        const response = await chai
             .request(index)
             .post("/question/addQuestion")
-            .set('Cookie', `token=${authToken}`) 
-            .send(addQuestion)
-            .end((err, res) => {
-                expect(res.status).to.equal(201);
-                done();
-            });
+            .set('Cookie', `token=${authToken}`)
+            .send(addQuestion);
+
+        expect(response.status).to.equal(201);
     });
 
-    it("Should delete question", done => {
-        // Generate an authentication token for the test user
-        const authToken = generateAuthToken(testUser);
+    it("Should not add questions with empty parameters", async () => {
+        const emptyParamQuestion = {
+            
+        }
 
-        chai
+        const response = await chai
+            .request(index)
+            .post("/question/addQuestion")
+            .set('Cookie', `token=${authToken}`)
+            .send(emptyParamQuestion)
+        expect(response.status).to.equal(401);
+    })
+
+    it("Should delete question with id", async () => {
+        const deleteQuestion = {
+            id: nextQuestionId,
+        };
+
+        const response = await chai
             .request(index)
             .post("/question/deleteQuestion")
-            .set('Cookie', `token=${authToken}`) 
-            .send(deleteQuestion)
-            .end((err, res) => {
-                expect(res.status).to.equal(201); 
-                done();
-            });
+            .set('Cookie', `token=${authToken}`)
+            .send(deleteQuestion);
+
+        expect(response.status).to.equal(201)
     });
+
+    it("Should not delete question that doesn't exist", async () => {
+        const deletedQuestion = {
+            id: nextQuestionId
+        }
+
+        const response = await chai
+            .request(index)
+            .post("/question/deleteQuestion")
+            .set('Cookie', `token=${authToken}`)
+            .send(deletedQuestion);
+
+        expect(response.status).to.equal(404);
+
+    })
+
+    it("Should get questions", async () => {
+        const getQuestions = {
+            page: 1,
+            pageSize: 10
+        }
+
+        const response = await chai
+            .request(index)
+            .post("/question/getQuestions")
+            .set('Cookie', `token=${authToken}`)
+            .send(getQuestions);
+
+        expect(response.status).to.equal(200);
+    })
+
 });
