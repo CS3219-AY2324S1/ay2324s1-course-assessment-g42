@@ -43,9 +43,11 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
       categories: categoriesToAdd,
       complexity: complexity
     }
-    addQuestionToDb(newQuestion);
-    setQuestions([...questions, newQuestion]);
-    setOpen(false);
+    if (addQuestionToDb(newQuestion)) {
+      // If question was successfully added, proceed
+      setQuestions([...questions, newQuestion]);
+      setOpen(false);
+    };
   }
 
   useEffect(() => {

@@ -77,6 +77,7 @@ function Questions() {
           .then((response) =>  {
             console.log(response.status);
             window.location.reload(); // Reload page
+            return true;
           })
           .catch(error => {
             if (error.response.status === 401) {
