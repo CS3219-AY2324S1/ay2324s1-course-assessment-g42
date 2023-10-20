@@ -1,9 +1,10 @@
 import '../App.css';
 import '../styles/collab.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import io from 'socket.io-client';
 
 import { Grid } from '@mui/material';
 import Chip from '@mui/material/Chip';
@@ -16,7 +17,20 @@ import { RenderedDescription, DifficultyText } from '../helpers/questionFormatte
 
 function Collab() {
   const [question, setQuestion] = useState(null);
+  const [code, setCode] = useState('');
+  const socketRef = useRef();
   const navigate = useNavigate();
+  const roomName = "room-123";
+
+  const editorDidMount = (editor, monaco) => {
+    console.log('editorDidMount', editor);
+    editor.focus();
+  }
+
+  const handleChange = (value, event) => {
+    setCode(value);
+    socketRef.current.emit('code-change', roomName, value);
+  }
 
   useEffect(() => {
     // generate a random question from db
@@ -52,6 +66,23 @@ function Collab() {
         return;
       }
     console.error(error)});
+
+    socketRef.current = io('http://localhost:80',  { transports : ['websocket'] });
+
+    socketRef.current.emit('join-room', roomName);
+
+    socketRef.current.on('code-change', (newCode) => {
+      if (newCode !== code) {
+        setCode(newCode);
+      }
+    });
+
+    // Clean up the socket connection on unmount
+    return () => {
+      socketRef.current.disconnect();
+    };
+    // Do not remove the next line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate])
 
   return (
@@ -84,11 +115,14 @@ function Collab() {
             Javascript
           </div>
           <div className="collab-editor-content">
-            <MonacoEditor
-              height="100%"
-              width="100%"
-              language="javascript"
-            />
+          <MonacoEditor
+            width="100%"
+            height="400"
+            language="javascript"
+            value={code}
+            editorDidMount={editorDidMount}
+            onChange={handleChange}
+          />
           </div>
 
           {/* Chat and video call */}
