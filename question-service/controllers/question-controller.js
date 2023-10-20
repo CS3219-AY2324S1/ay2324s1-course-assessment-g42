@@ -22,8 +22,7 @@ async function getQuestions(req, res) {
 
     // Count the total number of documents (for pagination controls)
     const totalDocuments = await QuestionModel.countDocuments();
-
-    res.json({
+    res.status(200).json({
       questions: result,
       currentPage: pageNumber,
       totalPages: Math.ceil(totalDocuments / pageSizeNumber),
@@ -40,7 +39,7 @@ async function getMaxQuestionId(req, res) {
   try {
     const maxQuestion = await QuestionModel.findOne({}, {}, { sort: { id: -1 } });
     const maxQuestionId = maxQuestion ? maxQuestion.id : 0; // Return 0 if ther is no question
-    res.json({ maxQuestionId });
+    res.status(200).json({ maxQuestionId });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred' });
@@ -50,6 +49,11 @@ async function getMaxQuestionId(req, res) {
 async function addQuestion(req, res) {
   try {
     const { id, title, description, categories, complexity } = req.body;
+    
+    if (!id || !title || !description || !categories || !complexity) {
+      return res.status(401).json({ error: 'Empty params given' });
+    }
+
     // Create a new instance of the QuestionModel with the data you want to add
     const newQuestion = new QuestionModel({
       id: id,
@@ -78,7 +82,7 @@ async function deleteQuestion(req, res) {
       return res.status(404).json({ error: 'Question not found' });
     }
 
-    res.json(deletedQuestion); // Respond with the deleted document
+    res.status(201).json(deletedQuestion); // Respond with the deleted document
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred' });
