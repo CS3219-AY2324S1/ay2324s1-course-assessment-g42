@@ -32,7 +32,7 @@ describe("Test User Service", function () {
 
     it("Should not register user with same email", done => {
         let registerUser = {
-            username: "testUser",
+            username: "testUser1",
             email: "testUser@gmail.com",
             password: "testUser123",
             password2: "testUser123",
@@ -45,6 +45,25 @@ describe("Test User Service", function () {
             .send(registerUser)
             .end((err, res) => {
                 expect(res.status).to.equal(409);
+                done();
+            });
+    });
+
+    it("Should not register user with same username", done => {
+        let registerUser = {
+            username: "testUser",
+            email: "testUser1@gmail.com",
+            password: "testUser123",
+            password2: "testUser123",
+            role: "user"
+        }
+
+        chai
+            .request(index)
+            .post("/user/register")
+            .send(registerUser)
+            .end((err, res) => {
+                expect(res.status).to.equal(422);
                 done();
             });
     });
