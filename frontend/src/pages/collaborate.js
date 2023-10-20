@@ -10,17 +10,18 @@ import CircularProgress from '@mui/material/CircularProgress';
 import WarningIcon from '@mui/icons-material/Warning';
 
 import FormComplexitySelect from '../components/questions/formComplexitySelect';
+import { COLLABORATE_API_URL } from '../config';
 
 
 function Collaborate() {
   const navigate = useNavigate();
   const [complexity, setComplexity] = useState("Easy");
   const [isMatching, setIsMatching] = useState(false);
-  const [matchedUsername, setMatchedUsername] = useState('');
-  const [isMatchFound, setIsMatchFound] = useState(false);
+  const [responseMessage, setResponseMessage] = useState('');
   const [isMatchingComplete, setIsMatchingComplete] = useState(false);
-  const [userObj, setUserObj] = useState();
+  const [username, setUsername] = useState('');
   const [timeLeft, setTimeLeft] = useState(30);
+  const [isResponseReceived, setIsResponseReceived] = useState(false);
 
   useEffect(() => {
     const loggedInUser = Cookies.get('user');
@@ -35,7 +36,7 @@ function Collaborate() {
       navigate('/login');
       return;
     }
-    setUserObj(JSON.parse(loggedInUser));
+    setUsername(JSON.parse(loggedInUser).username);
     
   }, [navigate]);
 
@@ -45,22 +46,21 @@ function Collaborate() {
     if (isMatching) {
       return ;
     }
-    setMatchedUsername('');
+    setResponseMessage('');
     setTimeLeft(30);
     setIsMatching(true);
-    const apiUrl = '/collaborate/match'; 
+    setIsResponseReceived(false);
     const timeOfReq = new Date().getTime();
-    // Define the data to send in the request body
-    const data = { userObj, complexity, timeOfReq };  
 
-    axios.post(apiUrl, data)
+    axios.post(COLLABORATE_API_URL + '/collaborate/match'
+                , { username, complexity, timeOfReq }
+                , { withCredentials: true, credentials: 'include' })
         .then(response => { 
           setIsMatching(false);
-          setMatchedUsername(response.data);
-          if (response.data !== 'no match') {
-            setIsMatchFound(true);
-          }
+          const res = response.data;
+          setResponseMessage(res.message);
           setIsMatchingComplete(true);
+          setIsResponseReceived(true);
         })
         .catch(error => {
             console.log('ran into error while requesting match')
@@ -102,8 +102,8 @@ function Collaborate() {
         </div>
         ) : ''}
       {isMatchingComplete & !isMatching ? (
-        isMatchFound ? (<p>You were matched with {matchedUsername}!</p>)
-        : (<p>We couldn't find a match for you! Try again in a while.</p>)
+        isResponseReceived ? (<p>{responseMessage}</p>)
+        : (<p>Server error occurred! Try again in a while.</p>)
         )
         : ''}
     </div>

@@ -2,8 +2,8 @@ const rpc_client = require('../rpc_client.js');
 
 async function sendMatchingRequest(req, res) {
     try {
-      const { userObj, complexity, timeOfReq } = req.body;
-      const matchedUser = await rpc_client.main(userObj, complexity, timeOfReq);
+      const { username, complexity, timeOfReq } = req.body;
+      const matchedUser = await rpc_client.sendMatchingRequest(username, complexity, timeOfReq);
       
       return res.status(200).send(matchedUser);
     } catch (err) {

@@ -2,7 +2,20 @@
 require('dotenv').config();
 var amqp = require('amqplib/callback_api');
 
-function main(userObj, complexity, timeOfReq) {
+function createUserReq(username, complexity, timeOfReq, replyTo) {
+    const newCorrelationId = generateUuid();
+    const userReq = {
+        username : username,
+        complexity : complexity,
+        timeOfReq : timeOfReq,
+        correlationId : newCorrelationId,
+        replyTo : replyTo,
+        isValid : true
+    };
+    return userReq;
+}
+
+async function sendMatchingRequest(username, complexity, timeOfReq) {
     return new Promise((resolve, reject) => {
         var ans = 'none';
         amqp.connect(process.env.CLOUDAMQP_URL + "?heartbeat=60", function(error0, connection) {
@@ -16,34 +29,35 @@ function main(userObj, complexity, timeOfReq) {
                 }
                 channel.assertQueue('', {
                     exclusive: true
-                }, function(error2, q) {
+                }, async function(error2, q) {
                     if (error2) {
                         throw error2;
                     }
-                    var correlationId = generateUuid();
 
-                    console.log(' [.] Requesting user: %s, complexity: %s, time of request: %s', userObj.username.toString(), complexity, timeOfReq.toString());
-                    
+                    const userReq = createUserReq(username, complexity, timeOfReq, q.queue);
+                    console.log(' [client] Requesting user: %s, complexity: %s, time of request: %s', username.toString(), complexity, timeOfReq.toString());
+
+                    // listen for responses from the server
                     channel.consume(q.queue, function(msg) {
-                        if (msg.properties.correlationId === correlationId) {
-                            ans = msg.content.toString();
-                            console.log(' [.] Got %s', msg.content.toString());
-                            setTimeout(function() {
-                                connection.close();
-                            }, 500);
+                        if (msg.properties.correlationId === userReq.correlationId) {
+                            response = JSON.parse(msg.content);
+                    
+                            console.log(' [client %s] Server response: %s', username, response.message);
+
+                            ans = msg.content;
                             resolve(ans);
+                            connection.close();
                         }
                     }, {
                         noAck: true
                     });
-                    const message = JSON.stringify({ userObj, complexity, timeOfReq });
                     
                     channel.sendToQueue('rpc_queue',
-                        Buffer.from(message), {
-                            correlationId: correlationId,
-                            replyTo: q.queue
+                        Buffer.from(JSON.stringify(userReq)), {
+                            correlationId: userReq.correlationId,
+                            replyTo: userReq.replyTo
                         });
-                    console.log(' [.] sent to rpc_queue');
+                    console.log(' [client %s] Sent request to rpc_queue', username);
                 });
             });
         });
@@ -57,4 +71,4 @@ function generateUuid() {
         Math.random().toString();
 }
 
-module.exports = { main }
+module.exports = { sendMatchingRequest }
