@@ -68,8 +68,13 @@ async function addQuestion(req, res) {
 
     res.status(201).json(savedQuestion); // Respond with the saved document
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'An error occurred' });
+    if (err.code === 11000) {
+      // Handle duplicate key error
+      res.status(409).json({ error: 'Duplicate key error' });
+    } else {
+      console.error(err);
+      res.status(500).json({ error: 'An error occurred' });
+    }
   }
 }
 
