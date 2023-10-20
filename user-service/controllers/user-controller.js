@@ -25,33 +25,50 @@ async function registerUser(req, res) {
                     error: "Email already exists."
                 });
             }
-
-            // Continue with the registration process if the email is not found
-            // Check password length < 8
-            if (password.length < 8) {
-                return res.status(403).json({
-                    error: "Password not long enough"
-                });
-            }
-            
-            // Check that passwords match
-            if (password !== password2) {
-                return res.status(400).json({
-                    error: "Passwords do not match",
-                });
-            }
-
-            // Register user
+        
+            // Check if username already taken
             pool.query(
-                `INSERT INTO users (username, email, password, role) 
-                VALUES ($1, $2, $3, $4)`, [username, email, password, role], (err) => {
+                `SELECT * FROM users
+                WHERE username = $1`, [username], (err, result) => {
                     if (err) {
                         return res.status(500).json({
-                            error: "Failed to register user."
+                            error: "An error occurred while checking for username existence."
                         });
-                    } else {
-                        return res.status(200).json({ username, email });
                     }
+            
+                    if (result.rows.length > 0) {
+                        return res.status(422).json({
+                            error: "Username already exists."
+                        });
+                    }    
+                    // Continue with the registration process if the email and username not found
+                    // Check password length < 8
+                    if (password.length < 8) {
+                        return res.status(403).json({
+                            error: "Password not long enough"
+                        });
+                    }
+                    
+                    // Check that passwords match
+                    if (password !== password2) {
+                        return res.status(400).json({
+                            error: "Passwords do not match",
+                        });
+                    }
+
+                    // Register user
+                    pool.query(
+                        `INSERT INTO users (username, email, password, role) 
+                        VALUES ($1, $2, $3, $4)`, [username, email, password, role], (err) => {
+                            if (err) {
+                                return res.status(500).json({
+                                    error: "Failed to register user."
+                                });
+                            } else {
+                                return res.status(200).json({ username, email });
+                            }
+                        }
+                    );
                 }
             );
         }
