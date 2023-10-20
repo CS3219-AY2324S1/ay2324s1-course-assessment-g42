@@ -5,6 +5,7 @@ var amqp = require('amqplib/callback_api');
 const COMPLEXITY_LIST = ['Easy', 'Medium', 'Hard'];
 const MAX_TIME = 29900;
 const queue = 'rpc_queue';
+
 function calculateTimeLeft(timeOfReq) {
     const currTime = new Date().getTime();
     return MAX_TIME - (currTime - timeOfReq);
@@ -177,8 +178,7 @@ function runServer() {
                 if (isDuplicate) {
                     handleDuplicateRequest(matchReqDict, findDuplicateUserInDict(matchReqDict, userReq.username), userReq, channel);
                 }
-                console.log("ISNOTTIMEOUT");
-                console.log(isValidMatch(matchReqDict, userReq));
+
                 if (isNotTimeOut && isValidMatch(matchReqDict, userReq)) {
                     const firstUserReq = matchReqDict[userReq.complexity];
                     handleMatchFound(matchReqDict, firstUserReq, userReq, channel);
@@ -187,7 +187,7 @@ function runServer() {
                 } else if (!isNotTimeOut) {
                     handleExpiredRequest(userReq, channel);
                 } else {
-                    console.log('unknown');
+                    console.log('Unknown error');
                 }
     
                 channel.ack(msg);

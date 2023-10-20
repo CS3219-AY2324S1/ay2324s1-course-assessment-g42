@@ -5,9 +5,11 @@ import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { standardToast } from '../styles/toastStyles';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import WarningIcon from '@mui/icons-material/Warning';
+import { logout } from '../helpers';
 
 import FormComplexitySelect from '../components/questions/formComplexitySelect';
 import { COLLABORATE_API_URL } from '../config';
@@ -63,8 +65,16 @@ function Collaborate() {
           setIsResponseReceived(true);
         })
         .catch(error => {
-            console.log('ran into error while requesting match')
-            console.log(error)
+          if (error.response.status === 401) {
+            navigate('/');
+            logout();
+    
+            console.log("Unauthorized access. Logged out.");
+            toast.error("Unauthorized access.", standardToast);
+    
+            return;
+          }
+          console.log('Ran into error while requesting match: ', error);
         });
     const timer = setInterval(() => {
       setTimeLeft((prevTimeLeft) => {
