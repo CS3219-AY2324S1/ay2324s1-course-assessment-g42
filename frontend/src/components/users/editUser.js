@@ -58,12 +58,20 @@ function EditUser({ user }) {
                 });
                 
                 return;
+            } else if (error.response.status === 422) {
+                toast.error('Username already exists', {
+                    position: 'top-center',
+                    autoClose: 3000,
+                    theme: 'dark',
+                });
+            } else {
+                toast.error("Unknown error occurred", {
+                    position: 'top-center',
+                    autoClose: 3000,
+                    theme: 'dark',
+                });
             }
-            toast.error("Unknown error occurred", {
-                position: 'top-center',
-                autoClose: 3000,
-                theme: 'dark',
-            });
+            
         }
     };
 
