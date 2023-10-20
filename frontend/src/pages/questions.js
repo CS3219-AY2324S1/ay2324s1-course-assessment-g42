@@ -77,6 +77,7 @@ function Questions() {
           .then((response) =>  {
             console.log(response.status);
             window.location.reload(); // Reload page
+            return true;
           })
           .catch(error => {
             if (error.response.status === 401) {
@@ -88,10 +89,15 @@ function Questions() {
     
               return;
             }
+
+            if (error.response.status === 409) {
+              console.log("Question title already exists.");
+              toast.error("Question title already exists.", standardToast);
+    
+              return;
+            }
     
             if (error.response.status === 500) {
-              navigate('/');
-    
               console.log("An error occurred.");
               toast.error("An error occurred.", standardToast);
     
@@ -129,7 +135,7 @@ function Questions() {
       { page: pageNumber, pageSize: questionsPerPage },
       { withCredentials: true, credentials: 'include' }
     )
-    .then(response => {       
+    .then(response => {
       setQuestions(response.data.questions);
       setTotalPages(response.data.totalPages);
     })

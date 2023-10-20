@@ -52,6 +52,24 @@ describe("Test Question Service", function () {
         expect(response.status).to.equal(201);
     });
 
+    it("Should not add question with duplicate title", async () => {
+      const addQuestion = {
+          id: nextQuestionId,
+          title: 'Test Question',
+          description: 'Other Test Description',
+          categories: ['Data Structures', 'Array'],
+          complexity: 'Hard'
+      };
+
+      const response = await chai
+          .request(index)
+          .post("/question/addQuestion")
+          .set('Cookie', `token=${authToken}`)
+          .send(addQuestion);
+
+      expect(response.status).to.equal(409);
+  });
+
     it("Should not add questions with empty parameters", async () => {
         const emptyParamQuestion = {
             
