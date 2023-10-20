@@ -129,24 +129,40 @@ async function deleteUser (req, res) {
 
 async function updateUsername (req, res) {
     let {newUsername, email} = req.body;
-
     pool.query(
-        `UPDATE users SET username=$1 WHERE email=$2`,
-        [newUsername, email],
-        (error, result) => {
-            if (error) {
-                return res.status(500).send({ message: "Error updating username" });
-            } else {
-                pool.query(
-                    `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
-                        if (err) {
-                            return res.status(500).send({ message: "Error updating username" });
-                        }
-                        const user = result.rows[0];
-                        return res.status(200).json({ user });
-                    }
-                )
+        `SELECT * FROM users
+        WHERE username = $1`, [newUsername], (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    error: "An error occurred while checking for username existence."
+                });
             }
+    
+            if (result.rows.length > 0) {
+                return res.status(422).json({
+                    error: "Username already exists."
+                });
+            }  
+
+            pool.query(
+                `UPDATE users SET username=$1 WHERE email=$2`,
+                [newUsername, email],
+                (error, result) => {
+                    if (error) {
+                        return res.status(500).send({ message: "Error updating username" });
+                    } else {
+                        pool.query(
+                            `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
+                                if (err) {
+                                    return res.status(500).send({ message: "Error updating username" });
+                                }
+                                const user = result.rows[0];
+                                return res.status(200).json({ user });
+                            }
+                        )
+                    }
+                }
+            );
         }
     );
 }
