@@ -24,7 +24,15 @@ const authToken = generateAuthToken(testUser);
 describe("Test Question Service", function () {
     let nextQuestionId;
 
-    before(async () => {
+    it("Should not get Max Question Id if not authenticated", async () => {
+        const response = await chai
+            .request(index)
+            .get("/question/getMaxQuestionId");
+
+        expect(response.status).to.equal(401);
+    });
+
+    it("Should get Max Question Id", async () => {
         const response = await chai
             .request(index)
             .get("/question/getMaxQuestionId")
@@ -32,6 +40,23 @@ describe("Test Question Service", function () {
 
         expect(response.status).to.equal(200);
         nextQuestionId = response.body.maxQuestionId + 1;
+    });
+
+    it("Should not add questions if not authenticated", async () => {
+        const dummyAdd = {
+            id: nextQuestionId,
+            title: 'Dummy Test Question',
+            description: 'Other Test Description',
+            categories: ['Data Structures', 'Array'],
+            complexity: 'Hard'
+        };
+
+        const response = await chai
+            .request(index)
+            .post("/question/addQuestion")
+            .send(dummyAdd);
+        
+        expect(response.status).to.equal(401);
     });
 
     it("Should add a new question", async () => {
@@ -53,22 +78,22 @@ describe("Test Question Service", function () {
     });
 
     it("Should not add question with duplicate title", async () => {
-      const addQuestion = {
-          id: nextQuestionId,
-          title: 'Test Question',
-          description: 'Other Test Description',
-          categories: ['Data Structures', 'Array'],
-          complexity: 'Hard'
-      };
-
-      const response = await chai
-          .request(index)
-          .post("/question/addQuestion")
-          .set('Cookie', `token=${authToken}`)
-          .send(addQuestion);
-
-      expect(response.status).to.equal(409);
-  });
+        const addQuestion = {
+            id: nextQuestionId,
+            title: 'Test Question',
+            description: 'Other Test Description',
+            categories: ['Data Structures', 'Array'],
+            complexity: 'Hard'
+        };
+  
+        const response = await chai
+            .request(index)
+            .post("/question/addQuestion")
+            .set('Cookie', `token=${authToken}`)
+            .send(addQuestion);
+  
+        expect(response.status).to.equal(409);
+    });
 
     it("Should not add questions with empty parameters", async () => {
         const emptyParamQuestion = {
@@ -81,7 +106,20 @@ describe("Test Question Service", function () {
             .set('Cookie', `token=${authToken}`)
             .send(emptyParamQuestion)
         expect(response.status).to.equal(401);
-    })
+    });
+
+    it("Should not delete question if not authenticated", async () => {
+        const dummyDelete = {
+            id: nextQuestionId
+        }
+
+        const response = await chai
+            .request(index)
+            .post("/question/deleteQuestion")
+            .send(dummyDelete);
+        
+        expect(response.status).to.equal(401);
+    });
 
     it("Should delete question with id", async () => {
         const deleteQuestion = {
@@ -109,7 +147,20 @@ describe("Test Question Service", function () {
             .send(deletedQuestion);
 
         expect(response.status).to.equal(404);
+    });
 
+    it("Should not get questions if not authenticated", async () => {
+        const getQuestions = {
+            page: 1,
+            pageSize: 10
+        }
+
+        const response = await chai
+            .request(index)
+            .post("/question/getQuestions")
+            .send(getQuestions);
+
+        expect(response.status).to.equal(401);
     })
 
     it("Should get questions", async () => {
@@ -125,6 +176,19 @@ describe("Test Question Service", function () {
             .send(getQuestions);
 
         expect(response.status).to.equal(200);
-    })
+    });
 
+    it("Should not get questions if invalid page or page size", async() => {
+        const invalidGet = {
+
+        }
+
+        const response = await chai
+            .request(index)
+            .post("/question/getQuestions")
+            .set('Cookie', `token=${authToken}`)
+            .send(invalidGet);
+
+        expect(response.status).to.equal(400);
+    })
 });
