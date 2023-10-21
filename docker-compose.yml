@@ -19,6 +19,16 @@ services:
       - ./question-service/.env
     ports:
       - "8030:8030"
+  
+  match:
+    container_name: match
+    hostname: match
+    build:
+      context: ./matching-service
+    env_file:
+      - ./matching-service/.env
+    ports:
+      - "5001:5001"
 
   frontend:
     container_name: frontend
@@ -42,3 +52,4 @@ services:
       - frontend
       - users
       - questions
+      - match

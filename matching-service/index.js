@@ -20,7 +20,7 @@ app.get("/test", (req, res) => {
 });
 
 // routes for matching
-app.use("/collaborate", require('./routes/matching-route'));
+app.use("/match", require('./routes/matching-route'));
 
 app.listen(5001, () => {console.log("Matching server started on Port 5001")});
 

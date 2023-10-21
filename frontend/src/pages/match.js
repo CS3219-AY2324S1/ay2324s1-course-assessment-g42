@@ -12,10 +12,10 @@ import WarningIcon from '@mui/icons-material/Warning';
 import { logout } from '../helpers';
 
 import FormComplexitySelect from '../components/questions/formComplexitySelect';
-import { COLLABORATE_API_URL } from '../config';
+import { MATCH_API_URL } from '../config';
 
 
-function Collaborate() {
+function Match() {
   const navigate = useNavigate();
   const [complexity, setComplexity] = useState("Easy");
   const [isMatching, setIsMatching] = useState(false);
@@ -54,7 +54,7 @@ function Collaborate() {
     setIsResponseReceived(false);
     const timeOfReq = new Date().getTime();
 
-    axios.post(COLLABORATE_API_URL + '/collaborate/match'
+    axios.post(MATCH_API_URL + '/match/find-match'
                 , { username, complexity, timeOfReq }
                 , { withCredentials: true, credentials: 'include' })
         .then(response => { 
@@ -120,4 +120,4 @@ function Collaborate() {
   );
 }
 
-export default Collaborate;
+export default Match;

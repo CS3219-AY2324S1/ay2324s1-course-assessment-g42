@@ -17,15 +17,19 @@ function createUserReq(username, complexity, timeOfReq, replyTo) {
 
 async function sendMatchingRequest(username, complexity, timeOfReq) {
     return new Promise((resolve, reject) => {
-        var ans = 'none';
         amqp.connect(process.env.CLOUDAMQP_URL + "?heartbeat=60", function(error0, connection) {
             if (error0) {
-                throw error0;
+                console.error('Error connecting to AMQP:', error0);
+                reject(error0);
+                return;
             }
             console.log('Client connected to Cloud AMQP');
             connection.createChannel(function(error1, channel) {
                 if (error1) {
-                    throw error1;
+                    console.error('Error creating channel:', error1);
+                    reject(error1);
+                    connection.close();
+                    return;
                 }
                 channel.assertQueue('', {
                     exclusive: true
@@ -44,8 +48,7 @@ async function sendMatchingRequest(username, complexity, timeOfReq) {
                     
                             console.log(' [client %s] Server response: %s', username, response.message);
 
-                            ans = msg.content;
-                            resolve(ans);
+                            resolve(msg.content);
                             connection.close();
                         }
                     }, {

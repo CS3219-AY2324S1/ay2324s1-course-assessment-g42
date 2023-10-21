@@ -44,7 +44,7 @@ function NavBar() {
                     }}>
                         Questions
                     </Typography>
-                    <Typography variant="text" component={Link} to="/collaborate" 
+                    <Typography variant="text" component={Link} to="/match" 
                     sx={{ textDecoration: 'none', color: 'white', 
                         marginLeft: 8, fontWeight: 400, fontSize: 18 
                     }}>
