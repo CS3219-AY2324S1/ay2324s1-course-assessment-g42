@@ -65,6 +65,12 @@ function Signup() {
                     autoClose: 3000,
                     theme: 'dark',
                 });
+            } else if (error.response.status === 422) {
+                toast.error('Username already exists', {
+                    position: 'top-center',
+                    autoClose: 3000,
+                    theme: 'dark',
+                });
             } else if (error.response.status === 500) {
                 toast.error('Unknown error occured', {
                     position: 'top-center',

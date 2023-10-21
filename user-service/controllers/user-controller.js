@@ -25,33 +25,50 @@ async function registerUser(req, res) {
                     error: "Email already exists."
                 });
             }
-
-            // Continue with the registration process if the email is not found
-            // Check password length < 8
-            if (password.length < 8) {
-                return res.status(403).json({
-                    error: "Password not long enough"
-                });
-            }
-            
-            // Check that passwords match
-            if (password !== password2) {
-                return res.status(400).json({
-                    error: "Passwords do not match",
-                });
-            }
-
-            // Register user
+        
+            // Check if username already taken
             pool.query(
-                `INSERT INTO users (username, email, password, role) 
-                VALUES ($1, $2, $3, $4)`, [username, email, password, role], (err) => {
+                `SELECT * FROM users
+                WHERE username = $1`, [username], (err, result) => {
                     if (err) {
                         return res.status(500).json({
-                            error: "Failed to register user."
+                            error: "An error occurred while checking for username existence."
                         });
-                    } else {
-                        return res.status(200).json({ username, email });
                     }
+            
+                    if (result.rows.length > 0) {
+                        return res.status(422).json({
+                            error: "Username already exists."
+                        });
+                    }    
+                    // Continue with the registration process if the email and username not found
+                    // Check password length < 8
+                    if (password.length < 8) {
+                        return res.status(403).json({
+                            error: "Password not long enough"
+                        });
+                    }
+                    
+                    // Check that passwords match
+                    if (password !== password2) {
+                        return res.status(400).json({
+                            error: "Passwords do not match",
+                        });
+                    }
+
+                    // Register user
+                    pool.query(
+                        `INSERT INTO users (username, email, password, role) 
+                        VALUES ($1, $2, $3, $4)`, [username, email, password, role], (err) => {
+                            if (err) {
+                                return res.status(500).json({
+                                    error: "Failed to register user."
+                                });
+                            } else {
+                                return res.status(200).json({ username, email });
+                            }
+                        }
+                    );
                 }
             );
         }
@@ -113,29 +130,54 @@ async function deleteUser (req, res) {
 async function updateUsername (req, res) {
     let {newUsername, email} = req.body;
 
+    if (!newUsername || !email) {
+        return res.status(423).json({ error: "Empty parameters given "});
+    }
+    
     pool.query(
-        `UPDATE users SET username=$1 WHERE email=$2`,
-        [newUsername, email],
-        (error, result) => {
-            if (error) {
-                return res.status(500).send({ message: "Error updating username" });
-            } else {
-                pool.query(
-                    `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
-                        if (err) {
-                            return res.status(500).send({ message: "Error updating username" });
-                        }
-                        const user = result.rows[0];
-                        return res.status(200).json({ user });
-                    }
-                )
+        `SELECT * FROM users
+        WHERE username = $1`, [newUsername], (err, result) => {
+            if (err) {
+                return res.status(500).json({
+                    error: "An error occurred while checking for username existence."
+                });
             }
+    
+            if (result.rows.length > 0) {
+                return res.status(422).json({
+                    error: "Username already exists."
+                });
+            }  
+
+            pool.query(
+                `UPDATE users SET username=$1 WHERE email=$2`,
+                [newUsername, email],
+                (error, result) => {
+                    if (error) {
+                        return res.status(500).send({ message: "Error updating username" });
+                    } else {
+                        pool.query(
+                            `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
+                                if (err) {
+                                    return res.status(500).send({ message: "Error updating username" });
+                                }
+                                const user = result.rows[0];
+                                return res.status(200).json({ user });
+                            }
+                        )
+                    }
+                }
+            );
         }
     );
 }
 
 async function updatePassword (req, res) {
     let {newPassword, email} = req.body;
+
+    if(!newPassword || !email) {
+        return res.status(402).json({ error: "Empty params given "});
+    }
     
     if (newPassword.length < 8) {
         return res.status(403).json({
@@ -181,18 +223,23 @@ async function updateRole (req, res) {
 }
 async function findByEmail (req, res) {
     let { email } = req.body;
+
+    if(!email) {
+        return res.status(403).json({ error: "No email given" });
+    }
+
     pool.query(
         `SELECT * FROM users WHERE email=$1`, [email], (err, result) => {
         if (err) {
             console.log(err);
             return res.status(500);
         } else {
-            if (result.rows.length >0) {
+            if (result.rows.length > 0) {
                 const user = result.rows[0];
                 console.log(user);
                 return res.status(200).json({user});
             } else {
-                return res.status(404);
+                return res.status(404).json({ error: "User does not exist" });
             }
         }
         }
