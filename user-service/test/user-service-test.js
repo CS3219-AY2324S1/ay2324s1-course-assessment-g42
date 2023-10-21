@@ -10,6 +10,24 @@ chai.should();
 
 describe("Test User Service", function () {
     let agent; //session preservation
+    before("Create user for test cases", done => {
+        let existingUser = {
+            username: "existingUser",
+            email: "existingUser@gmail.com",
+            password: "existinguser",
+            password2: "existinguser",
+            role: "user"
+        }
+
+        chai
+            .request(index)
+            .post("/user/register")
+            .send(existingUser)
+            .end((err, res) => {
+                expect(res.status).to.equal(200);
+                done();
+            })
+    });
 
     it("Should register testUser", done => {
         let registerUser = {
@@ -139,7 +157,7 @@ describe("Test User Service", function () {
             })
     });
 
-    it("Should not login user incorrect password", done => {
+    it("Should not login user with incorrect password", done => {
         let loginUserIncorrectPassword = {
             email: "testUser@gmail.com",
             password: "incorrectPassword",
@@ -153,14 +171,238 @@ describe("Test User Service", function () {
                 expect(res.status).to.equal(422);
                 done();
             })
+    });
+
+    it("Should update user with new username", done => {
+        let updateUsername = {
+            newUsername: "testUserNew",
+            email: "testUser@gmail.com"
+        }
+
+        if (!agent) {
+            return done(new Error("Agent not available. Please run 'Login testUser' first."));
+        }
+
+        agent
+            .post("/user/updateUsername")
+            .send(updateUsername)
+            .end((err, res) => {
+                expect(res.status).to.equal(200);
+                done();
+            })
+    });
+
+    it("Should update user with new password", done => {
+        let updatePassword = {
+            newPassword: "testUserNewPassword",
+            email: "testUser@gmail.com"
+        }
+
+        if (!agent) {
+            return done(new Error("Agent not available. Please run 'Login testUser' first."));
+        }
+
+        agent
+            .post("/user/updatePassword")
+            .send(updatePassword)
+            .end((err, res) => {
+                expect(res.status).to.equal(200);
+                done();
+            })
     })
+
+    it("Should not update user with existing username", done => {
+        let existingUsername = {
+            newUsername: "existingUser",
+            email: "testUser@gmail.com"
+        }
+
+        if (!agent) {
+            return done(new Error("Agent not available. Please run 'Login testUser' first."));
+        }
+
+        agent
+            .post("/user/updateUsername")
+            .send(existingUsername)
+            .end((err, res) => {
+                expect(res.status).to.equal(422)
+                done();
+            })
+    });
+
+    it("Should not update username with empty fields", done => {
+        let emptyUpdate = {  
+
+        };
+
+        if (!agent) {
+            return done(new Error("Agent not available. Please run 'Login testUser' first."));
+        }
+
+        agent
+            .post("/user/updateUsername")
+            .send(emptyUpdate)
+            .end((err, res) => {
+                expect(res.status).to.equal(423)
+                done();
+            })
+    })
+
+    it("Should not update username if not authenticated", done => {
+        let dummyUpdate = {
+            newUsername: "dummyUsername",
+            emai: "testUser@gmail.com"
+        };
+
+        chai
+            .request(index)
+            .post("/user/updateUsername")
+            .send(dummyUpdate)
+            .end((err, res) => {
+                expect(res.status).to.equal(401);
+                done();
+            })
+    })
+    
+    it("Should not update user with password less than 8 characters", done => {
+        let shortPassword = {
+            newPassword: "short",
+            email: "testUser@gmail.com"
+        }
+
+        if (!agent) {
+            return done(new Error("Agent not available. Please run 'Login testUser' first."));
+        }
+
+        agent   
+            .post("/user/updatePassword")
+            .send(shortPassword)
+            .end((err, res) => {
+                expect(res.status).to.equal(403);
+                done();
+            })
+    });
+
+    it("Should not update password with empty fields", done => {
+        let emptyPasswordUser = {
+
+        };
+
+        agent
+            .post("/user/updatePassword")
+            .send(emptyPasswordUser)
+            .end((err, res) => {
+                expect(res.status).to.equal(402);
+                done();
+            });
+    });
+
+    it("Should not update password if not authenticated", done => {
+        let dummyPasswordUpdate = {
+            newPassword: "dummyPassword",
+            email: "testUser@gmail.com"
+        };
+
+        chai
+            .request(index)
+            .post("/user/updatePassword")
+            .send(dummyPasswordUpdate)
+            .end((err, res) => {
+                expect(res.status).to.equal(401);
+                done();
+            });
+    })
+
+    it("Should get users", async () => {
+        if (!agent) {
+            return done(new Error("Agent not available. Please run 'Login testUser' first."));
+        }
+
+        const response = await agent
+            .post("/user/getUsers")
+        
+        expect(response.status).to.equal(200);
+    });
+
+    it("Should not get users if not authenticated", async ()=> {
+        const response = await chai
+            .request(index)
+            .post("/user/getUsers");
+
+        expect(response.status).to.equal(401);
+    })
+
+    it("Should update user role to moderator", done => {
+        let updateRoleMod = {
+            username: "existingUser",
+            newRole: "moderator"
+        };
+
+        if (!agent) {
+            return done(new Error("Agent not available. Please run 'Login testUser' first."));
+        }
+
+        agent
+            .post("/user/updateRole")
+            .send(updateRoleMod)
+            .end((err, res) => {
+                expect(res.status).to.equal(200);
+                done();
+            });
+    });
+
+    it("Should update user role to admin", done => {
+        let updateRoleAdmin = {
+            username: "existingUser",
+            newRole: "admin"
+        };
+
+        if (!agent) {
+            return done(new Error("Agent not available. Please run 'Login testUser' first."));
+        }
+
+        agent
+            .post("/user/updateRole")
+            .send(updateRoleAdmin)
+            .end((err, res) => {
+                expect(res.status).to.equal(200);
+                done();
+            });
+    });
+
+    it("Should find user existingUser by email", done => {
+        let findUser = {
+            email: "existingUser@gmail.com"
+        }
+
+        agent
+            .post("/user/findByEmail")
+            .send(findUser)
+            .end((err, res) => {
+                expect(res.status).to.equal(200);
+                done();
+            });
+    });
+
+    it("Should not find user if email not given", done => {
+        let emptyEmail = {
+
+        };
+
+        agent
+            .post("/user/findByEmail")
+            .send(emptyEmail)
+            .end((err, res) => {
+                expect(res.status).to.equal(403);
+                done();
+            });
+    });
 
     it("Should delete testUser", done => {
         let deleteUser = {
             email: "testUser@gmail.com"
         }
 
-        // Ensure that the 'agent' from the "Login testUser" is available
         if (!agent) {
             return done(new Error("Agent not available. Please run 'Login testUser' first."));
         }
@@ -173,4 +415,35 @@ describe("Test User Service", function () {
                 done();
             });
     });
+    
+    after("Log into existing user", done => {
+        let loginUser = {
+            email: "existingUser@gmail.com",
+            password: "existinguser",
+        }
+
+        agent = chai.request.agent(index); // Create an agent to maintain the session
+    
+        agent
+            .post("/user/login")
+            .send(loginUser)
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                done();
+            })
+    })
+    after("Delete existing user", done => {
+        let deleteUser = {
+            email: "existingUser@gmail.com"
+        }
+
+        agent  
+            .post("/user/delete")
+            .send(deleteUser)
+
+            .end((err, res) => {
+                expect(res).to.have.status(200);
+                done();
+            })
+    })
 })

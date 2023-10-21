@@ -129,6 +129,11 @@ async function deleteUser (req, res) {
 
 async function updateUsername (req, res) {
     let {newUsername, email} = req.body;
+
+    if (!newUsername || !email) {
+        return res.status(423).json({ error: "Empty parameters given "});
+    }
+    
     pool.query(
         `SELECT * FROM users
         WHERE username = $1`, [newUsername], (err, result) => {
@@ -169,6 +174,10 @@ async function updateUsername (req, res) {
 
 async function updatePassword (req, res) {
     let {newPassword, email} = req.body;
+
+    if(!newPassword || !email) {
+        return res.status(402).json({ error: "Empty params given "});
+    }
     
     if (newPassword.length < 8) {
         return res.status(403).json({
@@ -214,18 +223,23 @@ async function updateRole (req, res) {
 }
 async function findByEmail (req, res) {
     let { email } = req.body;
+
+    if(!email) {
+        return res.status(403).json({ error: "No email given" });
+    }
+
     pool.query(
         `SELECT * FROM users WHERE email=$1`, [email], (err, result) => {
         if (err) {
             console.log(err);
             return res.status(500);
         } else {
-            if (result.rows.length >0) {
+            if (result.rows.length > 0) {
                 const user = result.rows[0];
                 console.log(user);
                 return res.status(200).json({user});
             } else {
-                return res.status(404);
+                return res.status(404).json({ error: "User does not exist" });
             }
         }
         }
