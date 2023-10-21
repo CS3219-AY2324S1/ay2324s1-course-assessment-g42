@@ -19,6 +19,12 @@ Ensure you have Node.js v.16^ installed before attempting to run.
 3. Add .env files with necessary values to `question-service/` and `user-service/`
 4. At the root directory run docker compose up
 5. After all containers are up, access to the application at `localhost:3000`
+### Assignment 5
+1. Clone the repository or download the code.
+2. Download Docker Engine if you haven't got it yet, open Docker Engine.
+3. Add .env files with necessary values to `matching-service/`, `question-service/` and `user-service/`
+4. At the root directory run docker compose up
+5. After all containers are up, access to the application at `localhost:3000`
 ## 📁 Relevant Files for Assignments
 Below are the most relevant files/folders for each assignment. There may have been other files involved. If the assignment is not specified below, then all files in the tagged commit are relevant for that assignment.
 
@@ -36,5 +42,12 @@ Below are the most relevant files/folders for each assignment. There may have be
 * `*/Dockerfile`
 * `*/.dockerignore`
 * `nginx/`
+* `docker-compose.yml`
+</details>
+<details>
+<summary>Files For Assignment 5</summary>
+
+* `matching-service/`
+* `frontend/src/pages/match.js`
 * `docker-compose.yml`
 </details>
