@@ -20,6 +20,8 @@ PSQL_PORT=
 MONGODB_URI=
 
 JWT_SECRET_KEY=
+
+CLOUDAMQP_URL=
 ```
 
 ### Assignments 1 to 3
