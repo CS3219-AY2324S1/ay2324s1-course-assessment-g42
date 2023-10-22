@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.5.1",
     "bcrypt": "^5.1.1",
     "chai": "^4.3.10",
     "chai-http": "^4.4.0",
@@ -22,7 +23,8 @@
     "jsonwebtoken": "^9.0.2",
     "mocha": "^10.2.0",
     "mongoose": "^7.5.2",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "pika": "^0.0.1-security"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

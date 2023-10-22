@@ -1,3 +1,4 @@
+import Match from './pages/match';
 import Home from './pages/home';
 import Questions from './pages/questions';
 import UserProfile from'./pages/UserProfile';
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="questions" element={<Questions />} />
         <Route path="questions/:page" element={<Questions />} />
+        <Route path="match" element={<Match />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
         <Route path="userprofile" element={<UserProfile />}/>
