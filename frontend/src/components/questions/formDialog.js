@@ -33,32 +33,21 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
   const handleAddQuestion = (event) => {
     event.preventDefault(); // prevent page from refreshing
 
-    const maxId = questions.reduce((max, question) => {
-      return question.id > max ? question.id : max;
-    }, 0);
-    const idValue = maxId + 1;
-
-    // prevent adding if question title already exists
-    if (questions.some((question) => question.title.toLowerCase() === titleRef.current.value.toLowerCase())) {
-      console.log('Question with this title already exists');
-      alert('Question with this title already exists. Please enter another title.');
-      return;
-    }
-
     // map titles of categories into a regular array
     const categoriesToAdd = categories.map(category => category.title);
 
-    // add question
+    // add question (id adding is done in addQuestionToDb)
     const newQuestion = {
-      id: idValue,
       title: titleRef.current.value,
       description: descRef.current.value,
       categories: categoriesToAdd,
       complexity: complexity
     }
-    addQuestionToDb(newQuestion);
-    setQuestions([...questions, newQuestion]);
-    setOpen(false);
+    if (addQuestionToDb(newQuestion)) {
+      // If question was successfully added, proceed
+      setQuestions([...questions, newQuestion]);
+      setOpen(false);
+    };
   }
 
   useEffect(() => {
