@@ -46,6 +46,22 @@ async function getMaxQuestionId(req, res) {
   }
 }
 
+async function getQuestionById(req, res) {
+  try {
+    const { id } = req.body;
+    const question = await QuestionModel.findOne({ id: id });
+
+    if (!question) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+
+    res.json(question); // Respond with found document
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+}
+
 async function addQuestion(req, res) {
   try {
     const { id, title, description, categories, complexity } = req.body;
@@ -96,6 +112,7 @@ async function deleteQuestion(req, res) {
 
 module.exports = { 
   getQuestions,
+  getQuestionById,
   getMaxQuestionId,
   addQuestion,
   deleteQuestion
