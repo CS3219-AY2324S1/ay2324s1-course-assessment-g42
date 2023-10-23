@@ -22,7 +22,7 @@ async function sendMatchingRequest(username, complexity, timeOfReq) {
                 reject(error0);
                 return;
             }
-            
+            console.log(` [client ${username}] Connected to AMQP`);
             connection.createChannel(function(error1, channel) {
                 if (error1) {
                     console.error('Error creating channel:', error1);
@@ -38,14 +38,14 @@ async function sendMatchingRequest(username, complexity, timeOfReq) {
                     }
 
                     const userReq = createUserReq(username, complexity, timeOfReq, q.queue);
-                    console.log(' [client] Requesting user: %s, complexity: %s, time of request: %s', username.toString(), complexity, timeOfReq.toString());
+                    console.log(` [client ${username}] Requesting user:${username}, complexity:${complexity}, time of request:${timeOfReq}`);
 
                     // listen for responses from the server
                     channel.consume(q.queue, function(msg) {
                         if (msg.properties.correlationId === userReq.correlationId) {
                             response = JSON.parse(msg.content);
                     
-                            console.log(' [client %s] Server response: %s', username, response.message);
+                            console.log(` [client ${username}] Server response: ${response.message}`);
 
                             resolve(msg.content);
                             connection.close();
@@ -54,6 +54,7 @@ async function sendMatchingRequest(username, complexity, timeOfReq) {
                         noAck: true
                     });
                     
+                    // send match request to the server
                     channel.sendToQueue('rpc_queue',
                         Buffer.from(JSON.stringify(userReq)), {
                             correlationId: userReq.correlationId,

@@ -1,11 +1,9 @@
 name: Test
 on:
-  push:
-    branches:
-      - master
   pull_request:
-    types:
-      - opened
+    branches: [master]
+  push:
+    branches: [master]
 
 env:
   JWT_SECRET_KEY: '${{ secrets.JWT_SECRET_KEY }}'
