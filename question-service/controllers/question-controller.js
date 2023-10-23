@@ -128,7 +128,7 @@ async function getQuestionByComplexity(req, res) {
     const randomIndex = Math.floor(Math.random() * questions.length);
     const randomQuestion = questions[randomIndex];
 
-    res.status(200).json(randomQuestion); //Respond with random question
+    res.status(200).json(randomQuestion.id); //Respond with random question
     
   } catch (err) {
     console.error(err);
