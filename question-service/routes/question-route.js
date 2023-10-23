@@ -9,5 +9,6 @@ router.post("/getQuestionById", auth, questionController.getQuestionById);
 router.get("/getMaxQuestionId", auth, questionController.getMaxQuestionId);
 router.post("/addQuestion", auth, questionController.addQuestion);
 router.post("/deleteQuestion", auth, questionController.deleteQuestion);
+router.post("/getQuestionByComplexity", auth, questionController.getQuestionByComplexity);
 
 module.exports = router;
