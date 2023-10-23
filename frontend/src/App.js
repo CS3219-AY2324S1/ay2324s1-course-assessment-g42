@@ -25,7 +25,8 @@ function App() {
         <Route path="signup" element={<Signup />} />
         <Route path="userprofile" element={<UserProfile />}/>
         <Route path="viewusers" element={<ViewUsers />}/>
-        <Route path="collab" element={<Collab />}/>
+        <Route path="collab/" element={<Collab />}/>
+        <Route path="collab/:roomId" element={<Collab />}/>
       </Routes>
     </div>
   );
