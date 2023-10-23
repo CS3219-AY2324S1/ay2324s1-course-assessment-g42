@@ -8,6 +8,11 @@ const socketIo = require('socket.io');
 const server = http.createServer(app);
 const io = socketIo(server);
 
+var dict = {
+  roomId : null,
+  questionId : null
+};
+
 app.use(
   cors({
     credentials: true,
@@ -26,6 +31,8 @@ io.on('connection', (socket) => {
   // Create a room for each pair of users based on user IDs
   socket.on('join-room', (roomName) => {
     console.log("User joined:", roomName)
+    dict.roomId = roomName;
+    dict.questionId = null;
     socket.join(roomName);
   });
 
@@ -34,7 +41,17 @@ io.on('connection', (socket) => {
     socket.to(roomName).emit('code-change', code);
   });
 
+  socket.on('generate-question', (roomName, questionId) => {
+    if (dict.questionId === null) {
+      dict.questionId = questionId;
+    }
+    console.log(dict.questionId);
+    socket.to(roomName).emit('generate-question', dict.questionId);
+  })
+
   socket.on('disconnect', () => {
+    dict.roomId = null;
+    dict.questionId = null;
     console.log("Socket disconnected:", socket.id);
   });
 });

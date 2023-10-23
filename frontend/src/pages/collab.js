@@ -17,10 +17,11 @@ import { RenderedDescription, DifficultyText } from '../helpers/questionFormatte
 
 function Collab() {
   const [question, setQuestion] = useState(null);
+  const [questionId, setQuestionId] = useState(null);
   const [code, setCode] = useState('');
   const socketRef = useRef();
   const navigate = useNavigate();
-  const { roomId } = useParams();
+  const { roomId, qnComplexity } = useParams();
 
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
@@ -36,7 +37,9 @@ function Collab() {
     // generate a random question from db
     const ids = [1, 2, 13, 20]; // list of sample ids currently in db
     const randomIndex = Math.floor(Math.random() * ids.length);
-    const randomId = ids[randomIndex];
+    let randomId = ids[randomIndex]; // chng back to const
+    setQuestionId(randomId);
+    console.log(randomId);
 
     // get questions from database
     axios.post(
@@ -65,12 +68,52 @@ function Collab() {
         toast.error("There was an error loading the question.", standardToast);
         return;
       }
+      
     console.error(error)});
+
+    
 
     socketRef.current = io('http://localhost:5002',  { transports : ['websocket'] });
 
-    console.log(roomId)
+    console.log(roomId);
     socketRef.current.emit('join-room', roomId);
+
+    socketRef.current.emit('generate-question', roomId, randomId);
+
+    socketRef.current.on('generate-question', (qnId) => {
+      if (qnId !== randomId) {
+        setQuestionId(qnId);
+        randomId = qnId;
+      }
+      axios.post(
+        QUESTION_API_URL + "/question/getQuestionById",
+        { id: qnId },
+        { withCredentials: true, credentials: 'include' }
+      )
+      .then(response => {       
+        setQuestion(response.data)
+      })
+      .catch(error => {
+        if (error.response.status === 401) {
+          navigate('/');
+          logout();
+          console.log("Unauthorized access. Logged out.");
+          toast.error("Unauthorized access.", standardToast);
+          return;
+        }
+        if (error.response.status === 404) {
+          console.log("Could not find the question.");
+          toast.error("Could not find the question.", standardToast);
+          return;
+        }
+        if (error.response.status === 500) {
+          console.log("There was an error loading the question.");
+          toast.error("There was an error loading the question.", standardToast);
+          return;
+        }
+        console.error(error)});
+      
+    })
 
     socketRef.current.on('code-change', (newCode) => {
       if (newCode !== code) {

@@ -45,9 +45,9 @@ function Match() {
 
   useEffect(() => {
     if (isMatchingComplete && !isMatching && isResponseReceived && roomId !== null) {
-      navigate(`/collab/${roomId}`);
+      navigate(`/collab/${roomId}/${complexity}`);
     }
-  }, [isMatchingComplete, isMatching, isResponseReceived, roomId, navigate]);
+  }, [isMatchingComplete, isMatching, isResponseReceived, roomId, complexity, navigate]);
 
   const sendMatchingRequest = () => {
     if (isMatching) {
@@ -71,9 +71,6 @@ function Match() {
           setRoomId(res.roomId);
           setIsMatchingComplete(true);
           setIsResponseReceived(true);
-          if(res.isMatchFound) {
-            navigate('/collab');
-          }
           
         })
         .catch(error => {
