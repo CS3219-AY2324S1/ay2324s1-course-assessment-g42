@@ -45,7 +45,7 @@ async function sendMatchingRequest(username, complexity, timeOfReq) {
                         if (msg.properties.correlationId === userReq.correlationId) {
                             response = JSON.parse(msg.content);
                     
-                            console.log(` [client ${username}]] Server response: ${response.message}`);
+                            console.log(` [client ${username}] Server response: ${response.message}`);
 
                             resolve(msg.content);
                             connection.close();
