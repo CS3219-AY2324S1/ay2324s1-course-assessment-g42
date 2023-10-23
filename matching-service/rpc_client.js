@@ -9,8 +9,7 @@ function createUserReq(username, complexity, timeOfReq, replyTo) {
         complexity : complexity,
         timeOfReq : timeOfReq,
         correlationId : newCorrelationId,
-        replyTo : replyTo,
-        isValid : true
+        replyTo : replyTo
     };
     return userReq;
 }
@@ -23,7 +22,7 @@ async function sendMatchingRequest(username, complexity, timeOfReq) {
                 reject(error0);
                 return;
             }
-            console.log('Client connected to Cloud AMQP');
+            
             connection.createChannel(function(error1, channel) {
                 if (error1) {
                     console.error('Error creating channel:', error1);
