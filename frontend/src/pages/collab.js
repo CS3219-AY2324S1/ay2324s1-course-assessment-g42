@@ -21,7 +21,7 @@ function Collab() {
   const [code, setCode] = useState('');
   const socketRef = useRef();
   const navigate = useNavigate();
-  const { roomId, qnComplexity } = useParams();
+  const { roomId, qnComplexity, matchedUser } = useParams();
 
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
@@ -35,7 +35,7 @@ function Collab() {
 
   useEffect(() => {
     // generate a random question from db
-    const ids = [1, 2, 13, 20]; // list of sample ids currently in db
+    const ids = [1, 2, 3, 4, 5, 6, 13, 20, 50, 60]; // list of sample ids currently in db
     const randomIndex = Math.floor(Math.random() * ids.length);
     let randomId = ids[randomIndex]; // chng back to const
     setQuestionId(randomId);
@@ -176,7 +176,7 @@ function Collab() {
                 Chat
               </div>
               <div className="collab-chat-content">
-                u r matched with (some user)
+                u r matched with {matchedUser}
               </div>
             </Grid>
             <Grid item xs={6} style={{marginTop: "10px", maxHeight: "94%"}}>
