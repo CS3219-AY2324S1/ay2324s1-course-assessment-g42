@@ -2,7 +2,7 @@
 require('dotenv').config();
 var amqp = require('amqplib/callback_api');
 
-const MAX_TIME = 29800;
+const MAX_TIME = 29900; 
 const queue = 'rpc_queue';
 var consumerMap = new Map(); // track the consumers and first user request received
 
@@ -68,11 +68,18 @@ function handleMatchFound(firstUserReq, secondUserReq, channel, consumerTag) {
         Buffer.from(JSON.stringify(firstUserRes)), {
             correlationId: firstUserReq.correlationId
         });
-    consumerMap.set(consumerTag, null);
+    consumerMap.set(consumerTag, null);  // update first userReq received to null
+    console.log(` [consumer ${consumerTag}] Matched ${firstUserReq.username} and ${secondUserReq.username}`);
+    console.log(` [consumer ${consumerTag}] Removed first user request from consumerMap:`);
+    console.log(consumerMap);
 }
 
 function handleIsFirstUserReq(userReq, channel, consumerTag) {
-    consumerMap.set(consumerTag, userReq);
+    consumerMap.set(consumerTag, userReq);  // set first userReq received
+    console.log(` [consumer ${consumerTag}] First user request is waiting for match, updated in consumerMap`);
+    console.log(consumerMap);
+
+    // wait until timeout for match
     setTimeout(() => {
         const response = {
             isMatchFound : false,
@@ -80,6 +87,7 @@ function handleIsFirstUserReq(userReq, channel, consumerTag) {
             roomId : null,
             message : 'No match found. Try again in a while!'
         }
+        // only send response if it is not a duplicate response terminated previously
         if (consumerMap.get(consumerTag) == userReq) {
             channel.sendToQueue(userReq.replyTo,
                 Buffer.from(JSON.stringify(response)), {
@@ -88,21 +96,25 @@ function handleIsFirstUserReq(userReq, channel, consumerTag) {
             console.log(` [consumer ${consumerTag}] No match found. Deleting ${consumerTag}.`);
             channel.cancel(consumerTag);
             consumerMap.delete(consumerTag);
+            console.log(consumerMap);
         }
     }
     , calculateTimeLeft(userReq.timeOfReq));
 }
 
 function handleDuplicateRequest(firstUserReq, secondUserReq, channel, consumerTag1, consumerTag2) {
-    console.log(` [consumer ${consumerTag2}] Duplicate user request found, terminating first request.`);
+    console.log(` [consumer ${consumerTag2}] Duplicate user request found, terminating first request. Updated consumerMap:`);
     consumerMap.set(consumerTag1, null);
     consumerMap.set(consumerTag2, secondUserReq);
+    console.log(consumerMap);
+
     const response = {
         isMatchFound : false,
         username : '',
         roomId : null,
         message : 'You are waiting in another tab! We will take your latest request.'
     };
+    // send response to the first user request
     channel.sendToQueue(firstUserReq.replyTo,
         Buffer.from(JSON.stringify(response)), {
             correlationId: firstUserReq.correlationId
@@ -117,6 +129,7 @@ function handleExpiredRequest(userReq, channel) {
         roomId : null,
         message : 'Your request expired before reaching our server!'
     };
+    // send response message to client
     channel.sendToQueue(userReq.replyTo,
         Buffer.from(JSON.stringify(response)), {
             correlationId: userReq.correlationId
@@ -131,12 +144,14 @@ function generateUuid() {
 
 function createConsumer(queue, channel) {
     const consumerTag = `${queue}_consumer`;
+
+    // receive messages from the main queue (rpc_queue) which expects match requests from client
     channel.consume(queue, function reply(msg) {
         const userReq = JSON.parse(msg.content);
-        console.log(`  [Consumer ${consumerTag}] Got username:${userReq.username}, complexity:${userReq.complexity}, time of request:${userReq.timeOfReq}`);
+        console.log(` [consumer ${consumerTag}] Got username:${userReq.username}, complexity:${userReq.complexity}, time of request:${userReq.timeOfReq}`);
         
-        const isNotTimeOut = isReqTimeValid(userReq.timeOfReq);
-        const isDuplicate = isDuplicateUser(userReq);
+        const isNotTimeOut = isReqTimeValid(userReq.timeOfReq);   // check if the request expired before reaching the server
+        const isDuplicate = isDuplicateUser(userReq);   // check if the user made multiple requests within the MAX_TIMEOUT period
         if (isDuplicate) {
             const consumerTag1 = findDuplicateUser(userReq)
             handleDuplicateRequest(consumerMap.get(consumerTag1), userReq, channel, consumerTag1, consumerTag);
@@ -173,7 +188,7 @@ function runServer() {
             channel.assertQueue(queue, {
                 durable: true
             }, function(err, q) {
-                console.log(' [server] Number of messages in queue: ' + q.messageCount);
+                console.log(' [server] Number of messages in main queue: ' + q.messageCount);
             });
             channel.prefetch(1);
             
@@ -191,7 +206,7 @@ function runServer() {
                     if (err) {
                         throw err;
                     }
-                    console.log(' [server] Number of messages left in queue: ' + q.messageCount);
+                    console.log(' [server] Number of messages left in main queue: ' + q.messageCount);
                 });
                 const isNotTimeOut = isReqTimeValid(userReq.timeOfReq); // checl if request expired before reaching server
                 
@@ -201,8 +216,17 @@ function runServer() {
                     channel.assertQueue(matchCriteria, {
                         autoDelete: true
                     }, function (err, q) {
+                        if (err) {
+                            throw err;
+                        }
+
+                        const numOfMessages = q.messageCount;
+                        console.log(` [server] Number of messages in ${matchCriteria} queue: ${numOfMessages}`);
+
+                        // send match request to the specific queue based on matchCriteria
                         channel.sendToQueue(matchCriteria, Buffer.from(JSON.stringify(userReq)));
                         const consumerTag = `${matchCriteria}_consumer`;
+                        // each queue should only have one consumer, check no consumer exists for that queue before creating
                         if (!consumerMap.has(consumerTag)) {
                             console.log(' [server] Creating a new consumer ', consumerTag);
                             createConsumer(matchCriteria, channel);
