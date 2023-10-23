@@ -157,11 +157,11 @@ describe("Test Question Service", function () {
 
         const response = await chai
             .request(index)
-            .post("/question/getQuestions")
+            .get("/question/getQuestions")
             .send(getQuestions);
 
         expect(response.status).to.equal(401);
-    })
+    });
 
     it("Should get questions", async () => {
         const getQuestions = {
@@ -171,10 +171,10 @@ describe("Test Question Service", function () {
 
         const response = await chai
             .request(index)
-            .post("/question/getQuestions")
+            .get("/question/getQuestions")
             .set('Cookie', `token=${authToken}`)
             .send(getQuestions);
-
+            
         expect(response.status).to.equal(200);
     });
 
@@ -185,7 +185,7 @@ describe("Test Question Service", function () {
 
         const response = await chai
             .request(index)
-            .post("/question/getQuestions")
+            .get("/question/getQuestions")
             .set('Cookie', `token=${authToken}`)
             .send(invalidGet);
 
