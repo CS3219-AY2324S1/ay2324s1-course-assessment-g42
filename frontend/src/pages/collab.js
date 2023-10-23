@@ -67,7 +67,7 @@ function Collab() {
       }
     console.error(error)});
 
-    socketRef.current = io('http://localhost:80',  { transports : ['websocket'] });
+    socketRef.current = io('http://localhost:5002',  { transports : ['websocket'] });
 
     socketRef.current.emit('join-room', roomName);
 
