@@ -39,4 +39,4 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(80, () => console.log("Matching server Started on Port 80"));
+server.listen(5002, () => console.log("Collaboration server Started on Port 5002"));
