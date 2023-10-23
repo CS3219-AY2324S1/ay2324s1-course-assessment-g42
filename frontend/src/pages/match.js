@@ -113,7 +113,7 @@ function Match() {
         ) : ''}
       {isMatchingComplete & !isMatching ? (
         isResponseReceived ? (<p>{responseMessage}</p>)
-        : (<p>Server error occurred! Try again in a while.</p>)
+        : (<p>Server took too long to respond!</p>)
         )
         : ''}
     </div>
