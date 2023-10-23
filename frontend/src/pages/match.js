@@ -24,6 +24,7 @@ function Match() {
   const [username, setUsername] = useState('');
   const [timeLeft, setTimeLeft] = useState(30);
   const [isResponseReceived, setIsResponseReceived] = useState(false);
+  const [roomId, setRoomId] = useState('');
 
   useEffect(() => {
     const loggedInUser = Cookies.get('user');
@@ -42,7 +43,11 @@ function Match() {
     
   }, [navigate]);
 
-  
+  useEffect(() => {
+    if (isMatchingComplete && !isMatching && isResponseReceived && roomId !== null) {
+      navigate(`/collab/${roomId}`);
+    }
+  }, [isMatchingComplete, isMatching, isResponseReceived, roomId, navigate]);
 
   const sendMatchingRequest = () => {
     if (isMatching) {
@@ -60,7 +65,10 @@ function Match() {
         .then(response => { 
           setIsMatching(false);
           const res = response.data;
+          console.log(response.data)
+          console.log(response.data.roomId)
           setResponseMessage(res.message);
+          setRoomId(res.roomId);
           setIsMatchingComplete(true);
           setIsResponseReceived(true);
         })

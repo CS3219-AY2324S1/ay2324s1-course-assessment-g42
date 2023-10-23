@@ -46,6 +46,22 @@ async function getMaxQuestionId(req, res) {
   }
 }
 
+async function getQuestionById(req, res) {
+  try {
+    const { id } = req.body;
+    const question = await QuestionModel.findOne({ id: id });
+
+    if (!question) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+
+    res.json(question); // Respond with found document
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+}
+
 async function addQuestion(req, res) {
   try {
     const { id, title, description, categories, complexity } = req.body;
@@ -94,9 +110,37 @@ async function deleteQuestion(req, res) {
   }
 }
 
+async function getQuestionByComplexity(req, res) {
+  try {
+    const { complexity } = req.body;
+
+    if (!(complexity == 'Easy' || complexity == 'Medium' || complexity == 'Hard')) {
+      return(res).status(402).json({ message: 'Invalid complexity given' });
+    }
+    // Find questions with the specified complexity
+    const questions = await QuestionModel.find({ complexity: complexity });
+
+    if (questions.length === 0) {
+      return res.status(403).json({ message: 'No questions found for the specified complexity.' });
+    }
+
+    // Generate a random index to select a question
+    const randomIndex = Math.floor(Math.random() * questions.length);
+    const randomQuestion = questions[randomIndex];
+
+    res.status(200).json(randomQuestion.id); //Respond with random question id
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occured '});
+  }
+}
+
 module.exports = { 
   getQuestions,
+  getQuestionById,
   getMaxQuestionId,
   addQuestion,
-  deleteQuestion
+  deleteQuestion,
+  getQuestionByComplexity
 };
