@@ -63,6 +63,7 @@ function Match() {
           setResponseMessage(res.message);
           setIsMatchingComplete(true);
           setIsResponseReceived(true);
+          navigate('/collab');
         })
         .catch(error => {
           if (error.response.status === 401) {
