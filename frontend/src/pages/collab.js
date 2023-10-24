@@ -17,7 +17,6 @@ import { RenderedDescription, DifficultyText } from '../helpers/questionFormatte
 
 function Collab() {
   const [question, setQuestion] = useState(null);
-  const [questionId, setQuestionId] = useState(null);
   const [code, setCode] = useState('');
   const socketRef = useRef();
   const navigate = useNavigate();
@@ -34,21 +33,17 @@ function Collab() {
   }
 
   useEffect(() => {
-    // generate a random question from db
-    const ids = [1, 2, 3, 4, 5, 6, 13, 20, 50, 60]; // list of sample ids currently in db
-    const randomIndex = Math.floor(Math.random() * ids.length);
-    let randomId = ids[randomIndex]; // chng back to const
-    setQuestionId(randomId);
-    console.log(randomId);
+    let randomId = null;
 
     // get questions from database
     axios.post(
-      QUESTION_API_URL + "/question/getQuestionById",
-      { id: randomId },
+      QUESTION_API_URL + "/question/getQuestionByComplexity",
+      { complexity: qnComplexity },
       { withCredentials: true, credentials: 'include' }
     )
     .then(response => {       
-      setQuestion(response.data)
+      randomId = response.data;
+      socketRef.current.emit('generate-question', roomId, randomId);
     })
     .catch(error => {
       if (error.response.status === 401) {
@@ -78,11 +73,8 @@ function Collab() {
     console.log(roomId);
     socketRef.current.emit('join-room', roomId);
 
-    socketRef.current.emit('generate-question', roomId, randomId);
-
     socketRef.current.on('generate-question', (qnId) => {
       if (qnId !== randomId) {
-        setQuestionId(qnId);
         randomId = qnId;
       }
       axios.post(
