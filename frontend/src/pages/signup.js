@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Paper, Typography, TextField, Button, Container } from '@mui/material';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { standardToast } from '../styles/toastStyles';
 
 import { USER_API_URL } from '../config';
 
@@ -26,7 +27,17 @@ function Signup() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        const user = { username, email, password, password2, role };
+
+        if (password !== password2) {
+            toast.error("Passwords do not match", standardToast);
+            return;
+        }
+
+        if (password.length < 8) {
+            toast.error("Passwords must have at least 8 characters", standardToast);
+            return;
+        }
+        const user = { username, email, password, role };
         try {
             const response = await axios.post(
               USER_API_URL + '/user/register',
@@ -34,11 +45,7 @@ function Signup() {
               { withCredentials: true, credentials: 'include' }
             );
             if (response.status === 200) {
-                toast.success('Account created successfully', {
-                    position: 'top-center',
-                    autoClose: 3000,
-                    theme: 'dark'
-                })
+                toast.success('Account created successfully', standardToast);
                 navigate('/login');
                 //reset state
                 setUsername('');
@@ -47,36 +54,12 @@ function Signup() {
                 setPassword2('');
             }
         } catch (error) {
-            if (error.response.status === 403) {
-                toast.error('Password must have at least 8 characters', {
-                    position: 'top-center',
-                    autoClose: 3000,
-                    theme: 'dark',
-                });
-            }  else if (error.response.status === 400) {
-                toast.error('Passwords do not match', {
-                position: 'top-center',
-                autoClose: 3000,
-                theme: 'dark',
-                });
-            } else if (error.response.status === 409) {
-                toast.error('Email already registered. Login?', {
-                    position: 'top-center',
-                    autoClose: 3000,
-                    theme: 'dark',
-                });
+            if (error.response.status === 409) {
+                toast.error('Email already registered. Login?', standardToast);
             } else if (error.response.status === 422) {
-                toast.error('Username already exists', {
-                    position: 'top-center',
-                    autoClose: 3000,
-                    theme: 'dark',
-                });
+                toast.error('Username already exists', standardToast);
             } else if (error.response.status === 500) {
-                toast.error('Unknown error occured', {
-                    position: 'top-center',
-                    autoClose: 3000,
-                    theme: 'dark',
-                });
+                toast.error('Unknown error occured', standardToast);
             }
         }
     };

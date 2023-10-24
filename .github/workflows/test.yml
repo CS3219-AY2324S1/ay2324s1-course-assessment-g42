@@ -6,7 +6,8 @@ on:
     types:
       - opened
   push:
-    branches: [master]
+    branches: 
+      - '*'
 
 env:
   JWT_SECRET_KEY: '${{ secrets.JWT_SECRET_KEY }}'
