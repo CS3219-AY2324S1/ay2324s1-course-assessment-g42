@@ -57,11 +57,7 @@ function Signup() {
             if (error.response.status === 409) {
                 toast.error('Email already registered. Login?', standardToast);
             } else if (error.response.status === 422) {
-                toast.error('Username already exists', {
-                    position: 'top-center',
-                    autoClose: 3000,
-                    theme: 'dark',
-                });
+                toast.error('Username already exists', standardToast);
             } else if (error.response.status === 500) {
                 toast.error('Unknown error occured', standardToast);
             }
