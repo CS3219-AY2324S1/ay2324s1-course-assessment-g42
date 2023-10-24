@@ -46,9 +46,9 @@ function Match() {
 
   useEffect(() => {
     if (isMatchingComplete && !isMatching && isResponseReceived && roomId !== null) {
-      navigate(`/collab/${roomId}/${complexity}/${matchedUser}`);
+      navigate(`/collab/${roomId}/${complexity}`);
     }
-  }, [isMatchingComplete, isMatching, isResponseReceived, roomId, complexity, matchedUser, navigate]);
+  }, [isMatchingComplete, isMatching, isResponseReceived, roomId, complexity, navigate]);
 
   const sendMatchingRequest = () => {
     if (isMatching) {

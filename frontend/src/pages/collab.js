@@ -21,7 +21,8 @@ function Collab() {
   const [code, setCode] = useState('');
   const socketRef = useRef();
   const navigate = useNavigate();
-  const { roomId, qnComplexity, matchedUser } = useParams();
+  const { roomId, qnComplexity } = useParams();
+  const [matchedUser, setMatchedUser] = useState(null);
 
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
@@ -46,7 +47,7 @@ function Collab() {
       navigate('/login');
       return;
     }
-
+    const username = JSON.parse(loggedInUser).username;
     let randomId = null;
 
     // get questions from database
@@ -87,7 +88,16 @@ function Collab() {
     console.log(roomId);
     socketRef.current.emit('join-room', roomId);
     //socketRef.current.emit('set-language', roomId, language);
-    //socketRef.current.emit('set-user', roomId, username);
+    socketRef.current.emit('set-user', roomId, username);
+
+    socketRef.current.on('get-info', (room) => {
+      if (room.user1 !== null && room.user1 !== username) {
+        setMatchedUser(room.user1);
+      } else if (room.user2 !== null && room.user2 !== username) {
+        setMatchedUser(room.user2);
+      }
+
+    })
 
     socketRef.current.on('generate-question', (qnId) => {
       if (qnId !== randomId) {
@@ -100,6 +110,7 @@ function Collab() {
       )
       .then(response => {       
         setQuestion(response.data)
+        socketRef.current.emit('get-info', roomId);
       })
       .catch(error => {
         if (error.response.status === 401) {

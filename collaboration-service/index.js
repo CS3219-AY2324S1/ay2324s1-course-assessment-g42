@@ -39,12 +39,35 @@ io.on('connection', (socket) => {
     socket.to(roomName).emit('code-change', code);
   });
 
+  // Return question id for a given room
   socket.on('generate-question', (roomName, questionId) => {
     if (rooms[roomName].qnId === null) {
       rooms[roomName].qnId = questionId;
     }
     console.log(rooms[roomName].qnId);
     socket.to(roomName).emit('generate-question', rooms[roomName].qnId);
+  })
+
+  // get room info
+  socket.on('get-info', (roomName) => {
+    socket.to(roomName).emit('get-info', rooms[roomName]);
+    console.log(rooms[roomName]);
+  })
+
+  // set usernames for a room
+  socket.on('set-user', (roomName, username) => {
+    if (rooms[roomName].user1 === null) {
+      rooms[roomName].user1 = username;
+    } else {
+      rooms[roomName].user2 = username;
+    }
+  })
+
+  // set language for a room
+  socket.on('set-language', (roomName, language) => {
+    if (rooms[roomName].language === null) {
+      rooms[roomName].language = language;
+    }
   })
 
   socket.on('disconnect-room', (roomName) => {
