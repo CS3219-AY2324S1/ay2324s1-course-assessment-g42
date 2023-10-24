@@ -6,6 +6,20 @@
   margin: 70px;
 }
 
+.home-title-text {
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+}
+
+.grad-box {
+  margin-top: -15px;
+  padding: 30px;
+  text-align: center;
+  color: rgb(231, 231, 231);
+  background-image: linear-gradient(rgb(0, 0, 0), rgb(105, 105, 105));
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
