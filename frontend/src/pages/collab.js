@@ -21,10 +21,9 @@ function Collab() {
   const [code, setCode] = useState('');
   const socketRef = useRef();
   const navigate = useNavigate();
-  const { roomId, qnComplexity } = useParams();
+  const { roomId, qnComplexity, language } = useParams();
   const [matchedUser, setMatchedUser] = useState(null);
   const [rejoin, setRejoin] = useState(false);
-  const language = 'javascript'; // hardcoded for now
 
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
@@ -190,7 +189,7 @@ function Collab() {
         {/* Right side of page */}
         <Grid item xs={7} style={{maxHeight: '85vh', overflow: 'auto'}}>
           <div className="collab-section-header">
-            Javascript
+            {language}
           </div>
           <div className="collab-editor-content">
           <MonacoEditor
