@@ -2,6 +2,7 @@ import '../App.css';
 import '../styles/collab.css';
 import React, { useState, useEffect, useRef } from 'react';
 import axios from "axios";
+import Cookies from 'js-cookie';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
@@ -33,6 +34,19 @@ function Collab() {
   }
 
   useEffect(() => {
+    const loggedInUser = Cookies.get('user');
+    if (!loggedInUser) {
+      
+      toast.error("Not signed in!", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "dark",
+      });
+      toast.clearWaitingQueue();
+      navigate('/login');
+      return;
+    }
+
     let randomId = null;
 
     // get questions from database
@@ -72,6 +86,8 @@ function Collab() {
 
     console.log(roomId);
     socketRef.current.emit('join-room', roomId);
+    //socketRef.current.emit('set-language', roomId, language);
+    //socketRef.current.emit('set-user', roomId, username);
 
     socketRef.current.on('generate-question', (qnId) => {
       if (qnId !== randomId) {
