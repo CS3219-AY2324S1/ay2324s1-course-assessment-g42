@@ -113,9 +113,13 @@ function Collab() {
       }
     });
 
+    socketRef.current.on('disconnect', (roomId) => {
+      socketRef.current.emit('disconnect-room', roomId);
+    })
+
     // Clean up the socket connection on unmount
     return () => {
-      socketRef.current.disconnect();
+      socketRef.current.disconnect(roomId);
     };
     // Do not remove the next line
     // eslint-disable-next-line react-hooks/exhaustive-deps

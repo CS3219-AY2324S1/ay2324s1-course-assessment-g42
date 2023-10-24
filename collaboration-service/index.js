@@ -8,10 +8,7 @@ const socketIo = require('socket.io');
 const server = http.createServer(app);
 const io = socketIo(server);
 
-var dict = {
-  roomId : null,
-  questionId : null
-};
+const rooms = {};
 
 app.use(
   cors({
@@ -31,8 +28,9 @@ io.on('connection', (socket) => {
   // Create a room for each pair of users based on user IDs
   socket.on('join-room', (roomName) => {
     console.log("User joined:", roomName)
-    dict.roomId = roomName;
-    dict.questionId = null;
+    if (!rooms[roomName]) {
+      rooms[roomName] = {user1 : null, user2: null, qnId : null, language : null};
+    } 
     socket.join(roomName);
   });
 
@@ -42,16 +40,21 @@ io.on('connection', (socket) => {
   });
 
   socket.on('generate-question', (roomName, questionId) => {
-    if (dict.questionId === null) {
-      dict.questionId = questionId;
+    if (rooms[roomName].qnId === null) {
+      rooms[roomName].qnId = questionId;
     }
-    console.log(dict.questionId);
-    socket.to(roomName).emit('generate-question', dict.questionId);
+    console.log(rooms[roomName].qnId);
+    socket.to(roomName).emit('generate-question', rooms[roomName].qnId);
+  })
+
+  socket.on('disconnect-room', (roomName) => {
+    rooms[roomName].qnId = null;
+    rooms[roomName].user1 = null;
+    rooms[roomName].user2 = null;
+    rooms[roomName].language = null;
   })
 
   socket.on('disconnect', () => {
-    dict.roomId = null;
-    dict.questionId = null;
     console.log("Socket disconnected:", socket.id);
   });
 });
