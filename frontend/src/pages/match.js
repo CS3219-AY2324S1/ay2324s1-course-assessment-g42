@@ -22,7 +22,6 @@ function Match() {
   const [responseMessage, setResponseMessage] = useState('');
   const [isMatchingComplete, setIsMatchingComplete] = useState(false);
   const [username, setUsername] = useState('');
-  const [matchedUser, setMatchedUser] = useState('');
   const [timeLeft, setTimeLeft] = useState(30);
   const [isResponseReceived, setIsResponseReceived] = useState(false);
   const [roomId, setRoomId] = useState('');
@@ -70,7 +69,6 @@ function Match() {
           console.log(response.data.roomId)
           setResponseMessage(res.message);
           setRoomId(res.roomId);
-          setMatchedUser(res.username);
           setIsMatchingComplete(true);
           setIsResponseReceived(true);
           
