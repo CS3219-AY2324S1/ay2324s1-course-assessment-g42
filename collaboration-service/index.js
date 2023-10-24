@@ -9,6 +9,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 const rooms = {};
+let roomId = null;
 
 app.use(
   cors({
@@ -28,9 +29,10 @@ io.on('connection', (socket) => {
   // Create a room for each pair of users based on user IDs
   socket.on('join-room', (roomName) => {
     console.log("User joined:", roomName)
-    if (!rooms[roomName]) {
+    if (!rooms[roomName] || rooms[roomName] === null) {
       rooms[roomName] = {user1 : null, user2: null, qnId : null, language : null};
     } 
+    roomId = roomName;
     socket.join(roomName);
   });
 
@@ -58,7 +60,7 @@ io.on('connection', (socket) => {
   socket.on('set-user', (roomName, username) => {
     if (rooms[roomName].user1 === null) {
       rooms[roomName].user1 = username;
-    } else {
+    } else if (rooms[roomName].user2 === null) {
       rooms[roomName].user2 = username;
     }
   })
@@ -75,9 +77,14 @@ io.on('connection', (socket) => {
     rooms[roomName].user1 = null;
     rooms[roomName].user2 = null;
     rooms[roomName].language = null;
+    rooms[roomName] = null;
+    socket.disconnect();
+    socket.leave(roomName);
+    
   })
 
   socket.on('disconnect', () => {
+    socket.broadcast.to(roomId).emit('disconnect-client');
     console.log("Socket disconnected:", socket.id);
   });
 });

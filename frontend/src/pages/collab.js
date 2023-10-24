@@ -7,7 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
-import { Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import MonacoEditor from 'react-monaco-editor';
 
@@ -23,6 +23,7 @@ function Collab() {
   const navigate = useNavigate();
   const { roomId, qnComplexity } = useParams();
   const [matchedUser, setMatchedUser] = useState(null);
+  const [rejoin, setRejoin] = useState(false);
   const language = 'javascript'; // hardcoded for now
 
   const editorDidMount = (editor, monaco) => {
@@ -33,6 +34,12 @@ function Collab() {
   const handleChange = (value, event) => {
     setCode(value);
     socketRef.current.emit('code-change', roomId, value);
+  }
+
+  const handleDisconnect = () => {
+    socketRef.current.emit('disconnect-room', roomId);
+    socketRef.current.disconnect(roomId);
+    navigate('/');
   }
 
   useEffect(() => {
@@ -82,11 +89,11 @@ function Collab() {
       
     console.error(error)});
 
-    
-
+  
     socketRef.current = io('http://localhost:5002',  { transports : ['websocket'] });
 
     console.log(roomId);
+    setRejoin(true);
     socketRef.current.emit('join-room', roomId);
     socketRef.current.emit('set-language', roomId, language);
     socketRef.current.emit('set-user', roomId, username);
@@ -141,17 +148,19 @@ function Collab() {
       }
     });
 
-    socketRef.current.on('disconnect', (roomId) => {
-      socketRef.current.emit('disconnect-room', roomId);
+    socketRef.current.on('disconnect-client', () => {
+      setRejoin(false);
+      console.log("client disconnected")
     })
 
     // Clean up the socket connection on unmount
     return () => {
       socketRef.current.disconnect(roomId);
+      setRejoin(false);
     };
     // Do not remove the next line
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate])
+  }, [navigate, rejoin])
 
   return (
     <div>
@@ -174,6 +183,7 @@ function Collab() {
             ))}
             <RenderedDescription text={question.description} />
           </div>
+          <Button variant="contained" onClick={handleDisconnect}>Disconnect</Button>
 
         </Grid>
 
