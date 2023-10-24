@@ -2,7 +2,7 @@ import '../App.css';
 import '../styles/collab.css';
 import React, { useState, useEffect, useRef } from 'react';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
@@ -20,7 +20,7 @@ function Collab() {
   const [code, setCode] = useState('');
   const socketRef = useRef();
   const navigate = useNavigate();
-  const roomName = "room-123";
+  const { roomId } = useParams();
 
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
@@ -29,7 +29,7 @@ function Collab() {
 
   const handleChange = (value, event) => {
     setCode(value);
-    socketRef.current.emit('code-change', roomName, value);
+    socketRef.current.emit('code-change', roomId, value);
   }
 
   useEffect(() => {
@@ -69,7 +69,8 @@ function Collab() {
 
     socketRef.current = io('http://localhost:80',  { transports : ['websocket'] });
 
-    socketRef.current.emit('join-room', roomName);
+    console.log(roomId)
+    socketRef.current.emit('join-room', roomId);
 
     socketRef.current.on('code-change', (newCode) => {
       if (newCode !== code) {

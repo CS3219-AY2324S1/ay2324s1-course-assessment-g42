@@ -157,7 +157,7 @@ describe("Test Question Service", function () {
 
         const response = await chai
             .request(index)
-            .get("/question/getQuestions")
+            .post("/question/getQuestions")
             .send(getQuestions);
 
         expect(response.status).to.equal(401);
@@ -171,7 +171,7 @@ describe("Test Question Service", function () {
 
         const response = await chai
             .request(index)
-            .get("/question/getQuestions")
+            .post("/question/getQuestions")
             .set('Cookie', `token=${authToken}`)
             .send(getQuestions);
             
@@ -185,10 +185,79 @@ describe("Test Question Service", function () {
 
         const response = await chai
             .request(index)
-            .get("/question/getQuestions")
+            .post("/question/getQuestions")
             .set('Cookie', `token=${authToken}`)
             .send(invalidGet);
 
         expect(response.status).to.equal(400);
+    });
+
+    it("Should not get a random question of given difficulty if not authenticated", async() => {
+        const dummyGet = {
+
+        }
+
+        const response = await chai
+            .request(index)
+            .post("/question/getQuestionByComplexity")
+            .send(dummyGet);
+
+        expect(response.status).to.equal(401);
     })
+
+    it("Should get a random question of easy difficulty", async() => {
+        const getEasyComplexity = {
+            complexity: 'Easy'
+        }
+
+        const response = await chai
+            .request(index)
+            .post("/question/getQuestionByComplexity")
+            .set('Cookie', `token=${authToken}`)
+            .send(getEasyComplexity);
+
+        expect(response.status).to.equal(200);
+    });
+
+    it("Should get a random question of medium difficulty", async() => {
+        const getMediumComplexity = {
+            complexity: 'Medium'
+        }
+
+        const response = await chai
+            .request(index)
+            .post("/question/getQuestionByComplexity")
+            .set('Cookie', `token=${authToken}`)
+            .send(getMediumComplexity)
+        
+        expect(response.status).to.equal(200);
+    });
+
+    it("Should get a random question of hard difficulty", async() => {
+        const getHardComplexity = {
+            complexity: 'Hard'
+        }
+
+        const response = await chai
+            .request(index)
+            .post("/question/getQuestionByComplexity")
+            .set('Cookie', `token=${authToken}`)
+            .send(getHardComplexity)
+        
+        expect(response.status).to.equal(200);
+    });
+
+    it("Should not get a random question of invalid difficutly", async() => {
+        const getInvalidComplexity = {
+            complexity: 'Invalid'
+        }
+
+        const response = await chai
+            .request(index)
+            .post("/question/getQuestionByComplexity")
+            .set('Cookie', `token=${authToken}`)
+            .send(getInvalidComplexity)
+    
+        expect(response.status).to.equal(402);
+    });
 });

@@ -6,6 +6,46 @@
   margin: 70px;
 }
 
+.home-title-text {
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+}
+
+.home-orange-heading {
+  font-size: 18px;
+  font-weight: bold;
+  color: #F24E1E;
+}
+
+.home-caption-text {
+  font-size: 14px;
+  justify-content: center;
+}
+
+.center-column-wrapper {
+  margin: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.center-column-body-wrapper {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.grad-box {
+  margin-top: -15px;
+  padding: 30px;
+  text-align: center;
+  color: rgb(231, 231, 231);
+  background-image: linear-gradient(rgb(0, 0, 0), rgb(105, 105, 105));
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

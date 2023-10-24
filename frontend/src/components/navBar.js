@@ -32,7 +32,7 @@ function NavBar() {
     }, [setIsLoggedIn]);
 
     return (
-        <AppBar position="static" sx={{ backgroundColor: 'black' }}>
+        <AppBar position="static" sx={{ backgroundColor: 'black' }} elevation={0}>
             <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <a href="/">

@@ -4,10 +4,10 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 
 async function registerUser(req, res) {
-    let { username, email, password, password2, role } = req.body;
+    let { username, email, password, role } = req.body;
 
     console.log ({
-        username, email, password, password2, role
+        username, email, password, role
     });
 
     // Check if email already registered
@@ -46,13 +46,6 @@ async function registerUser(req, res) {
                     if (password.length < 8) {
                         return res.status(403).json({
                             error: "Password not long enough"
-                        });
-                    }
-                    
-                    // Check that passwords match
-                    if (password !== password2) {
-                        return res.status(400).json({
-                            error: "Passwords do not match",
                         });
                     }
 
