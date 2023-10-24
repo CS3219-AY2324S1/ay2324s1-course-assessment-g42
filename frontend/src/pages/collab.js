@@ -23,6 +23,7 @@ function Collab() {
   const navigate = useNavigate();
   const { roomId, qnComplexity } = useParams();
   const [matchedUser, setMatchedUser] = useState(null);
+  const language = 'javascript'; // hardcoded for now
 
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
@@ -87,7 +88,7 @@ function Collab() {
 
     console.log(roomId);
     socketRef.current.emit('join-room', roomId);
-    //socketRef.current.emit('set-language', roomId, language);
+    socketRef.current.emit('set-language', roomId, language);
     socketRef.current.emit('set-user', roomId, username);
 
     socketRef.current.on('get-info', (room) => {
@@ -185,7 +186,7 @@ function Collab() {
           <MonacoEditor
             width="100%"
             height="400"
-            language="javascript"
+            language={language}
             value={code}
             editorDidMount={editorDidMount}
             onChange={handleChange}
