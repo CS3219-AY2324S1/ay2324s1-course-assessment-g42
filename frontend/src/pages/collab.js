@@ -45,11 +45,7 @@ function Collab() {
     const loggedInUser = Cookies.get('user');
     if (!loggedInUser) {
       
-      toast.error("Not signed in!", {
-        position: "top-center",
-        autoClose: 3000,
-        theme: "dark",
-      });
+      toast.error("Not signed in!.", standardToast);
       toast.clearWaitingQueue();
       navigate('/login');
       return;

@@ -11,7 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import WarningIcon from '@mui/icons-material/Warning';
 import { logout } from '../helpers';
 
-import FormLanguageSelect from '../components/formLanguageSelect';
+import FormLanguageSelect from '../components/match/formLanguageSelect';
 import FormComplexitySelect from '../components/questions/formComplexitySelect';
 import { MATCH_API_URL } from '../config';
 
