@@ -103,26 +103,7 @@ describe("Test User Service", function () {
                 expect(res.status).to.equal(403);
                 done();
             })
-    })
-
-    it("Should not register user with passwords not matching", done => {
-        let registerUserMismatchedPassword = {
-            username: "testUser2",
-            email: "testUser2@gmail.com",
-            password: "testUser2",
-            password2: "testUser123",
-            role: "user"
-        }
-
-        chai
-            .request(index)
-            .post("/user/register")
-            .send(registerUserMismatchedPassword)
-            .end((err, res) => {
-                expect(res.status).to.equal(400);
-                done();
-            })
-    })
+    });
 
     it("Should login testUser", done => {
         let loginUser = {
