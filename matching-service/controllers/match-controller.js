@@ -7,8 +7,8 @@ async function sendMatchingRequest(req, res) {
         console.log('Error occurred when sending match request ', error);
         return JSON.stringify({
           isMatchFound: false,
-          username : firstUserReq.username,
-          roomId : roomId,
+          username : '',
+          roomId : -1,
           message: 'Server error occurred. Try again later!'
         });
       });

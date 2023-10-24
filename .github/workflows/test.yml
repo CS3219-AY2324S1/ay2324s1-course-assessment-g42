@@ -1,7 +1,10 @@
 name: Test
 on:
-  pull_request:
-    branches: [master]
+  pull_request_target:
+    branches:
+      - '*'
+    types:
+      - opened
   push:
     branches: [master]
 
