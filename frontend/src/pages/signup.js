@@ -26,7 +26,25 @@ function Signup() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        const user = { username, email, password, password2, role };
+
+        if (password !== password2) {
+            toast.error('Passwords do not match', {
+                position: 'top-center',
+                autoClose: 3000,
+                theme: 'dark',
+            });
+            return;
+        }
+
+        if (password.length < 8) {
+            toast.error('Password must have at least 8 characters', {
+                position: 'top-center',
+                autoClose: 3000,
+                theme: 'dark',
+            });
+            return;
+        }
+        const user = { username, email, password, role };
         try {
             const response = await axios.post(
               USER_API_URL + '/user/register',
@@ -47,19 +65,7 @@ function Signup() {
                 setPassword2('');
             }
         } catch (error) {
-            if (error.response.status === 403) {
-                toast.error('Password must have at least 8 characters', {
-                    position: 'top-center',
-                    autoClose: 3000,
-                    theme: 'dark',
-                });
-            }  else if (error.response.status === 400) {
-                toast.error('Passwords do not match', {
-                position: 'top-center',
-                autoClose: 3000,
-                theme: 'dark',
-                });
-            } else if (error.response.status === 409) {
+            if (error.response.status === 409) {
                 toast.error('Email already registered. Login?', {
                     position: 'top-center',
                     autoClose: 3000,
