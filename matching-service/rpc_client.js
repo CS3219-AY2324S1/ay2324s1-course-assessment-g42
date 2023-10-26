@@ -14,7 +14,7 @@ function createUserReq(username, complexity, timeOfReq, replyTo) {
     return userReq;
 }
 
-async function sendMatchingRequest(username, complexity, timeOfReq) {
+async function sendMatchingRequest(username, complexity, language, timeOfReq) {
     return new Promise((resolve, reject) => {
         amqp.connect(process.env.CLOUDAMQP_URL + "?heartbeat=60", function(error0, connection) {
             if (error0) {
