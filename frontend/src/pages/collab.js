@@ -2,11 +2,12 @@ import '../App.css';
 import '../styles/collab.css';
 import React, { useState, useEffect, useRef } from 'react';
 import axios from "axios";
+import Cookies from 'js-cookie';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
-import { Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import MonacoEditor from 'react-monaco-editor';
 
@@ -20,7 +21,9 @@ function Collab() {
   const [code, setCode] = useState('');
   const socketRef = useRef();
   const navigate = useNavigate();
-  const { roomId } = useParams();
+  const { roomId, qnComplexity, language } = useParams();
+  const [matchedUser, setMatchedUser] = useState(null);
+  const [rejoin, setRejoin] = useState(false);
 
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
@@ -32,20 +35,33 @@ function Collab() {
     socketRef.current.emit('code-change', roomId, value);
   }
 
+  const handleDisconnect = () => {
+    socketRef.current.emit('disconnect-room', roomId);
+    socketRef.current.disconnect(roomId);
+    navigate('/');
+  }
+
   useEffect(() => {
-    // generate a random question from db
-    const ids = [1, 2, 13, 20]; // list of sample ids currently in db
-    const randomIndex = Math.floor(Math.random() * ids.length);
-    const randomId = ids[randomIndex];
+    const loggedInUser = Cookies.get('user');
+    if (!loggedInUser) {
+      
+      toast.error("Not signed in!.", standardToast);
+      toast.clearWaitingQueue();
+      navigate('/login');
+      return;
+    }
+    const username = JSON.parse(loggedInUser).username;
+    let randomId = null;
 
     // get questions from database
     axios.post(
-      QUESTION_API_URL + "/question/getQuestionById",
-      { id: randomId },
+      QUESTION_API_URL + "/question/getQuestionByComplexity",
+      { complexity: qnComplexity },
       { withCredentials: true, credentials: 'include' }
     )
     .then(response => {       
-      setQuestion(response.data)
+      randomId = response.data;
+      socketRef.current.emit('generate-question', roomId, randomId);
     })
     .catch(error => {
       if (error.response.status === 401) {
@@ -65,12 +81,61 @@ function Collab() {
         toast.error("There was an error loading the question.", standardToast);
         return;
       }
+      
     console.error(error)});
 
-    socketRef.current = io('http://localhost:80',  { transports : ['websocket'] });
+  
+    socketRef.current = io('http://localhost:5002',  { transports : ['websocket'] });
 
-    console.log(roomId)
+    console.log(roomId);
+    setRejoin(true);
     socketRef.current.emit('join-room', roomId);
+    socketRef.current.emit('set-language', roomId, language);
+    socketRef.current.emit('set-user', roomId, username);
+
+    socketRef.current.on('get-info', (room) => {
+      if (room.user1 !== null && room.user1 !== username) {
+        setMatchedUser(room.user1);
+      } else if (room.user2 !== null && room.user2 !== username) {
+        setMatchedUser(room.user2);
+      }
+
+    })
+
+    socketRef.current.on('generate-question', (qnId) => {
+      if (qnId !== randomId) {
+        randomId = qnId;
+      }
+      axios.post(
+        QUESTION_API_URL + "/question/getQuestionById",
+        { id: qnId },
+        { withCredentials: true, credentials: 'include' }
+      )
+      .then(response => {       
+        setQuestion(response.data)
+        socketRef.current.emit('get-info', roomId);
+      })
+      .catch(error => {
+        if (error.response.status === 401) {
+          navigate('/');
+          logout();
+          console.log("Unauthorized access. Logged out.");
+          toast.error("Unauthorized access.", standardToast);
+          return;
+        }
+        if (error.response.status === 404) {
+          console.log("Could not find the question.");
+          toast.error("Could not find the question.", standardToast);
+          return;
+        }
+        if (error.response.status === 500) {
+          console.log("There was an error loading the question.");
+          toast.error("There was an error loading the question.", standardToast);
+          return;
+        }
+        console.error(error)});
+      
+    })
 
     socketRef.current.on('code-change', (newCode) => {
       if (newCode !== code) {
@@ -78,13 +143,19 @@ function Collab() {
       }
     });
 
+    socketRef.current.on('disconnect-client', () => {
+      setRejoin(false);
+      console.log("client disconnected")
+    })
+
     // Clean up the socket connection on unmount
     return () => {
-      socketRef.current.disconnect();
+      socketRef.current.disconnect(roomId);
+      setRejoin(false);
     };
     // Do not remove the next line
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate])
+  }, [navigate, rejoin])
 
   return (
     <div>
@@ -107,19 +178,20 @@ function Collab() {
             ))}
             <RenderedDescription text={question.description} />
           </div>
+          <Button variant="contained" onClick={handleDisconnect}>Disconnect</Button>
 
         </Grid>
 
         {/* Right side of page */}
         <Grid item xs={7} style={{maxHeight: '85vh', overflow: 'auto'}}>
           <div className="collab-section-header">
-            Javascript
+            {language}
           </div>
           <div className="collab-editor-content">
           <MonacoEditor
             width="100%"
             height="400"
-            language="javascript"
+            language={language}
             value={code}
             editorDidMount={editorDidMount}
             onChange={handleChange}
@@ -133,7 +205,7 @@ function Collab() {
                 Chat
               </div>
               <div className="collab-chat-content">
-                u r matched with (some user)
+                u r matched with {matchedUser}
               </div>
             </Grid>
             <Grid item xs={6} style={{marginTop: "10px", maxHeight: "94%"}}>

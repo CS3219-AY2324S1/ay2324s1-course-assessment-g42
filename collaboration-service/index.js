@@ -8,6 +8,9 @@ const socketIo = require('socket.io');
 const server = http.createServer(app);
 const io = socketIo(server);
 
+const rooms = {};
+let roomId = null;
+
 app.use(
   cors({
     credentials: true,
@@ -26,6 +29,10 @@ io.on('connection', (socket) => {
   // Create a room for each pair of users based on user IDs
   socket.on('join-room', (roomName) => {
     console.log("User joined:", roomName)
+    if (!rooms[roomName] || rooms[roomName] === null) {
+      rooms[roomName] = {user1 : null, user2: null, qnId : null, language : null};
+    } 
+    roomId = roomName;
     socket.join(roomName);
   });
 
@@ -34,9 +41,52 @@ io.on('connection', (socket) => {
     socket.to(roomName).emit('code-change', code);
   });
 
+  // Return question id for a given room
+  socket.on('generate-question', (roomName, questionId) => {
+    if (rooms[roomName].qnId === null) {
+      rooms[roomName].qnId = questionId;
+    }
+    console.log(rooms[roomName].qnId);
+    socket.to(roomName).emit('generate-question', rooms[roomName].qnId);
+  })
+
+  // get room info
+  socket.on('get-info', (roomName) => {
+    socket.to(roomName).emit('get-info', rooms[roomName]);
+    console.log(rooms[roomName]);
+  })
+
+  // set usernames for a room
+  socket.on('set-user', (roomName, username) => {
+    if (rooms[roomName].user1 === null) {
+      rooms[roomName].user1 = username;
+    } else if (rooms[roomName].user2 === null) {
+      rooms[roomName].user2 = username;
+    }
+  })
+
+  // set language for a room
+  socket.on('set-language', (roomName, language) => {
+    if (rooms[roomName].language === null) {
+      rooms[roomName].language = language;
+    }
+  })
+
+  socket.on('disconnect-room', (roomName) => {
+    rooms[roomName].qnId = null;
+    rooms[roomName].user1 = null;
+    rooms[roomName].user2 = null;
+    rooms[roomName].language = null;
+    rooms[roomName] = null;
+    socket.disconnect();
+    socket.leave(roomName);
+    
+  })
+
   socket.on('disconnect', () => {
+    socket.broadcast.to(roomId).emit('disconnect-client');
     console.log("Socket disconnected:", socket.id);
   });
 });
 
-server.listen(80, () => console.log("Matching server Started on Port 80"));
+server.listen(5002, () => console.log("Collaboration server Started on Port 5002"));
