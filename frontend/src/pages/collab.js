@@ -19,11 +19,11 @@ import { RenderedDescription, DifficultyText } from '../helpers/questionFormatte
 function Collab() {
   const [question, setQuestion] = useState(null);
   const [code, setCode] = useState('');
+  const [user, setUser] = useState(null);
   const socketRef = useRef();
   const navigate = useNavigate();
   const { roomId, qnComplexity, language } = useParams();
   const [matchedUser, setMatchedUser] = useState(null);
-  const [rejoin, setRejoin] = useState(false);
 
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
@@ -36,8 +36,8 @@ function Collab() {
   }
 
   const handleDisconnect = () => {
-    socketRef.current.emit('disconnect-room', roomId);
-    socketRef.current.disconnect(roomId);
+    socketRef.current.emit('disconnect-client', roomId, user);
+    console.log("client disconnected")
     navigate('/');
   }
 
@@ -45,53 +45,57 @@ function Collab() {
     const loggedInUser = Cookies.get('user');
     if (!loggedInUser) {
       
-      toast.error("Not signed in!.", standardToast);
+      toast.error("Not signed in!", standardToast);
       toast.clearWaitingQueue();
       navigate('/login');
       return;
     }
     const username = JSON.parse(loggedInUser).username;
+    setUser(username);
     let randomId = null;
-
-    // get questions from database
-    axios.post(
-      QUESTION_API_URL + "/question/getQuestionByComplexity",
-      { complexity: qnComplexity },
-      { withCredentials: true, credentials: 'include' }
-    )
-    .then(response => {       
-      randomId = response.data;
-      socketRef.current.emit('generate-question', roomId, randomId);
-    })
-    .catch(error => {
-      if (error.response.status === 401) {
-        navigate('/');
-        logout();
-        console.log("Unauthorized access. Logged out.");
-        toast.error("Unauthorized access.", standardToast);
-        return;
-      }
-      if (error.response.status === 404) {
-        console.log("Could not find the question.");
-        toast.error("Could not find the question.", standardToast);
-        return;
-      }
-      if (error.response.status === 500) {
-        console.log("There was an error loading the question.");
-        toast.error("There was an error loading the question.", standardToast);
-        return;
-      }
-      
-    console.error(error)});
-
   
     socketRef.current = io('http://localhost:5002',  { transports : ['websocket'] });
 
     console.log(roomId);
-    setRejoin(true);
-    socketRef.current.emit('join-room', roomId);
-    socketRef.current.emit('set-language', roomId, language);
-    socketRef.current.emit('set-user', roomId, username);
+    socketRef.current.emit('join-room', roomId, username, language);
+
+    socketRef.current.on('invalid-user', () => {
+      toast.error("You cannot access this room!", standardToast);
+      navigate('/');
+      return;
+    })
+
+    socketRef.current.on('connect', () => {
+      axios.post(
+        QUESTION_API_URL + "/question/getQuestionByComplexity",
+        { complexity: qnComplexity },
+        { withCredentials: true, credentials: 'include' }
+      )
+      .then(response => {       
+        randomId = response.data;
+        socketRef.current.emit('generate-question', roomId, randomId);
+      })
+      .catch(error => {
+        if (error.response.status === 401) {
+          navigate('/');
+          logout();
+          console.log("Unauthorized access. Logged out.");
+          toast.error("Unauthorized access.", standardToast);
+          return;
+        }
+        if (error.response.status === 404) {
+          console.log("Could not find the question.");
+          toast.error("Could not find the question.", standardToast);
+          return;
+        }
+        if (error.response.status === 500) {
+          console.log("There was an error loading the question.");
+          toast.error("There was an error loading the question.", standardToast);
+          return;
+        }
+        
+      console.error(error)});
+    })
 
     socketRef.current.on('get-info', (room) => {
       if (room.user1 !== null && room.user1 !== username) {
@@ -143,19 +147,25 @@ function Collab() {
       }
     });
 
-    socketRef.current.on('disconnect-client', () => {
-      setRejoin(false);
-      console.log("client disconnected")
+    socketRef.current.on('inform-disconnect', (disconnectedUser) => {
+      // handle prompt on matched user disconnect
+      if (disconnectedUser !== username) {
+        console.log("partner has disconnected");
+        alert("Partner has disconnected");
+      }
+      
     })
 
     // Clean up the socket connection on unmount
+
     return () => {
-      socketRef.current.disconnect(roomId);
-      setRejoin(false);
+      socketRef.current.emit('disconnect-client', roomId, username);
+      console.log("client disconnected")
     };
     // Do not remove the next line
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate, rejoin])
+  }, [navigate])
+
 
   return (
     <div>

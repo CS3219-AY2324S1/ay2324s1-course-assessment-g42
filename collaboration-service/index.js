@@ -5,11 +5,12 @@ const cookieParser = require('cookie-parser');
 
 const http = require('http');
 const socketIo = require('socket.io');
+const { disconnect } = require('process');
 const server = http.createServer(app);
 const io = socketIo(server);
 
 const rooms = {};
-let roomId = null;
+
 
 app.use(
   cors({
@@ -25,14 +26,37 @@ app.use(cookieParser());
 // Set up socket
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
+  let roomId = null;
 
   // Create a room for each pair of users based on user IDs
-  socket.on('join-room', (roomName) => {
-    console.log("User joined:", roomName)
+  socket.on('join-room', (roomName, username, language) => {
     if (!rooms[roomName] || rooms[roomName] === null) {
-      rooms[roomName] = {user1 : null, user2: null, qnId : null, language : null};
+      rooms[roomName] = {user1 : null, user2: null, isUser1Present : false, isUser2Present : false, qnId : null, language : null};
     } 
     roomId = roomName;
+
+    // set user info if joining for the first time, else verify access
+    if (rooms[roomName].user1 === null) {
+      rooms[roomName].user1 = username;
+      rooms[roomName].isUser1Present = true;
+    } else if (rooms[roomName].user2 === null) {
+      rooms[roomName].user2 = username;
+      rooms[roomName].isUser2Present = true;
+    } else {
+      if (username === rooms[roomName].user1) {
+        rooms[roomName].isUser1Present = true;       
+      } else if (username === rooms[roomName].user2) {
+        rooms[roomName].isUser2Present = true;
+      } else {
+        socket.emit('invalid-user');
+        console.log("Access not allowed");
+        return;
+      }
+    }   
+    if (rooms[roomName].language === null) {
+      rooms[roomName].language = language;
+    }
+    console.log("User joined:", roomName);
     socket.join(roomName);
   });
 
@@ -56,37 +80,38 @@ io.on('connection', (socket) => {
     console.log(rooms[roomName]);
   })
 
-  // set usernames for a room
-  socket.on('set-user', (roomName, username) => {
-    if (rooms[roomName].user1 === null) {
-      rooms[roomName].user1 = username;
-    } else if (rooms[roomName].user2 === null) {
-      rooms[roomName].user2 = username;
+  socket.on('disconnect-client', (roomName, username) => {
+    if (username === rooms[roomName].user1) {
+      rooms[roomName].isUser1Present = false;       
+    } else if (username === rooms[roomName].user2) {
+      rooms[roomName].isUser2Present = false;
+    } else {
+      // do nothing, an invalid user has disconnected
+      socket.disconnect(true);
+      return;
     }
-  })
+    // if both users have disconnected
+    if (!rooms[roomName].isUser1Present && !rooms[roomName].isUser2Present) {
+      // disconnect room and clean up
+      rooms[roomName].qnId = null;
+      rooms[roomName].user1 = null;
+      rooms[roomName].user2 = null;
+      rooms[roomName].language = null;
+      rooms[roomName] = null;
 
-  // set language for a room
-  socket.on('set-language', (roomName, language) => {
-    if (rooms[roomName].language === null) {
-      rooms[roomName].language = language;
+    } else {
+      socket.to(roomName).emit('inform-disconnect', username);
     }
-  })
-
-  socket.on('disconnect-room', (roomName) => {
-    rooms[roomName].qnId = null;
-    rooms[roomName].user1 = null;
-    rooms[roomName].user2 = null;
-    rooms[roomName].language = null;
-    rooms[roomName] = null;
-    socket.disconnect();
-    socket.leave(roomName);
+    console.log(rooms[roomName]);
+    socket.disconnect(true);
+    console.log("User disconnected: ", username);
     
   })
 
   socket.on('disconnect', () => {
-    socket.broadcast.to(roomId).emit('disconnect-client');
     console.log("Socket disconnected:", socket.id);
   });
+
 });
 
 server.listen(5002, () => console.log("Collaboration server Started on Port 5002"));
