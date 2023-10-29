@@ -23,9 +23,9 @@ function Collab() {
   const [user, setUser] = useState(null);
   const socketRef = useRef();
   const navigate = useNavigate();
-  const roomId = location.state.roomId;
-  const qnComplexity = location.state.complexity;
-  const language = location.state.language;
+  let roomId = null;
+  let qnComplexity = null;
+  let language = null;
   const [matchedUser, setMatchedUser] = useState(null);
   const [isPartner, setIsPartner] = useState(true);
 
@@ -46,6 +46,17 @@ function Collab() {
   }
 
   useEffect(() => {
+    if (location.state == null || location.state.roomId == null || location.state.complexity == null || location.state.language == null) {
+      toast.error("You cannot access this room!", standardToast);
+      console.log("invalid access");
+      navigate('/');
+      return;
+    } else {
+      roomId = location.state.roomId;
+      qnComplexity = location.state.complexity;
+      language = location.state.language;
+    }
+    
     console.log(roomId, qnComplexity, language);
     const loggedInUser = Cookies.get('user');
     if (!loggedInUser) {
@@ -180,7 +191,7 @@ function Collab() {
     };
     // Do not remove the next line
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate])
+  }, [navigate, location.state])
 
 
   return (
