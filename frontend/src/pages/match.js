@@ -47,7 +47,7 @@ function Match() {
 
   useEffect(() => {
     if (isMatchingComplete && !isMatching && isResponseReceived && roomId !== null) {
-      navigate(`/collab/${roomId}/${complexity}/${language}`);
+      navigate('/collab', {state : {roomId : roomId, complexity : complexity, language : language}})
     }
   }, [isMatchingComplete, isMatching, isResponseReceived, roomId, complexity, language, navigate]);
 

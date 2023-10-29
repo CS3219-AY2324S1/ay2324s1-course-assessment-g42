@@ -3,7 +3,7 @@ import '../styles/collab.css';
 import React, { useState, useEffect, useRef } from 'react';
 import axios from "axios";
 import Cookies from 'js-cookie';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
@@ -17,12 +17,15 @@ import { logout } from '../helpers';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
 
 function Collab() {
+  const location = useLocation();
   const [question, setQuestion] = useState(null);
   const [code, setCode] = useState('');
   const [user, setUser] = useState(null);
   const socketRef = useRef();
   const navigate = useNavigate();
-  const { roomId, qnComplexity, language } = useParams();
+  const roomId = location.state.roomId;
+  const qnComplexity = location.state.complexity;
+  const language = location.state.language;
   const [matchedUser, setMatchedUser] = useState(null);
   const [isPartner, setIsPartner] = useState(true);
 
@@ -43,6 +46,7 @@ function Collab() {
   }
 
   useEffect(() => {
+    console.log(roomId, qnComplexity, language);
     const loggedInUser = Cookies.get('user');
     if (!loggedInUser) {
       
