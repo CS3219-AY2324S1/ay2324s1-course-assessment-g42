@@ -58,6 +58,7 @@ io.on('connection', (socket) => {
     }
     console.log("User joined:", roomName);
     socket.join(roomName);
+    socket.to(roomName).emit('inform-connect', username);
   });
 
   // Handle code changes within the room

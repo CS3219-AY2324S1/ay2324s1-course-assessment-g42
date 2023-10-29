@@ -24,6 +24,7 @@ function Collab() {
   const navigate = useNavigate();
   const { roomId, qnComplexity, language } = useParams();
   const [matchedUser, setMatchedUser] = useState(null);
+  const [isPartner, setIsPartner] = useState(true);
 
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
@@ -100,8 +101,10 @@ function Collab() {
     socketRef.current.on('get-info', (room) => {
       if (room.user1 !== null && room.user1 !== username) {
         setMatchedUser(room.user1);
+        setIsPartner(room.isUser1Present);
       } else if (room.user2 !== null && room.user2 !== username) {
         setMatchedUser(room.user2);
+        setIsPartner(room.isUser2Present);
       }
 
     })
@@ -150,10 +153,19 @@ function Collab() {
     socketRef.current.on('inform-disconnect', (disconnectedUser) => {
       // handle prompt on matched user disconnect
       if (disconnectedUser !== username) {
+        setIsPartner(false);
         console.log("partner has disconnected");
-        alert("Partner has disconnected");
+        toast.info("Partner has disconnected", standardToast);
       }
       
+    })
+
+    socketRef.current.on('inform-connect', (connectedUser) => {
+      if (connectedUser !== username) {
+        setIsPartner(true);
+        console.log("partner has connected");
+        toast.info("Partner has connected", standardToast);
+      }
     })
 
     // Clean up the socket connection on unmount
@@ -214,9 +226,17 @@ function Collab() {
               <div className="collab-section-header">
                 Chat
               </div>
+              {isPartner
+              ?
               <div className="collab-chat-content">
                 u r matched with {matchedUser}
               </div>
+              : 
+              <div className="collab-chat-content">
+              {matchedUser} has disconnected
+              </div>
+              }
+              
             </Grid>
             <Grid item xs={6} style={{marginTop: "10px", maxHeight: "94%"}}>
               <div className="collab-section-header">
