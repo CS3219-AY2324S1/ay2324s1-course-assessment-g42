@@ -19,7 +19,7 @@ import { MATCH_API_URL } from '../config';
 function Match() {
   const navigate = useNavigate();
   const [complexity, setComplexity] = useState("Easy");
-  const [language, setLanguage] = useState("javascript");
+  const [language, setLanguage] = useState("Javascript");
   const [isMatching, setIsMatching] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
   const [isMatchingComplete, setIsMatchingComplete] = useState(false);
