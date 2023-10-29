@@ -35,9 +35,9 @@ function NavBar() {
         <AppBar position="static" sx={{ backgroundColor: 'black' }} elevation={0}>
             <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <a href="/">
+                    <Link to="/">
                         <img src="/peerp.png" alt="peerP" width="100px" />
-                    </a>
+                    </Link>
                     <Typography variant="text" component={Link} to="/questions/1" 
                     sx={{ textDecoration: 'none', color: 'white', 
                         marginLeft: 6, fontWeight: 400, fontSize: 18 
