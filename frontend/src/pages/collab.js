@@ -23,9 +23,10 @@ function Collab() {
   const [user, setUser] = useState(null);
   const socketRef = useRef();
   const navigate = useNavigate();
-  let roomId = null;
-  let qnComplexity = null;
-  let language = null;
+  const [room, setRoom] = useState(null);
+  const [complexity, setComplexity] = useState(null);
+  const [language, setLanguage] = useState(null);
+
   const [matchedUser, setMatchedUser] = useState(null);
   const [isPartner, setIsPartner] = useState(true);
 
@@ -36,28 +37,40 @@ function Collab() {
 
   const handleChange = (value, event) => {
     setCode(value);
-    socketRef.current.emit('code-change', roomId, value);
+    socketRef.current.emit('code-change', room, value);
   }
 
   const handleDisconnect = () => {
-    socketRef.current.emit('disconnect-client', roomId, user);
+    socketRef.current.emit('disconnect-client', room, user);
     console.log("client disconnected")
     navigate('/');
   }
 
-  useEffect(() => {
-    if (location.state == null || location.state.roomId == null || location.state.complexity == null || location.state.language == null) {
-      toast.error("You cannot access this room!", standardToast);
-      console.log("invalid access");
-      navigate('/');
-      return;
-    } else {
-      roomId = location.state.roomId;
-      qnComplexity = location.state.complexity;
-      language = location.state.language;
+  useEffect(() => { 
+    // use local vars because state wont be set on first render
+    let roomId = room;
+    let qnComplexity = complexity;
+    let lang = language;
+
+    // have not set state yet
+    if (roomId == null || qnComplexity == null || lang== null) {
+      if (location.state == null || location.state.roomId == null || location.state.complexity == null || location.state.language == null) {
+        toast.error("You cannot access this room!", standardToast);
+        console.log("invalid access");
+        navigate('/');
+        return;
+      } else {
+        roomId = location.state.roomId;
+        qnComplexity = location.state.complexity;
+        lang = location.state.language;
+        setRoom(roomId);
+        setComplexity(qnComplexity);
+        setLanguage(lang);
+      }
     }
     
-    console.log(roomId, qnComplexity, language);
+    
+    console.log(roomId, qnComplexity, lang);
     const loggedInUser = Cookies.get('user');
     if (!loggedInUser) {
       
@@ -73,7 +86,7 @@ function Collab() {
     socketRef.current = io('http://localhost:5002',  { transports : ['websocket'] });
 
     console.log(roomId);
-    socketRef.current.emit('join-room', roomId, username, language);
+    socketRef.current.emit('join-room', roomId, username, lang);
 
     socketRef.current.on('invalid-user', () => {
       toast.error("You cannot access this room!", standardToast);
