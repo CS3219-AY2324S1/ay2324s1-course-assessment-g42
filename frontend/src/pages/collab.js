@@ -53,7 +53,7 @@ function Collab() {
     let lang = language;
 
     // have not set state yet
-    if (roomId == null || qnComplexity == null || lang== null) {
+    if (roomId == null || qnComplexity == null || lang == null) {
       if (location.state == null || location.state.roomId == null || location.state.complexity == null || location.state.language == null) {
         toast.error("You cannot access this room!", standardToast);
         console.log("invalid access");
