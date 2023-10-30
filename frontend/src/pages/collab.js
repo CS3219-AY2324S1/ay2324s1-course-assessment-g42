@@ -9,7 +9,7 @@ import io from 'socket.io-client';
 
 import { Button, Grid } from '@mui/material';
 import Chip from '@mui/material/Chip';
-import MonacoEditor from 'react-monaco-editor';
+import Editor from '@monaco-editor/react';
 
 import { standardToast } from '../styles/toastStyles';
 import { QUESTION_API_URL } from '../config';
@@ -238,10 +238,10 @@ function Collab() {
             {language}
           </div>
           <div className="collab-editor-content">
-          <MonacoEditor
+          <Editor
             width="100%"
-            height="400"
-            language={language}
+            height="100vh"
+            defaultLanguage={language}
             value={code}
             editorDidMount={editorDidMount}
             onChange={handleChange}
