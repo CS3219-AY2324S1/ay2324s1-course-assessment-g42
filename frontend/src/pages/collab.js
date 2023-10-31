@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
-import { Button, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import Editor from '@monaco-editor/react';
 
@@ -20,13 +20,11 @@ function Collab() {
   const location = useLocation();
   const [question, setQuestion] = useState(null);
   const [code, setCode] = useState('');
-  const [user, setUser] = useState(null);
   const socketRef = useRef();
   const navigate = useNavigate();
   const [room, setRoom] = useState(null);
   const [complexity, setComplexity] = useState(null);
   const [language, setLanguage] = useState(null);
-
   const [matchedUser, setMatchedUser] = useState(null);
   const [isPartner, setIsPartner] = useState(true);
 
@@ -38,12 +36,6 @@ function Collab() {
   const handleChange = (value, event) => {
     setCode(value);
     socketRef.current.emit('code-change', room, value);
-  }
-
-  const handleDisconnect = () => {
-    socketRef.current.emit('disconnect-client', room, user);
-    console.log("client disconnected")
-    navigate('/');
   }
 
   useEffect(() => { 
@@ -80,7 +72,6 @@ function Collab() {
       return;
     }
     const username = JSON.parse(loggedInUser).username;
-    setUser(username);
     let randomId = null;
   
     socketRef.current = io('http://localhost:5002',  { transports : ['websocket'] });
@@ -228,8 +219,6 @@ function Collab() {
             ))}
             <RenderedDescription text={question.description} />
           </div>
-          <Button variant="contained" onClick={handleDisconnect}>Disconnect</Button>
-
         </Grid>
 
         {/* Right side of page */}
@@ -241,7 +230,7 @@ function Collab() {
           <Editor
             width="100%"
             height="100vh"
-            defaultLanguage={language}
+            defaultLanguage={language.toLowerCase()}
             value={code}
             editorDidMount={editorDidMount}
             onChange={handleChange}
