@@ -30,6 +30,16 @@ services:
     ports:
       - "5001:5001"
 
+  collaboration:
+    container_name: collaboration
+    hostname: collaboration
+    build:
+      context: ./collaboration-service
+    env_file:
+      - ./collaboration-service/.env
+    ports:
+      - "5002:5002"
+
   frontend:
     container_name: frontend
     hostname: frontend
