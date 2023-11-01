@@ -3,7 +3,8 @@ const rpc_client = require('../rpc_client.js');
 async function sendMatchingRequest(req, res) {
     try {
       const { username, complexity, language, timeOfReq } = req.body;
-      const response = await rpc_client.sendMatchingRequest(username, complexity, language, timeOfReq).catch(error => {
+      const newComplexity = complexity + '-' + language;
+      const response = await rpc_client.sendMatchingRequest(username, newComplexity, timeOfReq).catch(error => {
         console.log('Error occurred when sending match request ', error);
         return JSON.stringify({
           isMatchFound: false,

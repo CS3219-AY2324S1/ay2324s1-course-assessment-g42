@@ -19,7 +19,7 @@ import { MATCH_API_URL } from '../config';
 function Match() {
   const navigate = useNavigate();
   const [complexity, setComplexity] = useState("Easy");
-  const [language, setLanguage] = useState("javascript");
+  const [language, setLanguage] = useState("JavaScript");
   const [isMatching, setIsMatching] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
   const [isMatchingComplete, setIsMatchingComplete] = useState(false);
@@ -47,7 +47,7 @@ function Match() {
 
   useEffect(() => {
     if (isMatchingComplete && !isMatching && isResponseReceived && roomId !== null) {
-      navigate(`/collab/${roomId}/${complexity}/${language}`);
+      navigate('/collab', {state : {roomId : roomId, complexity : complexity, language : language}})
     }
   }, [isMatchingComplete, isMatching, isResponseReceived, roomId, complexity, language, navigate]);
 
