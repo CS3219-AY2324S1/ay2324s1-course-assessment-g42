@@ -24,12 +24,15 @@
 }
 
 .userprofile-title-text {
-  font-size: 40px;
+  font-size: 50px;
   font-weight: bold;
   color: white;
   margin: 10.0px;
   text-align: left;
   margin-left: 40%;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
 }
 
 .userprofile-caption-text {
@@ -38,6 +41,9 @@
   margin: 1.0px;
   text-align: left;
   margin-left: 40%;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .edituser-custom-input {
