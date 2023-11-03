@@ -4,10 +4,11 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Button, TextField  } from '@mui/material';
+import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../helpers';
 import { USER_API_URL } from '../../config';
+import EditIcon from '@mui/icons-material/Edit';
 
 function EditUser({ user }) {
     const [newUsername, setNewUsername] = useState('');
@@ -129,67 +130,47 @@ function EditUser({ user }) {
     return (
         <div>
             <form onSubmit={handleUpdateUsername}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <TextField
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <input
                         type="text"
                         id="username"
                         placeholder="New username"
                         value={newUsername}
                         onChange={(e) => setNewUsername(e.target.value)}
-                        variant="outlined"
-                        style={{
-                            marginRight: '10px', // Add some spacing between the field and button
-                            padding: '6px', // Adjust padding for height
-                            fontSize: '14px'
-                        }}
-                        InputProps={{ style: { color: 'black' } }}
+                        className="edituser-custom-input"
                     />
                     <Button
                         type="submit"
                         style={{
-                        backgroundColor: 'black',
-                        color: 'white',
-                        width: '10%', // Adjust the width to match the field
-                        padding: '6px', // Adjust padding for height
-                        fontSize: '14px', // Reduce font size for button text
+                            color: 'white' // Adjust the width to match the field
                         }}
                     >
-                        Save
+                        <EditIcon style={{ fontSize: '25px' }}/>
                     </Button>
                 </div>
             </form>
             <form onSubmit={handleUpdatePassword}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                <TextField
-                    type="password"
-                    id="password"
-                    placeholder="New password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    variant="outlined"
-                    style={{ 
-                        marginRight: '10px', // Add some spacing between the field and button
-                        padding: '6px', // Adjust padding for height
-                        fontSize: '14px'
-                    }}
-                    InputProps={{ style: { color: 'black' } }}
-                />
-                <Button
-                    type="submit"
-                    style={{ 
-                        backgroundColor: 'black',
-                        color: 'white',
-                        width: '10%', // Adjust the width to match the field
-                        padding: '6px', // Adjust padding for height
-                        fontSize: '14px', // Reduce font size for button text
-                    }}
-                >
-                    Save
-                </Button>
-            </div>
-        </form>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <input
+                        type="text"
+                        id="password"
+                        placeholder="New password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="edituser-custom-input"
+                    />
+                    <Button
+                        type="submit"
+                        style={{
+                            color: 'white' // Adjust the width to match the field
+                        }}
+                    >
+                        <EditIcon style={{ fontSize: '25px' }}/>
+                    </Button>
+                </div>
+            </form>
     </div>
-);
+    );
 }
 
 export default EditUser;

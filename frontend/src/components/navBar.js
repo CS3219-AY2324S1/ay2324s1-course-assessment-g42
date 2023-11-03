@@ -87,7 +87,7 @@ function NavBar() {
                         <Button component={Link} to="/userprofile" color="inherit">
                             profile
                         </Button>
-                        <LogoutUser />
+                        <LogoutUser color="black" />
                     </Popover>
                 </div>
                 ) : (

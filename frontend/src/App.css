@@ -23,6 +23,33 @@
   justify-content: center;
 }
 
+.userprofile-title-text {
+  font-size: 40px;
+  font-weight: bold;
+  color: white;
+  margin: 10.0px;
+  text-align: left;
+  margin-left: 40%;
+}
+
+.userprofile-caption-text {
+  font-size: 20px;
+  color: white;
+  margin: 1.0px;
+  text-align: left;
+  margin-left: 40%;
+}
+
+.edituser-custom-input {
+  background: transparent; 
+  border: 1px solid white;
+  color: white; 
+  padding: 10px;
+  font-size: 14px;
+  width: 80%;
+  border-radius: 6px; 
+}
+
 .center-column-wrapper {
   margin: 40px;
   display: flex;
