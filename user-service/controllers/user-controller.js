@@ -2,6 +2,7 @@ const pool = require("../psql-db.js");
 const express = require("express");
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 async function registerUser(req, res) {
     let { username, email, password, role } = req.body;
@@ -49,19 +50,25 @@ async function registerUser(req, res) {
                         });
                     }
 
-                    // Register user
-                    pool.query(
-                        `INSERT INTO users (username, email, password, role) 
-                        VALUES ($1, $2, $3, $4)`, [username, email, password, role], (err) => {
-                            if (err) {
-                                return res.status(500).json({
-                                    error: "Failed to register user."
-                                });
-                            } else {
-                                return res.status(200).json({ username, email });
-                            }
-                        }
-                    );
+                    bcrypt.hash(password, 10)
+                        .then(hash => {
+                            // Register user
+                            pool.query(
+                                `INSERT INTO users (username, email, password, role) 
+                                VALUES ($1, $2, $3, $4)`, [username, email, hash, role], (err) => {
+                                    if (err) {
+                                        return res.status(500).json({
+                                            error: "Failed to register user."
+                                        });
+                                    } else {
+                                        return res.status(200).json({ username, email });
+                                    }
+                                }
+                            );
+                        })
+                        .catch(err => {
+                            return res.status(500).send({ message: "Error updating password" });
+                        })                   
                 }
             );
         }
@@ -80,25 +87,33 @@ async function loginUser (req, res) {
         });
       } else if (result.rows.length > 0) {
         const user = result.rows[0];
-        if (user.password == password) {
-            let jwtSecretKey = process.env.JWT_SECRET_KEY;
-            let data = {
-                email: email,
-                password: password,
-            };
-            
-            const token = jwt.sign(data, jwtSecretKey, {expiresIn: '5d'});
-            
-            return res.cookie("token", token, {
-                path: '/',
-                httpOnly: true,
-                maxAge : 7 * 24 * 60 * 60 * 1000 // 7 days expiry
-            }).status(200).json({user});
-        } else {
-          return res.status(422).json({
-            error: "incorrect password"
-          });
-        }
+        const hash = user.password;
+
+        bcrypt.compare(password, hash)
+        .then(result => {
+            if (result) {
+                let jwtSecretKey = process.env.JWT_SECRET_KEY;
+                let data = {
+                    email: email,
+                    password: hash,
+                };
+                
+                const token = jwt.sign(data, jwtSecretKey, {expiresIn: '5d'});
+                
+                return res.cookie("token", token, {
+                    path: '/',
+                    httpOnly: true,
+                    maxAge : 7 * 24 * 60 * 60 * 1000 // 7 days expiry
+                }).status(200).json({user});
+            } else {
+                return res.status(422).json({
+                    error: "incorrect password"
+                });
+            }
+        })
+        .catch(err => {
+            return res.status(500).send({ message: "Error checking password" });
+        })
       }
     }
   )
@@ -177,25 +192,32 @@ async function updatePassword (req, res) {
             error: "New password too short"
         })
     }
-    pool.query(
-        `UPDATE users SET password=$1 WHERE email=$2`,
-        [newPassword, email],
-        (error, result) => {
-            if (error) {
-                return res.status(500).send({ message: "Error updating password" });
-            } else {
-                pool.query(
-                    `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
-                        if (err) {
-                            return res.status(500);
-                        }
-                        const user = result.rows[0];
-                        return res.status(200).json({ user });
+    bcrypt.hash(newPassword, 10)
+        .then(hash => {
+            pool.query(
+                `UPDATE users SET password=$1 WHERE email=$2`,
+                [hash, email],
+                (error, result) => {
+                    if (error) {
+                        return res.status(500).send({ message: "Error updating password" });
+                    } else {
+                        pool.query(
+                            `SELECT * FROM users WHERE email = $1`, [email], (err, result) => {
+                                if (err) {
+                                    return res.status(500);
+                                }
+                                const user = result.rows[0];
+                                return res.status(200).json({ user });
+                            }
+                        )
                     }
-                )
-            }
-        }
-    );
+                }
+            );
+        })
+        .catch(err => {
+            return res.status(500).send({ message: "Error updating password" });
+        })
+    
 }
 
 async function updateRole (req, res) {
