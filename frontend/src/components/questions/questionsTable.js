@@ -12,8 +12,28 @@ import Paper from '@mui/material/Paper';
 
 import ComplexityChip from './complexityChip';
 import QuestionInfo from './questionInfo';
+import QuestionsFilter from './questionsFilter';
 
-function QuestionsTable({ questions, handleDelete }) {
+const complexityOptions = [
+  'None',
+  'Easy',
+  'Medium',
+  'Hard',
+];
+
+const categoryOptions = [
+  'None',
+  'Array',
+  'String',
+  'Matrix',
+  'Math',
+  'Hash Table',
+  'Sliding Window',
+  'Divide and Conquer',
+  'Dynamic Programming',
+];
+
+function QuestionsTable({ questions, handleDelete, applyFilter }) {
   const [open, setOpen] = useState(false);
   const [targetQuestion, setTargetQuestion] = useState();
 
@@ -38,9 +58,17 @@ function QuestionsTable({ questions, handleDelete }) {
         {/* Insert table headers */}
         <TableHead>
           <TableRow key="header">
-            <TableCell style={{ fontWeight: 'bold' }}>Question Title</TableCell>
-            <TableCell align="center" style={{ fontWeight: 'bold' }}>Categories</TableCell>
-            <TableCell align="center" style={{ fontWeight: 'bold' }}>Complexity</TableCell>
+            <TableCell style={{ fontWeight: 'bold' }}>
+              Question Title
+            </TableCell>
+            <TableCell align="center" style={{ fontWeight: 'bold' }}>
+              Categories
+              <QuestionsFilter type="category" options={categoryOptions} applyFilter={applyFilter} />
+            </TableCell>
+            <TableCell align="center" style={{ fontWeight: 'bold' }}>
+              Complexity
+              <QuestionsFilter type="complexity" options={complexityOptions} applyFilter={applyFilter} />
+            </TableCell>
           </TableRow>
         </TableHead>
 

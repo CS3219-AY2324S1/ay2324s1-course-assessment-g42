@@ -3,7 +3,7 @@ const QuestionModel = require('../models/questions.js');
 
 async function getQuestions(req, res) {
   try {
-    const { page, pageSize } = req.body || { page: 1, pageSize: 10 };
+    const { page, pageSize, complexity, category } = req.body || { page: 1, pageSize: 10 };
 
     // Ensure the values are integers and handle any validation as needed
     const pageNumber = parseInt(page);
@@ -15,13 +15,22 @@ async function getQuestions(req, res) {
     // Calculate the number of documents to skip to reach the requested page
     const skip = (pageNumber - 1) * pageSizeNumber;
 
+    // Create a filter object based on the complexityFilter
+    const filter = {};
+    if (complexity) {
+      filter.complexity = complexity;
+    }
+    if (category) {
+      filter.categories = { $in: [category] };
+    }
+
     // Query the database to get a page of documents
-    const result = await QuestionModel.find()
+    const result = await QuestionModel.find(filter)
       .skip(skip)
       .limit(pageSizeNumber);
 
     // Count the total number of documents (for pagination controls)
-    const totalDocuments = await QuestionModel.countDocuments();
+    const totalDocuments = await QuestionModel.countDocuments(filter);
     res.status(200).json({
       questions: result,
       currentPage: pageNumber,

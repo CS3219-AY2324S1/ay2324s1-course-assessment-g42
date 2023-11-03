@@ -1,7 +1,7 @@
 import '../App.css';
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,7 +17,9 @@ import { QUESTION_API_URL } from '../config';
 function Questions() {
   const [questions, setQuestions] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [filters, setFilters] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { page } = useParams();
   const pageNumber = parseInt(page) || 1; // default to page one if not a number
@@ -112,7 +114,28 @@ function Questions() {
   };
 
   const handlePageChange = (event, newPage) => {
-    navigate(`/questions/${newPage}`);
+    // Check URL for any filter parameters
+    const queryString = Object.entries(filters)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&');
+
+    navigate(`/questions/${newPage}${queryString ? `?${queryString}` : ''}`);
+  };
+
+  // Filter function to pass down
+  const applyFilter = (filterName, filterValue) => {
+    var filtersForURL = []; // Use this because filters doesn't change fast enough before URLSearchParams
+    if (filterValue === "None") {
+      const { [filterName]: removedFilter, ...restFilters } = filters;
+      filtersForURL = restFilters;
+      setFilters(restFilters);
+    } else {
+      const updatedFilters = { ...filters, [filterName]: filterValue };
+      filtersForURL = updatedFilters;
+      setFilters(updatedFilters);
+    }
+
+    navigate(`/questions/${page}?${new URLSearchParams(filtersForURL).toString()}`);
   };
 
   useEffect(() => {
@@ -129,10 +152,20 @@ function Questions() {
       return;
     }
 
+    const urlSearchParams = new URLSearchParams(location.search);
+    const queryParams = Object.fromEntries(urlSearchParams.entries());
+
+    setFilters(queryParams);
+
     // get questions from database
     axios.post(
       QUESTION_API_URL + "/question/getQuestions",
-      { page: pageNumber, pageSize: questionsPerPage },
+      {
+        page: pageNumber,
+        pageSize: questionsPerPage,
+        complexity: queryParams["complexity"],
+        category: queryParams["category"]
+      },
       { withCredentials: true, credentials: 'include' }
     )
     .then(response => {
@@ -159,8 +192,7 @@ function Questions() {
         return;
       }
     console.error(error)});
-
-  }, [navigate, pageNumber]);
+  }, [navigate, pageNumber, location]);
 
   return (
     <div className="wrapper">
@@ -168,7 +200,7 @@ function Questions() {
       {/* Button to add a new question */}
       <FormDialog questions={questions} setQuestions={setQuestions} addQuestionToDb={addQuestionToDb} />
       {/* Table displaying questions */}
-      <QuestionsTable questions={questions} handleDelete={handleDelete} />
+      <QuestionsTable questions={questions} handleDelete={handleDelete} applyFilter={applyFilter} />
 
       {/** Pagination */}
       <div style={{ display: 'flex', justifyContent: 'center', margin: "10px" }}>
