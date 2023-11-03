@@ -58,7 +58,7 @@ function DeleteUser({ user }) {
     }
 
     return(
-        <div style={{ border: '1px solid white', width: '60%', borderRadius: '6px' }}>
+        <div style={{ border: '1px solid white', width: '60%', borderRadius: '6px', overflow: 'hidden' }}>
             <Button variant="text" sx = {{ color: 'white', fontSize: '14px' }} onClick={handleDelete}> 
                 Delete Account 
             </Button>
