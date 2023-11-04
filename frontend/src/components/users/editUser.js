@@ -139,7 +139,7 @@ function EditUser({ user }) {
                         onChange={(e) => setNewUsername(e.target.value)}
                         className="edituser-custom-input"
                     />
-                    <Tooltip title="Edit Username">
+                    <Tooltip title="Update Username">
                         <Button
                             type="submit"
                             style={{
@@ -161,7 +161,7 @@ function EditUser({ user }) {
                         onChange={(e) => setNewPassword(e.target.value)}
                         className="edituser-custom-input"
                     />
-                    <Tooltip title="Edit Password">
+                    <Tooltip title="Update Password">
                         <Button
                             type="submit"
                             style={{
