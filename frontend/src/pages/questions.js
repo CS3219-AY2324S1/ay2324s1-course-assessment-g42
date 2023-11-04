@@ -17,6 +17,7 @@ import { QUESTION_API_URL } from '../config';
 function Questions() {
   const [questions, setQuestions] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [categories, setCategories] = useState([]);
   const [filters, setFilters] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -192,15 +193,56 @@ function Questions() {
         return;
       }
     console.error(error)});
+
+    // get categories
+    axios.get(
+      QUESTION_API_URL + "/category/getCategories",
+      { withCredentials: true, credentials: 'include' }
+    )
+    .then(response => {
+      const res = response.data.map(item => item.category);
+      res.sort();
+      setCategories(res);
+    })
+    .catch(error => {
+      if (error.response.status === 401) {
+        navigate('/');
+        logout();
+
+        console.log("Unauthorized access. Logged out.");
+        toast.error("Unauthorized access.", standardToast);
+
+        return;
+      }
+
+      if (error.response.status === 500) {
+        navigate('/');
+
+        console.log("There was an error loading the questions.");
+        toast.error("There was an error loading the questions.", standardToast);
+
+        return;
+      }
+    console.error(error)});
   }, [navigate, pageNumber, location]);
 
   return (
     <div className="wrapper">
       <h1>Questions Repository</h1>
       {/* Button to add a new question */}
-      <FormDialog questions={questions} setQuestions={setQuestions} addQuestionToDb={addQuestionToDb} />
+      <FormDialog
+        questions={questions}
+        categoryOptions={categories}
+        setQuestions={setQuestions}
+        addQuestionToDb={addQuestionToDb} />
       {/* Table displaying questions */}
-      <QuestionsTable questions={questions} filters={filters} handleDelete={handleDelete} applyFilter={applyFilter} />
+      <QuestionsTable
+        questions={questions}
+        categories={categories}
+        filters={filters}
+        handleDelete={handleDelete}
+        applyFilter={applyFilter}
+      />
 
       {/** Pagination */}
       <div style={{ display: 'flex', justifyContent: 'center', margin: "10px" }}>

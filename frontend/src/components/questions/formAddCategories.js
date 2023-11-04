@@ -112,7 +112,7 @@ const Listbox = styled('ul')(
 `,
 );
 
-export default function FormAddCategories({ setCategories }) {
+export default function FormAddCategories({ categories, setCategories }) {
   const {
     getRootProps,
     getInputLabelProps,
@@ -128,7 +128,7 @@ export default function FormAddCategories({ setCategories }) {
     id: 'categories',
     multiple: true,
     options: categories,
-    getOptionLabel: (option) => option.title,
+    getOptionLabel: (option) => option,
   });
 
   useEffect(() => {
@@ -142,7 +142,7 @@ export default function FormAddCategories({ setCategories }) {
         <Label {...getInputLabelProps()}>Categories</Label>
         <InputWrapper ref={setAnchorEl} className={focused ? 'focused' : ''}>
           {value.map((option, index) => (
-            <Chip label={option.title} {...getTagProps({ index })} />
+            <Chip label={option} {...getTagProps({ index })} />
           ))}
           <input {...getInputProps()} />
         </InputWrapper>
@@ -151,7 +151,7 @@ export default function FormAddCategories({ setCategories }) {
         <Listbox {...getListboxProps()}>
           {groupedOptions.map((option, index) => (
             <li {...getOptionProps({ option, index })}>
-              <span>{option.title}</span>
+              <span>{option}</span>
               <CheckIcon fontSize="small" />
             </li>
           ))}
@@ -160,16 +160,3 @@ export default function FormAddCategories({ setCategories }) {
     </div>
   );
 }
-
-// categories
-// TODO store this in database instead
-const categories = [
-  { title: 'Data Structures' },
-  { title: 'Algorithms'},
-  { title: 'Strings'},
-  { title: 'Bit Manipulation'},
-  { title: 'Recursion'},
-  { title: 'Brainteaser'},
-  { title: 'Databases'},
-  { title: 'Arrays'},
-];

@@ -21,19 +21,7 @@ const complexityOptions = [
   'Hard',
 ];
 
-const categoryOptions = [
-  'None',
-  'Array',
-  'String',
-  'Matrix',
-  'Math',
-  'Hash Table',
-  'Sliding Window',
-  'Divide and Conquer',
-  'Dynamic Programming',
-];
-
-function QuestionsTable({ questions, filters, handleDelete, applyFilter }) {
+function QuestionsTable({ questions, categories, filters, handleDelete, applyFilter }) {
   const [open, setOpen] = useState(false);
   const [targetQuestion, setTargetQuestion] = useState();
 
@@ -63,7 +51,7 @@ function QuestionsTable({ questions, filters, handleDelete, applyFilter }) {
             </TableCell>
             <TableCell align="center" style={{ fontWeight: 'bold' }}>
               Categories
-              <QuestionsFilter type="category" filters={filters} options={categoryOptions} applyFilter={applyFilter} />
+              <QuestionsFilter type="category" filters={filters} options={categories} applyFilter={applyFilter} />
             </TableCell>
             <TableCell align="center" style={{ fontWeight: 'bold' }}>
               Complexity
