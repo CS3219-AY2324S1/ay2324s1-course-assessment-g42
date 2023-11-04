@@ -13,6 +13,7 @@ import Paper from '@mui/material/Paper';
 import ComplexityChip from './complexityChip';
 import QuestionInfo from './questionInfo';
 import QuestionsFilter from './questionsFilter';
+import QuestionsTitleFilter from './questionsTitleFilter';
 
 const complexityOptions = [
   'None',
@@ -48,6 +49,7 @@ function QuestionsTable({ questions, categories, filters, handleDelete, applyFil
           <TableRow key="header">
             <TableCell style={{ fontWeight: 'bold' }}>
               Question Title
+              <QuestionsTitleFilter type="title" filters={filters} applyFilter={applyFilter} />
             </TableCell>
             <TableCell align="center" style={{ fontWeight: 'bold' }}>
               Categories

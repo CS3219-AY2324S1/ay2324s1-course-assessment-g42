@@ -3,7 +3,7 @@ const QuestionModel = require('../models/questions.js');
 
 async function getQuestions(req, res) {
   try {
-    const { page, pageSize, complexity, category } = req.body || { page: 1, pageSize: 10 };
+    const { page, pageSize, complexity, category, title } = req.body || { page: 1, pageSize: 10 };
 
     // Ensure the values are integers and handle any validation as needed
     const pageNumber = parseInt(page);
@@ -22,6 +22,9 @@ async function getQuestions(req, res) {
     }
     if (category) {
       filter.categories = { $in: [category] };
+    }
+    if (title) {
+      filter.title = { $regex: new RegExp(title, 'i') }; // i for case-insensitive
     }
 
     // Query the database to get a page of documents

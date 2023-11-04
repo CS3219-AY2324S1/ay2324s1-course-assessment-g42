@@ -165,7 +165,8 @@ function Questions() {
         page: pageNumber,
         pageSize: questionsPerPage,
         complexity: queryParams["complexity"],
-        category: queryParams["category"]
+        category: queryParams["category"],
+        title: queryParams["title"]
       },
       { withCredentials: true, credentials: 'include' }
     )
