@@ -200,7 +200,7 @@ function Questions() {
       {/* Button to add a new question */}
       <FormDialog questions={questions} setQuestions={setQuestions} addQuestionToDb={addQuestionToDb} />
       {/* Table displaying questions */}
-      <QuestionsTable questions={questions} handleDelete={handleDelete} applyFilter={applyFilter} />
+      <QuestionsTable questions={questions} filters={filters} handleDelete={handleDelete} applyFilter={applyFilter} />
 
       {/** Pagination */}
       <div style={{ display: 'flex', justifyContent: 'center', margin: "10px" }}>

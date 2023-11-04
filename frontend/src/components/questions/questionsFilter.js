@@ -5,10 +5,13 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Check from '@mui/icons-material/Check';
 
 const ITEM_HEIGHT = 48;
 
-function QuestionsFilter({ type, options, applyFilter }) {
+function QuestionsFilter({ type, filters, options, applyFilter }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -48,13 +51,22 @@ function QuestionsFilter({ type, options, applyFilter }) {
         PaperProps={{
           style: {
             maxHeight: ITEM_HEIGHT * 4.5,
-            width: '20ch',
           },
         }}
       >
         {options.map((option) => (
           <MenuItem key={option} onClick={() => handleFilter(option)}>
-            {option}
+            { option === filters[type]
+              ?
+                <>
+                <ListItemIcon>
+                  <Check />
+                </ListItemIcon>
+                <ListItemText>{option}</ListItemText>
+                </>
+              :
+              <ListItemText inset>{option}</ListItemText>
+            }
           </MenuItem>
         ))}
       </Menu>

@@ -33,7 +33,7 @@ const categoryOptions = [
   'Dynamic Programming',
 ];
 
-function QuestionsTable({ questions, handleDelete, applyFilter }) {
+function QuestionsTable({ questions, filters, handleDelete, applyFilter }) {
   const [open, setOpen] = useState(false);
   const [targetQuestion, setTargetQuestion] = useState();
 
@@ -63,11 +63,11 @@ function QuestionsTable({ questions, handleDelete, applyFilter }) {
             </TableCell>
             <TableCell align="center" style={{ fontWeight: 'bold' }}>
               Categories
-              <QuestionsFilter type="category" options={categoryOptions} applyFilter={applyFilter} />
+              <QuestionsFilter type="category" filters={filters} options={categoryOptions} applyFilter={applyFilter} />
             </TableCell>
             <TableCell align="center" style={{ fontWeight: 'bold' }}>
               Complexity
-              <QuestionsFilter type="complexity" options={complexityOptions} applyFilter={applyFilter} />
+              <QuestionsFilter type="complexity" filters={filters} options={complexityOptions} applyFilter={applyFilter} />
             </TableCell>
           </TableRow>
         </TableHead>
