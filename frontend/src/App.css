@@ -23,6 +23,39 @@
   justify-content: center;
 }
 
+.userprofile-title-text {
+  font-size: 50px;
+  font-weight: bold;
+  color: white;
+  margin: 10.0px;
+  text-align: left;
+  margin-left: 40%;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
+}
+
+.userprofile-caption-text {
+  font-size: 20px;
+  color: white;
+  margin: 1.0px;
+  text-align: left;
+  margin-left: 40%;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.edituser-custom-input {
+  background: transparent; 
+  border: 1px solid white;
+  color: white; 
+  padding: 10px;
+  font-size: 14px;
+  width: 80%;
+  border-radius: 6px; 
+}
+
 .center-column-wrapper {
   margin: 40px;
   display: flex;

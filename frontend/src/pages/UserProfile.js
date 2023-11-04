@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import { Paper, Typography, Grid, Container } from '@mui/material';
+import { Grid } from '@mui/material';
 
 import EditUser from '../components/users/editUser';
 import LogoutUser from '../components/users/logoutUser';
@@ -73,87 +73,43 @@ function UserProfile() {
     }, [navigate]);
 
     return (
-        <Container
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '80vh',
-          }}
-        >
-            <Paper
-                style={{
-                    padding: '24px',
-                    width: '80%',
-                    borderColor: 'black',
-                    backgroundColor: 'white',
-                    color: 'black',
-                }}
-                elevation={3}
-            >
-                <Grid container spacing={2}>
-                    <Grid item xs={4}>
+        <>
+            <div className='grad-box'>
+                <Grid container spacing={0.5} direction="row" justifyContent="center" alignItems="center" marginBottom='10px'>
+                    <Grid item xs={6}>
                         {isLoading ? (
                             <p>Loading...</p>
                         ) : (
                             <>
-                                <div>
-                                    <Typography
-                                        variant="h5"
-                                        component="div"
-                                        sx={{ fontWeight: 600, marginLeft: 7, marginTop: 3, 
-                                            fontSize: 28,
-                                            whiteSpace: 'nowrap',    
-                                            overflow: 'hidden',       
-                                            textOverflow: 'ellipsis' 
-                                        }} 
-                                    >
-                                        {user.username}
-                                    </Typography>
-                                    <Typography
-                                        variant="body1"
-                                        component="div"
-                                        sx={{ fontWeight: 200, marginLeft: 7 }} 
-                                    >
-                                        {user.email}
-                                    </Typography>
-                                    <Typography
-                                        variant="body1"
-                                        component="div"
-                                        sx={{ fontWeight: 200, marginLeft: 7 }} 
-                                    >
-                                        {user.role}
-                                    </Typography>
-                                </div>
+                                <p className="userprofile-title-text">
+                                    Hi, {user.username}
+                                </p>
+                                <p className="userprofile-caption-text">
+                                    {user.email}
+                                </p>
+                                <p className="userprofile-caption-text">
+                                    {user.role}
+                                </p>
                             </>
                         )}
                     </Grid>
-                    <Grid item xs={8}>
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}
-                        >
-                            <EditUser user={user} />
-                            <div style={{ border: '1px solid rgba(0, 0, 0, 0.4)', 
-                                borderRadius: '6px', 
-                                marginBottom: '10px',
-                                marginTop: '10px' 
-                            }}>
-                                <LogoutUser />
+                    <Grid item xs={6}>
+                        <div style={{ marginLeft: '20%', width: '40%', marginTop: '5%' }}>
+                            <div style={{ marginBottom: '10px' }}>
+                                <EditUser user={user}/>
                             </div>
-                            <div style={{ border: '1px solid rgba(0, 0, 0, 0.4)', borderRadius: '6px' }}>
+                            <div style={{ display: 'flex' }}>
+                                <LogoutUser color="white" />
                                 <DeleteUser user={user} />
                             </div>
                         </div>
                     </Grid>
                 </Grid>
-            </Paper>
-        </Container>
-      );
-    }
+            </div>
+
+            <p>Question History</p>
+        </>
+    )
+}
 
 export default UserProfile;
