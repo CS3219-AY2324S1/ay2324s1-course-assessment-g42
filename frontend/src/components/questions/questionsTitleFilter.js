@@ -1,4 +1,5 @@
 import '../../App.css';
+import '../../styles/questions.css';
 import React, { useState, useEffect } from 'react';
 
 function QuestionsTitleFilter({ type, filters, applyFilter }) {
@@ -33,6 +34,7 @@ function QuestionsTitleFilter({ type, filters, applyFilter }) {
         value={inputValue}
         onKeyPress={handleKeyPress}
         onChange={handleInputChange}
+        className="title-filter-input"
       />
     </>
   )
