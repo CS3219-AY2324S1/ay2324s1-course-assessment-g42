@@ -203,6 +203,7 @@ function Questions() {
     .then(response => {
       const res = response.data.map(item => item.category);
       res.sort();
+      res.unshift("None");
       setCategories(res);
     })
     .catch(error => {
