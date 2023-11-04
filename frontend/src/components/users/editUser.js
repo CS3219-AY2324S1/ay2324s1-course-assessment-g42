@@ -4,7 +4,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Button } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../helpers';
 import { USER_API_URL } from '../../config';
@@ -139,14 +139,16 @@ function EditUser({ user }) {
                         onChange={(e) => setNewUsername(e.target.value)}
                         className="edituser-custom-input"
                     />
-                    <Button
-                        type="submit"
-                        style={{
-                            color: 'white' // Adjust the width to match the field
-                        }}
-                    >
-                        <EditIcon style={{ fontSize: '25px' }}/>
-                    </Button>
+                    <Tooltip title="Edit Username">
+                        <Button
+                            type="submit"
+                            style={{
+                                color: 'white' // Adjust the width to match the field
+                            }}
+                        >
+                            <EditIcon style={{ fontSize: '25px' }}/>
+                        </Button>
+                    </Tooltip>
                 </div>
             </form>
             <form onSubmit={handleUpdatePassword}>
@@ -159,14 +161,16 @@ function EditUser({ user }) {
                         onChange={(e) => setNewPassword(e.target.value)}
                         className="edituser-custom-input"
                     />
-                    <Button
-                        type="submit"
-                        style={{
-                            color: 'white' // Adjust the width to match the field
-                        }}
-                    >
-                        <EditIcon style={{ fontSize: '25px' }}/>
-                    </Button>
+                    <Tooltip title="Edit Password">
+                        <Button
+                            type="submit"
+                            style={{
+                                color: 'white' // Adjust the width to match the field
+                            }}
+                        >
+                            <EditIcon style={{ fontSize: '25px' }}/>
+                        </Button>
+                    </Tooltip>
                 </div>
             </form>
     </div>
