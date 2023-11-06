@@ -79,6 +79,82 @@
   background-image: linear-gradient(rgb(0, 0, 0), rgb(105, 105, 105));
 }
 
+.matching-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; 
+  margin-top: -50px;
+  min-width: 100%;
+
+  @media (max-width: 1100px) {
+    margin-top: -40px; 
+
+    .image-container {
+      display: none;
+    }
+
+    .rounded-black-box {
+      min-width: 100%;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .match-title-text {
+      margin-left: 0;
+    }
+
+    .match-sub-text {
+      margin-left: 0;
+    }
+
+    .match-body-text {
+      margin-left: 0;
+    }
+
+    .match-form-container {
+      margin-left: 0;
+    }
+  }
+}
+
+.match-form-container {
+  margin-left: 60px;
+  margin-bottom: 20px;
+}
+
+.rounded-black-box {
+  padding: 30px;
+  color: white;
+  background-color: black;
+  border-radius: 10px; 
+  max-width: 70%; 
+  width: auto; 
+  margin: 0 auto; 
+}
+
+.match-title-text {
+  font-size: 30px;
+  font-weight: bold;
+  color: black;
+  margin-left: 100px;
+  margin-bottom: 10px;
+}
+
+.match-body-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  margin-left: 40px;
+  margin-bottom: 30px;
+}
+
+.match-sub-text {
+  font-size: 15px;
+  color: black;
+  margin-left: 100px;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
