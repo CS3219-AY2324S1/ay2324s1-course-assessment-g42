@@ -79,6 +79,81 @@
   background-image: linear-gradient(rgb(0, 0, 0), rgb(105, 105, 105));
 }
 
+.matching-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Set a minimum height to keep the black box centered */
+  margin-top: -50px;
+  min-width: 100%;
+
+  @media (max-width: 1100px) {
+    margin-top: -25px; 
+
+    .image-container {
+      display: none; /* Hide the image on small screens */
+    }
+
+    .rounded-black-box {
+      min-width: 100%;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .match-title-text {
+      margin-left: 0;
+    }
+
+    .match-sub-text {
+      margin-left: 0;
+    }
+
+    .match-body-text {
+      margin-left: 0;
+    }
+
+    .match-form-container {
+      margin-left: 0;
+    }
+  }
+}
+
+.match-form-container {
+  margin-left: 60px;
+}
+
+.rounded-black-box {
+  padding: 30px;
+  color: white; /* Text color should contrast with the background */
+  background-color: black; /* Set the background color to black */
+  border-radius: 10px; /* Add rounded corners with a 15px radius */
+  max-width: 70%; /* Allow the box to shrink when the window size is reduced */
+  width: auto; /* Let the width adjust to the content */
+  margin: 0 auto; /* Center the box horizontally */
+}
+
+.match-title-text {
+  font-size: 30px;
+  font-weight: bold;
+  color: black;
+  margin-left: 100px;
+  margin-bottom: 10px;
+}
+
+.match-body-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  margin-left: 40px;
+  margin-bottom: 30px;
+}
+
+.match-sub-text {
+  font-size: 15px;
+  color: black;
+  margin-left: 100px;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
