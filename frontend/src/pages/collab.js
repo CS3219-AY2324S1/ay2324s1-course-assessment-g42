@@ -18,7 +18,7 @@ import { RenderedDescription, DifficultyText } from '../helpers/questionFormatte
 
 function Collab() {
   const location = useLocation();
-  const [question, setQuestion] = useState(null);
+  const [storedQuestion, setStoredQuestion] = useState(null);
   const [code, setCode] = useState('');
   const socketRef = useRef();
   const navigate = useNavigate();
@@ -85,7 +85,12 @@ function Collab() {
       return;
     })
 
+    const storedQuestion = sessionStorage.getItem(`question_${roomId}`);
+    let question = JSON.parse(storedQuestion);
+
     socketRef.current.on('connect', () => {
+      if (!question) {
+      console.log("reached");
       axios.post(
         QUESTION_API_URL + "/question/getQuestionByComplexity",
         { complexity: qnComplexity },
@@ -115,6 +120,9 @@ function Collab() {
         }
         
       console.error(error)});
+      } else {
+        setStoredQuestion(question);
+      }
     })
 
     socketRef.current.on('get-info', (room) => {
@@ -138,7 +146,8 @@ function Collab() {
         { withCredentials: true, credentials: 'include' }
       )
       .then(response => {       
-        setQuestion(response.data)
+        sessionStorage.setItem(`question_${roomId}`, JSON.stringify(response.data));
+        setStoredQuestion(response.data);
         socketRef.current.emit('get-info', roomId);
       })
       .catch(error => {
@@ -201,7 +210,7 @@ function Collab() {
   return (
     <div>
     {
-      question &&
+      storedQuestion &&
       <div className="collab-wrapper">
       <Grid container spacing={2}>
         {/* Left side of page */}
@@ -210,14 +219,14 @@ function Collab() {
             Description
           </div>
           <div className="collab-question-content">
-            <b className="question-title">{question.id}. {question.title}</b>
+            <b className="question-title">{storedQuestion.id}. {storedQuestion.title}</b>
             <br />
-            <DifficultyText difficulty={question.complexity} />
+            <DifficultyText difficulty={storedQuestion.complexity} />
             <br />
-            {question.categories.map((category) => (
+            {storedQuestion.categories.map((category) => (
               <Chip key={category} label={category} style={{ height: "25px" }}></Chip>
             ))}
-            <RenderedDescription text={question.description} />
+            <RenderedDescription text={storedQuestion.description} />
           </div>
         </Grid>
 
