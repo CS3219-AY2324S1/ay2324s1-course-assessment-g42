@@ -105,7 +105,7 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
             inputRef={descRef}
           />
           <FormAddCategories setCategories={setCategories} />
-          <FormComplexitySelect complexity={complexity} setComplexity={setComplexity} />
+          <FormComplexitySelect complexity={complexity} setComplexity={setComplexity} showLabel={true} />
         </DialogContent>
 
         {/* Buttons in the bottom right */}

@@ -46,6 +46,68 @@
   background-image: linear-gradient(rgb(0, 0, 0), rgb(105, 105, 105));
 }
 
+.rounded-black-box {
+  padding: 30px;
+  color: white; /* Text color should contrast with the background */
+  background-color: black; /* Set the background color to black */
+  border-radius: 10px; /* Add rounded corners with a 15px radius */
+  margin-right: 50px;
+  margin-left: 100px;
+  min-width: 400px;
+  min-height: 450px;
+  width: 70%;
+}
+
+.matching-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Set a minimum height to keep the black box centered */
+  margin-top: -50px;
+
+  @media (max-width: 900px) {
+    .image-container {
+      display: none; /* Hide the image on small screens */
+    }
+
+    .rounded-black-box {
+      margin: 0 auto;
+    }
+  }
+}
+
+.match-title-text {
+  font-size: 30px;
+  font-weight: bold;
+  color: black;
+  margin-left: 100px;
+  margin-bottom: 10px;
+}
+
+.match-body-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  margin-left: 40px;
+  margin-bottom: 30px;
+}
+
+.match-sub-text {
+  font-size: 15px;
+  color: black;
+  margin-left: 100px;
+}
+
+.match-form-box {
+  background-color: white;
+  max-width: 200px;
+  height: 38px;
+  border-radius: 8px;
+  margin-left: 60px;
+  display: flex;
+  align-items: center;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

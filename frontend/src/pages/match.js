@@ -14,6 +14,9 @@ import { logout } from '../helpers';
 import FormLanguageSelect from '../components/match/formLanguageSelect';
 import FormComplexitySelect from '../components/questions/formComplexitySelect';
 import { MATCH_API_URL } from '../config';
+import { Grid } from '@mui/material';
+
+import matchingImage1 from '../images/matching_1.png';
 
 
 function Match() {
@@ -102,33 +105,84 @@ function Match() {
   }
 
   return (
-    <div className="wrapper">
-      <h1>Matching service</h1>
-      <h2>1. Choose your preferred difficulty level</h2>
-      <FormComplexitySelect complexity={complexity} setComplexity={setComplexity} />
-      <h2>2. Choose your preferred programming language</h2>
-      <FormLanguageSelect language={language} setLanguage={setLanguage} />
-      <h2>3. Find a match (this may take up to 30 seconds)</h2>
-      <Button variant="contained" onClick={sendMatchingRequest}>Match me!</Button>
-      {isMatching ? (
-          <CircularProgress size={30} sx={{
-          position: 'relative',
-          left: 20,
-          top: 10
-          }}/> 
-        ) : <br></br>}
-      {isMatching ? <p>Waiting for a match... Time left: {timeLeft} seconds</p> : null}
-      {isMatching ? (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <WarningIcon></WarningIcon>
-          <p>Please do not leave this page while waiting for your match.</p> 
-        </div>
-        ) : ''}
-      {isMatchingComplete & !isMatching ? (
-        isResponseReceived ? (<p>{responseMessage}</p>)
-        : (<p>Server took too long to respond!</p>)
-        )
-        : ''}
+    <div className="matching-container">
+      <Grid container spacing={0.5} direction="row" justifyContent="center" alignItems="center">
+        <Grid item xs={6} className="image-container">
+          <img src={matchingImage1} alt="matching_1" style={{ maxWidth: '1000px', maxHeight: '1000px' }} />
+        </Grid>
+        <Grid item xs={6} style={{ margin: '0 auto' }}>
+          <p className='match-title-text'>
+            Find me a match!
+          </p>
+          <div className="rounded-black-box">
+            <p className='match-body-text'>
+              1. Choose your question difficulty
+            </p>
+            <div className="match-form-box">
+              <FormComplexitySelect
+                complexity={complexity}
+                setComplexity={setComplexity}
+                style={{
+                  minWidth: '180px',
+                }}
+                showLabel={false}
+              />
+            </div>
+            <p className='match-body-text'>
+              2. Choose your programming language
+            </p>
+            <div className="match-form-box">
+              <FormLanguageSelect language={language} setLanguage={setLanguage}                 
+                style={{
+                  minWidth: '180px',
+                }}
+                showLabel={false}
+              />
+            </div>
+            <p className='match-body-text'>
+              3. Find a partner to learn with!
+            </p>
+            <Button
+                variant="contained"
+                onClick={sendMatchingRequest}
+                style={{ backgroundColor: '#F24E1E', marginLeft: '60px', color: 'black', padding: '10px' }}
+            >
+              Start Match!
+            </Button>
+
+              {isMatching ? (
+                  <CircularProgress size={30} sx={{
+                  position: 'relative',
+                  left: 20,
+                  top: 10
+                  }}/> 
+                ) : <br></br>
+              }
+
+              {isMatching ? <p style={{ marginLeft: '60px' }}> 
+                Time Elapsed: {timeLeft} seconds</p> : null
+              }
+
+              {isMatching ? (
+                <div style={{ display: 'flex', alignItems: 'center', marginLeft: '40px' }}>
+                  <WarningIcon></WarningIcon>
+                  <p> Please do not leave this page while waiting for your match.</p> 
+                </div>
+                ) : ''
+              }
+
+              {isMatchingComplete & !isMatching ? (
+                isResponseReceived ? (<p style={{ marginLeft: '40px' }}>{responseMessage}</p>)
+                : (<p style={{ marginLeft: '40px' }}>No match was found! Try again later.</p>)
+                )
+                : ''
+              }
+          </div>
+          <p className='match-sub-text'>
+            * Queue will be terminated if no match is found in 30 seconds.
+          </p>
+        </Grid>
+      </Grid>
     </div>
   );
 }
