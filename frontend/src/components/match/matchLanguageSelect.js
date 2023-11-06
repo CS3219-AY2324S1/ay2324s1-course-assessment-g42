@@ -10,7 +10,10 @@ function MatchLanguageSelect({ language, setLanguage }) {
 
   return (
     <div className='match-form-container'>
-      <FormControl sx={{ m: 1, minWidth: 200, backgroundColor: 'white', borderRadius: '8px' }}>
+      <FormControl sx={{ m: 1, minWidth: 200, backgroundColor: 'white', borderRadius: '8px',
+        '& .MuiSelect-select': {
+          padding: '8px', // Adjust the padding to control the height
+        }, }}>
         <Select
           id="language-select"
           value={language}
