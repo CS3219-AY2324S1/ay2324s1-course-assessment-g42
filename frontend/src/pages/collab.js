@@ -34,7 +34,10 @@ function Collab() {
   }
 
   const handleChange = (value, event) => {
+    let roomId = room;
     setCode(value);
+    //save code changes to session storage
+    sessionStorage.setItem(`codeEditor_${roomId}`, code);
     socketRef.current.emit('code-change', room, value);
   }
 
@@ -61,6 +64,11 @@ function Collab() {
       }
     }
     
+    //handle refresh on code editor
+    const storedCode = sessionStorage.getItem(`codeEditor_${roomId}`);
+    if (storedCode) {
+      setCode(storedCode);
+    }
     
     console.log(roomId, qnComplexity, lang);
     const loggedInUser = Cookies.get('user');
@@ -174,6 +182,7 @@ function Collab() {
     socketRef.current.on('code-change', (newCode) => {
       if (newCode !== code) {
         setCode(newCode);
+        sessionStorage.setItem(`codeEditor_${roomId}`, newCode);
       }
     });
 
