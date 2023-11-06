@@ -83,7 +83,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* Set a minimum height to keep the black box centered */
+  min-height: 100vh; 
   margin-top: -50px;
   min-width: 100%;
 
@@ -91,7 +91,7 @@
     margin-top: -25px; 
 
     .image-container {
-      display: none; /* Hide the image on small screens */
+      display: none;
     }
 
     .rounded-black-box {
@@ -124,12 +124,12 @@
 
 .rounded-black-box {
   padding: 30px;
-  color: white; /* Text color should contrast with the background */
-  background-color: black; /* Set the background color to black */
-  border-radius: 10px; /* Add rounded corners with a 15px radius */
-  max-width: 70%; /* Allow the box to shrink when the window size is reduced */
-  width: auto; /* Let the width adjust to the content */
-  margin: 0 auto; /* Center the box horizontally */
+  color: white;
+  background-color: black;
+  border-radius: 10px; 
+  max-width: 70%; 
+  width: auto; 
+  margin: 0 auto; 
 }
 
 .match-title-text {
