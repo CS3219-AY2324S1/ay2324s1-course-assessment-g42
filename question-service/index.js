@@ -20,6 +20,7 @@ app.get("/test", (req, res) => {
 
 // routes for questions
 app.use("/question", require('./routes/question-route'));
+app.use("/category", require('./routes/category-route'));
 
 app.listen(8030, () => {console.log("Question server started on Port 8030")});
 

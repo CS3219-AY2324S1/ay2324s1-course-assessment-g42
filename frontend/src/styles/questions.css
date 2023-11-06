@@ -1,0 +1,10 @@
+.title-filter-input {
+  background: transparent; 
+  border: 1px solid rgb(0, 0, 0);
+  color: rgb(0, 0, 0); 
+  padding: 10px;
+  margin: 10px;
+  font-size: 14px;
+  width: 40%;
+  border-radius: 6px;
+}

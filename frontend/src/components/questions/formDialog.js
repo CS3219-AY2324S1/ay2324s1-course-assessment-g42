@@ -14,7 +14,7 @@ import FormComplexitySelect from './formComplexitySelect';
 
 import { standardButton } from '../../styles/muiButtonStyles';
 
-function FormDialog({ questions, setQuestions, addQuestionToDb }) {
+function FormDialog({ questions, categoryOptions, setQuestions, addQuestionToDb }) {
   const [open, setOpen] = useState(false);
   // below are input references used for the form dialog
   const titleRef = useRef();
@@ -34,7 +34,7 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
     event.preventDefault(); // prevent page from refreshing
 
     // map titles of categories into a regular array
-    const categoriesToAdd = categories.map(category => category.title);
+    const categoriesToAdd = categories;
 
     // add question (id adding is done in addQuestionToDb)
     const newQuestion = {
@@ -104,7 +104,7 @@ function FormDialog({ questions, setQuestions, addQuestionToDb }) {
             variant="standard"
             inputRef={descRef}
           />
-          <FormAddCategories setCategories={setCategories} />
+          <FormAddCategories categories={categoryOptions} setCategories={setCategories} />
           <FormComplexitySelect complexity={complexity} setComplexity={setComplexity} />
         </DialogContent>
 
