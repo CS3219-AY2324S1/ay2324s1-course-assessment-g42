@@ -197,6 +197,14 @@ function Collab() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, location.state])
 
+  // set body background color
+  useEffect(()  => {
+    document.body.classList.add('collab-bg');
+
+    return () => {
+        document.body.classList.remove('collab-bg');
+    };
+  });
 
   return (
     <div>
