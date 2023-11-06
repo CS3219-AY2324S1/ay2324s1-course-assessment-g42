@@ -84,7 +84,7 @@ function NavBar() {
                             horizontal: 'right',
                         }}
                     >
-                        <Button component={Link} to="/userprofile" color="inherit">
+                        <Button component={Link} to="/userprofile" color="inherit" style={{ fontSize: '14px' }}>
                             profile
                         </Button>
                         <LogoutUser color="black" />
