@@ -90,7 +90,6 @@ function Collab() {
 
     socketRef.current.on('connect', () => {
       if (!question) {
-      console.log("reached");
       axios.post(
         QUESTION_API_URL + "/question/getQuestionByComplexity",
         { complexity: qnComplexity },
