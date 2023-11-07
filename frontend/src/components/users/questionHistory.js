@@ -6,12 +6,16 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
 import '../../App.css';
 import '../../styles/userProfile.css';
 
+// TODO: example questions, to delete after history service is done
 const exampleQuestions = [
- { id: 1, title: "Two Sum", attempt: "something", date: "25 Dec 2023", collaborated: "some user" }
+ { id: 1, title: "Two Sum", attempt: "something", date: "25 Dec 2023", collaborated: "some user" },
+ { id: 2, title: "Three Sum", attempt: "some code", date: "29 Dec 2023", collaborated: "pp" }
 ];
 
 function QuestionHistory() {
@@ -20,11 +24,11 @@ function QuestionHistory() {
     <div className="history-wrapper">
       <p className="history-title">Question History</p>
 
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table sx={{ minWidth: 400 }} size="small" aria-label="simple table">
 
           {/* Insert table headers */}
-          <TableHead>
+          <TableHead component={Paper} className="history-table-header">
             <TableRow key="header">
               <TableCell style={{ fontWeight: 'bold' }}>
                 Title
@@ -46,6 +50,9 @@ function QuestionHistory() {
             {exampleQuestions.map((question) => (
               <TableRow
                 key={question.id}
+                sx={{
+                  '&:last-child td, &:last-child th': { border: 0 },
+                }}
               >
                 {/* Add table cells */}
                 <TableCell component="th" scope="row">
@@ -66,6 +73,24 @@ function QuestionHistory() {
 
         </Table>
       </TableContainer>
+
+      {/** Pagination */}
+      <div style={{ display: 'flex', justifyContent: 'center', margin: "10px" }}>
+        <Stack spacing={2}>
+          <Pagination
+            sx={{
+              '& .MuiPaginationItem-root': {
+                '&.Mui-selected': {
+                  background: '#F24E1E',
+                  color: '#ffffff',
+                },
+            },
+            }}
+            count={1}
+            page={1}
+          />
+        </Stack>
+      </div>
     </div>
   )
 }

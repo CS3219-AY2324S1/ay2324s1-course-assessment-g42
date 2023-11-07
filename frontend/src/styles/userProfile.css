@@ -7,3 +7,7 @@
 .history-title {
   font-size: 20px;
 }
+
+.history-table-header {
+  border: 0;
+}
