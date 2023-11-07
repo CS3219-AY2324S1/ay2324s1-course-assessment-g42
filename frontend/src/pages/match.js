@@ -107,7 +107,7 @@ function Match() {
     <div className="matching-container">
       <Grid container spacing={0.5} direction="row" justifyContent="center" alignItems="center">
         <Grid item xs={6} className="image-container">
-          <img src={matchingImage1} alt="matching_1" style={{ maxWidth: '1000px', maxHeight: '1000px' }} />
+          <img src={matchingImage1} alt="matching_1" style={{ maxWidth: '100%', maxHeight: '100%' }} />
         </Grid>
         <Grid item xs={6} style={{ margin: '0 auto' }}>
           <p className='match-title-text'>
