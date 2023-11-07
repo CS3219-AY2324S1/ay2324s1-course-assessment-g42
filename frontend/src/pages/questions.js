@@ -260,11 +260,16 @@ function Questions() {
             '& .MuiPaginationItem-ellipsis': {
               color: '#ffffff',
             },
+            '& .MuiPaginationItem-root': {
+              '&.Mui-selected': {
+                background: '#F24E1E',
+                color: '#ffffff',
+              },
+           },
           }}
           count={totalPages}
           page={pageNumber}
           onChange={handlePageChange}
-          color="primary"
         />
         </Stack>
       </div>
