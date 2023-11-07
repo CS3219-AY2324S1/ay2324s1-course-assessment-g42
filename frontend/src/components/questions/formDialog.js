@@ -8,11 +8,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 import FormAddCategories from './formAddCategories';
 import FormComplexitySelect from './formComplexitySelect';
-
-import { standardButton } from '../../styles/muiButtonStyles';
 
 function FormDialog({ questions, categoryOptions, setQuestions, addQuestionToDb }) {
   const [open, setOpen] = useState(false);
@@ -67,9 +67,9 @@ function FormDialog({ questions, categoryOptions, setQuestions, addQuestionToDb 
       {/* Button to add a new question, moderator-only */}
       {isModerator &&
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Button style={standardButton} onClick={handleClickOpen}>
-            Add new question
-          </Button>
+          <IconButton onClick={handleClickOpen} style={{ color: '#ffffff' }}>
+            <AddCircleOutlineIcon />
+          </IconButton>
         </div>
       }
 
