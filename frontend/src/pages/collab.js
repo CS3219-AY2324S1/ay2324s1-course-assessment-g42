@@ -66,8 +66,13 @@ function Collab() {
     
     //handle refresh on code editor
     const storedCode = sessionStorage.getItem(`codeEditor_${roomId}`);
+    const storedUser = sessionStorage.getItem(`matchedUser_${roomId}`);
     if (storedCode) {
       setCode(storedCode);
+    }
+
+    if (storedUser) {
+      setMatchedUser(storedUser);
     }
     
     console.log(roomId, qnComplexity, lang);
@@ -134,9 +139,11 @@ function Collab() {
 
     socketRef.current.on('get-info', (room) => {
       if (room.user1 !== null && room.user1 !== username) {
+        sessionStorage.setItem(`matchedUser_${roomId}`, room.user1);
         setMatchedUser(room.user1);
         setIsPartner(room.isUser1Present);
       } else if (room.user2 !== null && room.user2 !== username) {
+        sessionStorage.setItem(`matchedUser_${roomId}`, room.user2);
         setMatchedUser(room.user2);
         setIsPartner(room.isUser2Present);
       }
