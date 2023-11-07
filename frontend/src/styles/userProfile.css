@@ -1,0 +1,13 @@
+.history-wrapper {
+  margin-top: 5px;
+  margin-left: 70px;
+  margin-right: 70px;
+}
+
+.history-title {
+  font-size: 20px;
+}
+
+.history-table-header {
+  border: 0;
+}
