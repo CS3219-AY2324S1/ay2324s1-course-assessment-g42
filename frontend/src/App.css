@@ -10,21 +10,26 @@
   margin: 20px;
 }
 
-.home-title-text {
+.landing-title-text {
   font-size: 30px;
   font-weight: bold;
   color: white;
 }
 
-.home-orange-heading {
+.landing-orange-heading {
   font-size: 18px;
   font-weight: bold;
   color: #F24E1E;
 }
 
-.home-caption-text {
+.landing-caption-text {
   font-size: 14px;
   justify-content: center;
+}
+
+.home-header {
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .userprofile-title-text {
