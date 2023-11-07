@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 require('dotenv').config();
 const { io } = require("socket.io-client");
-var amqp = require('amqplib/callback_api');
 
 const MAX_TIME = 30000; 
 const matchCriteriaList = ['Easy-JavaScript', 'Easy-Python', 'Easy-C', 'Medium-JavaScript', 'Medium-Python', 'Medium-C', 'Hard-JavaScript', 'Hard-Python', 'Hard-C'];
 var consumerMap = new Map(); // track the consumers and first user request received
+var socket = null;
 
 function calculateTimeLeft(timeOfReq) {
     const currTime = new Date().getTime();
@@ -42,7 +42,6 @@ function handleMatchFound(firstUserReq, secondUserReq, consumerTag) {
     const message2 = 'Matched with ' + firstUserReq.username + '!';
 
     // send match to socket
-    socket = io('http://localhost:5001',  { transports : ['websocket'] });
     socket.emit('match-found', firstUserReq.username, secondUserReq.username, roomId, message1, message2);
     
     consumerMap.set(consumerTag, null);  // update first userReq received to null
@@ -102,48 +101,39 @@ function createConsumer(queue, channel) {
 
 }
 
-function runServer() {
+function runServer(channel) {
     console.log('Starting matching server');
-    amqp.connect(process.env.LOCALAMQP_URL, function(error0, connection) {
-        if (error0) {
-            throw error0;
-        }
-        console.log('Server Connected to CloudAMQP');
-        connection.createChannel(function(error1, channel) {
-            if (error1) {
-                throw error1;
+    
+    channel.prefetch(1);
+    
+    console.log(' [server] Consumer map: ');
+    console.log(consumerMap)
+
+    // create queues for matchCriterias
+    for (const matchCriteria of matchCriteriaList) {
+        channel.assertQueue(matchCriteria, {
+            autoDelete: true
+        }, function (err, q) {
+            if (err) {
+                throw err;
             }
-            
-            channel.prefetch(1);
-            
-            console.log(' [server] Awaiting RPC requests');
-            
-            console.log(' [server] Consumer map: ');
-            console.log(consumerMap)
 
-            // create queues for matchCriterias
-            for (const matchCriteria of matchCriteriaList) {
-                channel.assertQueue(matchCriteria, {
-                    autoDelete: true
-                }, function (err, q) {
-                    if (err) {
-                        throw err;
-                    }
+            const numOfMessages = q.messageCount;
+            console.log(` [server] Number of messages in ${matchCriteria} queue: ${numOfMessages}`);
 
-                    const numOfMessages = q.messageCount;
-                    console.log(` [server] Number of messages in ${matchCriteria} queue: ${numOfMessages}`);
-
-                    // send match request to the specific queue based on matchCriteria
-                    const consumerTag = `${matchCriteria}_consumer`;
-                    // each queue should only have one consumer, check no consumer exists for that queue before creating
-                    if (!consumerMap.has(consumerTag)) {
-                        console.log(' [server] Creating a new consumer ', consumerTag);
-                        createConsumer(matchCriteria, channel);
-                    }
-                });
+            // send match request to the specific queue based on matchCriteria
+            const consumerTag = `${matchCriteria}_consumer`;
+            // each queue should only have one consumer, check no consumer exists for that queue before creating
+            if (!consumerMap.has(consumerTag)) {
+                console.log(' [server] Creating a new consumer ', consumerTag);
+                createConsumer(matchCriteria, channel);
             }
         });
-    });
+    }
+
+    // connect to socket
+    socket = io('http://localhost:5001',  { transports : ['websocket'] });
+    console.log(' [server] Connected to socket');
 }
 
 module.exports = { runServer }

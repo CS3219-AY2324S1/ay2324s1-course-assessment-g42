@@ -2,8 +2,9 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const matchingServer = require('./rpc_server.js');
-const matchingClient = require('./rpc_client.js');
+const matchingServer = require('./server.js');
+const matchingClient = require('./client.js');
+var amqp = require('amqplib/callback_api');
 
 const http = require('http');
 const socketIo = require('socket.io');
@@ -30,6 +31,8 @@ app.get("/test", (req, res) => {
 const userMap = new Map();
 const MAX_TIME = 30000;
 
+var CHANNEL = null;
+
 // Set up socket
 io.on('connection', function(socket) {
   console.log("user connected:", socket.id);
@@ -48,7 +51,7 @@ io.on('connection', function(socket) {
       userMap.set(username, timeOfReq);
     }
     socket.join(username);
-    matchingClient.sendMatchingRequest(username, complexity, language, timeOfReq);
+    matchingClient.sendMatchingRequest(username, complexity, language, timeOfReq, CHANNEL);
   });
 
   socket.on('match-found', function(username1, username2, roomId, message1, message2) {
@@ -64,4 +67,17 @@ io.on('connection', function(socket) {
 
 server.listen(5001, () => {console.log("Matching server started on Port 5001")});
 
-matchingServer.runServer();
+amqp.connect(process.env.LOCALAMQP_URL, function(error0, connection) {
+  if (error0) {
+      throw error0;
+  }
+  console.log('Server Connected to CloudAMQP');
+  connection.createChannel(function(error1, channel) {
+      if (error1) {
+          throw error1;
+      }
+      matchingServer.runServer(channel);
+      CHANNEL = channel;
+  });
+});
+
