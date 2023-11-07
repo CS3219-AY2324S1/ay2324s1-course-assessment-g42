@@ -13,7 +13,7 @@ import Collab from './pages/collab';
 
 function App() {
   return (
-    <div>
+    <>
       <ToastContainer limit={1}/>
       <NavBar/>
       <Routes>
@@ -27,7 +27,7 @@ function App() {
         <Route path="viewusers" element={<ViewUsers />}/>
         <Route path="collab/" element={<Collab />}/>
       </Routes>
-    </div>
+    </>
   );
 }
 
