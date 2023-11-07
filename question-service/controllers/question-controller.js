@@ -24,7 +24,8 @@ async function getQuestions(req, res) {
       filter.categories = { $in: [category] };
     }
     if (title) {
-      filter.title = { $regex: new RegExp(title, 'i') }; // i for case-insensitive
+      const sanitizedTitle = title.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'); // Escape special characters
+      filter.title = { $regex: new RegExp(sanitizedTitle, 'i') }; // i for case-insensitive
     }
 
     // Query the database to get a page of documents
