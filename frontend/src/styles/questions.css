@@ -1,10 +1,27 @@
+.questions-bg {
+  background-color: black;
+}
+
+.header-row {
+  background-color: #858585;
+}
+
+.header-row .MuiTableCell-head {
+  color: #ffffff;
+}
+
+.table-row {
+  background-color: #e4e4e4;
+  border-bottom: 1px solid #858585;
+}
+
 .title-filter-input {
-  background: transparent; 
-  border: 1px solid rgb(0, 0, 0);
-  color: rgb(0, 0, 0); 
-  padding: 10px;
-  margin: 10px;
+  background: #ffffff; 
+  border: 1px solid #ffffff;
+  color: #000000; 
+  padding: 5px;
+  margin-left: 20px;
   font-size: 14px;
   width: 40%;
-  border-radius: 6px;
+  border-radius: 15px;
 }

@@ -8,7 +8,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 
-import FormDialog from '../components/questions/formDialog.js';
 import QuestionsTable from '../components/questions/questionsTable.js';
 import { logout } from '../helpers';
 import { standardToast } from '../styles/toastStyles';
@@ -228,15 +227,17 @@ function Questions() {
     console.error(error)});
   }, [navigate, pageNumber, location]);
 
+  // set body background color
+  useEffect(()  => {
+    document.body.classList.add('questions-bg');
+
+    return () => {
+        document.body.classList.remove('questions-bg');
+    };
+  });
+
   return (
-    <div className="wrapper">
-      <h1>Questions Repository</h1>
-      {/* Button to add a new question */}
-      <FormDialog
-        questions={questions}
-        categoryOptions={categories}
-        setQuestions={setQuestions}
-        addQuestionToDb={addQuestionToDb} />
+    <div className="narrow-wrapper">
       {/* Table displaying questions */}
       <QuestionsTable
         questions={questions}
@@ -244,12 +245,27 @@ function Questions() {
         filters={filters}
         handleDelete={handleDelete}
         applyFilter={applyFilter}
+        setQuestions={setQuestions}
+        addQuestionToDb={addQuestionToDb}
       />
 
       {/** Pagination */}
       <div style={{ display: 'flex', justifyContent: 'center', margin: "10px" }}>
         <Stack spacing={2}>
-          <Pagination count={totalPages} page={pageNumber} onChange={handlePageChange} color="primary" />
+        <Pagination
+          sx={{
+            button: {
+              color: '#ffffff',
+            },
+            '& .MuiPaginationItem-ellipsis': {
+              color: '#ffffff',
+            },
+          }}
+          count={totalPages}
+          page={pageNumber}
+          onChange={handlePageChange}
+          color="primary"
+        />
         </Stack>
       </div>
     </div>

@@ -37,6 +37,7 @@ function QuestionsFilter({ type, filters, options, applyFilter }) {
         aria-expanded={open ? 'true' : undefined}
         aria-haspopup="true"
         onClick={handleClick}
+        style={{ color: '#ffffff' }}
       >
         <FilterListIcon />
       </IconButton>

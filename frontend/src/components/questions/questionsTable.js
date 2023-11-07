@@ -11,6 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 import ComplexityChip from './complexityChip';
+import FormDialog from './formDialog';
 import QuestionInfo from './questionInfo';
 import QuestionsFilter from './questionsFilter';
 import QuestionsTitleFilter from './questionsTitleFilter';
@@ -22,7 +23,7 @@ const complexityOptions = [
   'Hard',
 ];
 
-function QuestionsTable({ questions, categories, filters, handleDelete, applyFilter }) {
+function QuestionsTable({ questions, categories, filters, handleDelete, applyFilter, setQuestions, addQuestionToDb }) {
   const [open, setOpen] = useState(false);
   const [targetQuestion, setTargetQuestion] = useState();
 
@@ -42,11 +43,11 @@ function QuestionsTable({ questions, categories, filters, handleDelete, applyFil
 
       {/* Table component below*/}
       <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 400 }} aria-label="simple table">
+      <Table sx={{ minWidth: 400 }} size="small" aria-label="simple table">
 
         {/* Insert table headers */}
         <TableHead>
-          <TableRow key="header">
+          <TableRow key="header" className="header-row">
             <TableCell style={{ fontWeight: 'bold' }}>
               Question Title
               <QuestionsTitleFilter type="title" filters={filters} applyFilter={applyFilter} />
@@ -58,6 +59,14 @@ function QuestionsTable({ questions, categories, filters, handleDelete, applyFil
             <TableCell align="center" style={{ fontWeight: 'bold' }}>
               Complexity
               <QuestionsFilter type="complexity" filters={filters} options={complexityOptions} applyFilter={applyFilter} />
+            </TableCell>
+            <TableCell align="center" style={{ fontWeight: 'bold' }}>
+              {/* Button to add a new question */}
+              <FormDialog
+                questions={questions}
+                categoryOptions={categories}
+                setQuestions={setQuestions}
+                addQuestionToDb={addQuestionToDb} />
             </TableCell>
           </TableRow>
         </TableHead>
@@ -71,6 +80,7 @@ function QuestionsTable({ questions, categories, filters, handleDelete, applyFil
                 '&:last-child td, &:last-child th': { border: 0 },
                 '&:hover': { cursor: 'pointer' }
               }}
+              className="table-row"
               onClick={() => handleClickOpen(question.id)}
             >
               {/* Add table cells */}
@@ -84,6 +94,8 @@ function QuestionsTable({ questions, categories, filters, handleDelete, applyFil
               </TableCell>
               <TableCell align="center">
                 <ComplexityChip complexity={question.complexity} />
+              </TableCell>
+              <TableCell> {/** Empty table cell for add button column */}
               </TableCell>
             </TableRow>
           ))}
