@@ -27,9 +27,29 @@
   justify-content: center;
 }
 
-.home-header {
+.home-heading {
   font-size: 20px;
   font-weight: bold;
+  justify-content: center;
+  align-content: center;
+}
+
+.home-heading-wrapper {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.rounded-outline-box {
+  padding: 10px;
+  outline-color: black;
+  outline-style: solid;
+  border-radius: 10px; 
+  margin-top: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .userprofile-title-text {
