@@ -35,8 +35,6 @@ services:
     hostname: collaboration
     build:
       context: ./collaboration-service
-    env_file:
-      - ./collaboration-service/.env
     ports:
       - "5002:5002"
 
