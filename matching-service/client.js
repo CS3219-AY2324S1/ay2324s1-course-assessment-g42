@@ -13,7 +13,7 @@ function createUserReq(username, matchCriteria, timeOfReq) {
 function sendMatchingRequest(username, complexity, language, timeOfReq, channel) {
     channel.assertQueue('', {
         exclusive: true
-    }, async function(error2, q) {
+    }, function(error2, q) {
         if (error2) {
             throw error2;
         }
