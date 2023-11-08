@@ -18,7 +18,7 @@ function HomePage() {
         <Grid container spacing={3} direction="row" justifyContent="center" alignItems="center">
           <Grid item xs={4}>
             <div className='home-heading-wrapper'>
-              <img src={homeImage1} alt="home_1" style={{ maxWidth: '500px', maxHeight: '300px' }}/>
+              <img src={homeImage1} alt="home_1" style={{ maxWidth: '100%', maxHeight: '100%' }}/>
               <span align='center' className='home-heading'>Work with a friend and take that step towards your dream job.</span>
               <div style={{marginBottom: "10px"}}>
                 <Button
@@ -33,7 +33,7 @@ function HomePage() {
           </Grid>
           <Grid item xs={4}>
             <div className='home-heading-wrapper'>
-              <img src={homeImage2} alt="home_2" style={{ maxWidth: '400px', maxHeight: '300px' }}/>
+              <img src={homeImage2} alt="home_2" style={{ maxWidth: '100%', maxHeight: '100%' }}/>
               <span align='center' className='home-heading'>Challenge yourself with one of our challenging questions!</span>                
               <div style={{marginBottom: "10px"}}>
                 <Button
