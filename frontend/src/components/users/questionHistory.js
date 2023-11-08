@@ -15,7 +15,9 @@ import '../../styles/userProfile.css';
 // TODO: example questions, to delete after history service is done
 const exampleQuestions = [
  { id: 1, title: "Two Sum", attempt: "something", date: "25 Dec 2023", collaborated: "some user" },
- { id: 2, title: "Three Sum", attempt: "some code", date: "29 Dec 2023", collaborated: "pp" }
+ { id: 2, title: "Three Sum", attempt: "some code", date: "29 Dec 2023", collaborated: "pp" },
+ { id: 3, title: "idk", attempt: "yes", date: "30 Dec 2023", collaborated: "mod" },
+ { id: 4, title: "another qn", attempt: "more code", date: "30 Dec 2023", collaborated: "yuh" }
 ];
 
 function QuestionHistory() {
