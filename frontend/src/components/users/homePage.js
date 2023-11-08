@@ -19,7 +19,7 @@ function HomePage() {
           <Grid item xs={4}>
             <div className='home-heading-wrapper'>
               <img src={homeImage1} alt="home_1" style={{ maxWidth: '500px', maxHeight: '300px' }}/>
-              <span align='center' className='home-heading'>Work with a friend and take that step towards your dream job</span>
+              <span align='center' className='home-heading'>Work with a friend and take that step towards your dream job.</span>
               <div style={{marginBottom: "10px"}}>
                 <Button
                   variant="contained"
