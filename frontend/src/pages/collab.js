@@ -30,7 +30,7 @@ function Collab() {
   const [language, setLanguage] = useState(null);
   const [matchedUser, setMatchedUser] = useState(null);
   const [isPartner, setIsPartner] = useState(true);
-  const [username, setUsername] = useState(null);
+  const [ownUsername, setOwnUsername] = useState(null);
 
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
@@ -88,8 +88,9 @@ function Collab() {
       navigate('/login');
       return;
     }
-    setUsername(JSON.parse(loggedInUser).username);
+    const username = (JSON.parse(loggedInUser).username);
     let randomId = null;
+    setOwnUsername(username);
   
     socketRef.current = io('http://localhost:5002',  { transports : ['websocket'] });
 
@@ -287,7 +288,7 @@ function Collab() {
               {isPartner
               ?
               <div className="collab-chat-content" >
-                <ChatComponent roomId={room} username={username}>
+                <ChatComponent roomId={room} username={ownUsername}>
                 </ChatComponent>
               </div>
               : 
