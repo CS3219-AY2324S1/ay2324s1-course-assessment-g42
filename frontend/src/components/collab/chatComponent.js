@@ -14,12 +14,14 @@ function ChatComponent({roomId, username}) {
     const inputRef = useRef();
     const [msgInputValue, setMsgInputValue] = useState("");
     const [messages, setMessages] = useState([]);
+    const [isPartnerConnected, setIsPartnerConnected] = useState(false);
 
 
     const sendMessage = (message) => {
       const updatedMessages = [...messages, {
         message,
-        direction: 'outgoing'
+        direction: 'outgoing',
+        isNotification: false
       }];
       setMessages(updatedMessages);
       setMsgInputValue("");
@@ -31,11 +33,21 @@ function ChatComponent({roomId, username}) {
     const receiveMessage = (message) => {
       const updatedMessages = [...messages, {
         message,
-        direction: 'incoming'
+        direction: 'incoming',
+        isNotification: false
       }];
       setMessages(updatedMessages);
       sessionStorage.setItem(`chat_${roomId}`, JSON.stringify(updatedMessages));
     }
+
+    const sendNotification = (message) => {
+      const updatedMessages = [...messages, {
+        message,
+        isNotification: true
+      }];
+      setMessages(updatedMessages);
+    }
+
 
     useEffect(() => {
         if (!chatSocketRef.current) {
@@ -54,13 +66,27 @@ function ChatComponent({roomId, username}) {
             }
         });
 
+        chatSocketRef.current.on('inform-connect', (username) => {
+          sendNotification(`${username} joined the chat`);
+        });
+
+        chatSocketRef.current.on('inform-disconnect', (username) => {
+          sendNotification(`${username} left the chat`);
+        });
+
     })
 
     return (
         <ChatContainer>
           <MessageList scrollBehavior="smooth">
             {messages.map((m, i) => 
-              <Message key={i} model={{ direction: m.direction}} >
+              m.isNotification 
+              ? <div>
+              <span style={{
+                color: "grey"
+                  }}> {m.message} </span> 
+                  </div>
+              : <Message key={i} model={{ direction: m.direction}} >
                 <Message.CustomContent>
                   <Linkify>
                     {m.message}

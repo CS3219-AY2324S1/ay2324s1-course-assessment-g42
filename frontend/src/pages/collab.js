@@ -23,7 +23,6 @@ function Collab() {
   const [storedQuestion, setStoredQuestion] = useState(null);
   const [code, setCode] = useState('');
   const socketRef = useRef();
-  const chatSocketRef = useRef();
   const navigate = useNavigate();
   const [room, setRoom] = useState(null);
   const [complexity, setComplexity] = useState(null);
@@ -102,11 +101,6 @@ function Collab() {
       navigate('/');
       return;
     })
-
-    if (!chatSocketRef.current) {
-      chatSocketRef.current = io('http://localhost:5003',  { transports : ['websocket'] });
-      chatSocketRef.current.emit('create-chat', roomId);
-    }
 
     const storedQuestion = sessionStorage.getItem(`question_${roomId}`);
     let question = JSON.parse(storedQuestion);
@@ -285,17 +279,10 @@ function Collab() {
               <div className="collab-section-header">
                 Chat
               </div>
-              {isPartner
-              ?
               <div className="collab-chat-content" >
                 <ChatComponent roomId={room} username={ownUsername}>
                 </ChatComponent>
               </div>
-              : 
-              <div className="collab-chat-content">
-              {matchedUser} has disconnected
-              </div>
-              }
               
             </Grid>
             <Grid item xs={6} style={{marginTop: "10px", maxHeight: "94%"}}>

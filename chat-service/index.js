@@ -9,6 +9,8 @@ const { disconnect } = require('process');
 const server = http.createServer(app);
 const io = socketIo(server);
 
+const rooms = {};
+const usernames = {};
 
 app.use(
   cors({
@@ -30,6 +32,17 @@ io.on('connection', (socket) => {
     console.log(`[${username}] joined chat: ${roomId}`);
     
     socket.emit('loadChatHistory');
+
+    if (!rooms[roomId]) {
+      rooms[roomId] = [socket.id];
+      usernames[socket.id] = username;
+    } else {
+      rooms[roomId].push(socket.id);
+      const otherUser = rooms[roomId].find(id => id !== socket.id);
+      socket.to(otherUser).emit('inform-connect', username);
+      socket.emit('inform-connect', usernames[otherUser]);
+      usernames[socket.id] = username;
+    }
   });
 
   socket.on('send-message', (message, roomId, username) => {
@@ -39,6 +52,19 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
+    const roomId = Object.keys(rooms).find(roomId => rooms[roomId].includes(socket.id));
+    if (roomId) {
+      const otherUser = rooms[roomId].find(id => id !== socket.id);
+      if (otherUser) {
+        socket.to(otherUser).emit('inform-disconnect', usernames[socket.id]);
+        rooms[roomId] = rooms[roomId].filter(id => id !== socket.id);
+      } else {
+        // remove roomId from rooms
+        delete rooms[roomId];
+        console.log(`removed room ${roomId}`);
+      }
+      delete usernames[socket.id];
+    }
   });
 });
 
