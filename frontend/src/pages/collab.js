@@ -16,6 +16,8 @@ import { QUESTION_API_URL } from '../config';
 import { logout } from '../helpers';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
 
+import VideoCall from '../components/collab/videoCall';
+
 function Collab() {
   const location = useLocation();
   const [storedQuestion, setStoredQuestion] = useState(null);
@@ -292,7 +294,7 @@ function Collab() {
                 Video Call
               </div>
               <div className="collab-chat-content">
-                :)
+                <VideoCall roomId={room} />
               </div>
             </Grid>
           </Grid>
