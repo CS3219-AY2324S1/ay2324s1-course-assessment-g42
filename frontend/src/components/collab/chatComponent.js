@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-    MainContainer,
     ChatContainer,
     MessageList,
     Message,
@@ -8,6 +7,7 @@ import {
   } from "@chatscope/chat-ui-kit-react";
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import io from 'socket.io-client';
+import Linkify from 'react-linkify';
 
 function ChatComponent({roomId}) {
     const chatSocketRef = useRef();
@@ -57,16 +57,19 @@ function ChatComponent({roomId}) {
     })
 
     return (
-        <div style={{ position: "relative", height: "140px" }}>
-          <MainContainer>
-            <ChatContainer>
-              <MessageList scrollBehavior="smooth">
-                {messages.map((m, i) => <Message key={i} model={m} />)}
-              </MessageList >
-              <MessageInput placeholder="Type message here" onSend={sendMessage} onChange={setMsgInputValue} value={msgInputValue} ref={inputRef}/>
-            </ChatContainer>
-          </MainContainer>
-        </div>
+        <ChatContainer>
+          <MessageList scrollBehavior="smooth">
+            {messages.map((m, i) => 
+              <Message key={i} model={m.direction} >
+                <Message.CustomContent>
+                  <Linkify>
+                    {m.message}
+                  </Linkify>
+                </Message.CustomContent>
+              </Message>)}
+          </MessageList >
+          <MessageInput attachButton={false} placeholder="Type message here" onSend={sendMessage} onChange={setMsgInputValue} value={msgInputValue} ref={inputRef}/>
+        </ChatContainer>
           )
 }
 

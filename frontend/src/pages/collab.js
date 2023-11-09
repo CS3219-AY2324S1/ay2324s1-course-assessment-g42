@@ -278,7 +278,7 @@ function Collab() {
               </div>
               {isPartner
               ?
-              <div className="collab-chat-content">
+              <div className="collab-chat-content" >
                 <ChatComponent roomId={room} >
                 </ChatComponent>
               </div>
