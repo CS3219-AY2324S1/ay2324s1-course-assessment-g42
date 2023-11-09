@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chatscope/chat-ui-kit-react": "^1.10.1",
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@monaco-editor/react": "^4.6.0",
@@ -15,6 +17,7 @@
     "http-proxy-middleware": "^2.0.6",
     "js-cookie": "^3.0.5",
     "react": "^18.2.0",
+    "react-chat-ui": "^0.4.0",
     "react-dom": "^18.2.0",
     "react-monaco-editor": "^0.54.0",
     "react-router-dom": "^6.16.0",

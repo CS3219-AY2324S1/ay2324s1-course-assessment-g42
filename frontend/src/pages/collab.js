@@ -16,11 +16,14 @@ import { QUESTION_API_URL } from '../config';
 import { logout } from '../helpers';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
 
+import ChatComponent from '../components/collab/chatComponent';
+
 function Collab() {
   const location = useLocation();
   const [storedQuestion, setStoredQuestion] = useState(null);
   const [code, setCode] = useState('');
   const socketRef = useRef();
+  const chatSocketRef = useRef();
   const navigate = useNavigate();
   const [room, setRoom] = useState(null);
   const [complexity, setComplexity] = useState(null);
@@ -92,6 +95,11 @@ function Collab() {
       navigate('/');
       return;
     })
+
+    if (!chatSocketRef.current) {
+      chatSocketRef.current = io('http://localhost:5003',  { transports : ['websocket'] });
+      chatSocketRef.current.emit('create-chat', roomId);
+    }
 
     const storedQuestion = sessionStorage.getItem(`question_${roomId}`);
     let question = JSON.parse(storedQuestion);
@@ -271,7 +279,8 @@ function Collab() {
               {isPartner
               ?
               <div className="collab-chat-content">
-                u r matched with {matchedUser}
+                <ChatComponent roomId={room} >
+                </ChatComponent>
               </div>
               : 
               <div className="collab-chat-content">
