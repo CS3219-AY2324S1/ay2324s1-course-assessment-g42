@@ -67,7 +67,7 @@ io.on('connection', function(socket) {
 
 server.listen(5001, () => {console.log("Matching server started on Port 5001")});
 
-amqp.connect(process.env.LOCALAMQP_URL, function(error0, connection) {
+amqp.connect(process.env.CLOUDAMQP_URL, function(error0, connection) {
   if (error0) {
       throw error0;
   }
