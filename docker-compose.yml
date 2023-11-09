@@ -38,6 +38,14 @@ services:
     ports:
       - "5002:5002"
 
+  chat:
+    container_name: chat
+    hostname: chat
+    build:
+      context: ./chat-service
+    ports:
+      - "5003:5003"
+
   frontend:
     container_name: frontend
     hostname: frontend

@@ -25,16 +25,16 @@ app.use(cookieParser());
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
   
-  socket.on('join-chat', async (roomId) => {
+  socket.on('join-chat', (roomId, username) => {
     socket.join(roomId);
-    console.log("User joined chat:", roomId);
+    console.log(`[${username}] joined chat: ${roomId}`);
     
     socket.emit('loadChatHistory');
   });
 
-  socket.on('send-message', async (data, roomId) => {
-    console.log("send-message:", data);
-    socket.broadcast.to(roomId).emit('receive-message', data);
+  socket.on('send-message', (message, roomId, username) => {
+    console.log(`[${username}] sent message: ${message}`);
+    socket.broadcast.to(roomId).emit('receive-message', message);
   });
 
   socket.on('disconnect', () => {

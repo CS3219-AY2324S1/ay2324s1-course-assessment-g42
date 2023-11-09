@@ -9,7 +9,7 @@ import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import io from 'socket.io-client';
 import Linkify from 'react-linkify';
 
-function ChatComponent({roomId}) {
+function ChatComponent({roomId, username}) {
     const chatSocketRef = useRef();
     const inputRef = useRef();
     const [msgInputValue, setMsgInputValue] = useState("");
@@ -25,7 +25,7 @@ function ChatComponent({roomId}) {
       setMsgInputValue("");
       sessionStorage.setItem(`chat_${roomId}`, JSON.stringify(updatedMessages));
       inputRef.current.focus();
-      chatSocketRef.current.emit('send-message', message, roomId);
+      chatSocketRef.current.emit('send-message', message, roomId, username);
     }
 
     const receiveMessage = (message) => {
@@ -40,11 +40,10 @@ function ChatComponent({roomId}) {
     useEffect(() => {
         if (!chatSocketRef.current) {
             chatSocketRef.current = io('http://localhost:5003',  { transports : ['websocket'] });
-            chatSocketRef.current.emit('join-chat', roomId);
+            chatSocketRef.current.emit('join-chat', roomId, username);
         }
 
         chatSocketRef.current.on('receive-message', (message) => {
-            console.log('received message in ' + message);
             receiveMessage(message);
         });
 
@@ -54,13 +53,14 @@ function ChatComponent({roomId}) {
               setMessages(JSON.parse(chatHistory));
             }
         });
+
     })
 
     return (
         <ChatContainer>
           <MessageList scrollBehavior="smooth">
             {messages.map((m, i) => 
-              <Message key={i} model={m.direction} >
+              <Message key={i} model={{ direction: m.direction}} >
                 <Message.CustomContent>
                   <Linkify>
                     {m.message}
