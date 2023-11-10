@@ -97,7 +97,7 @@ io.on('connection', (socket) => {
       if (rooms[roomName].user1 !== null && rooms[roomName].user2 !== null) {
         const room = rooms[roomName];
         const saveAttempt = {user1: room.user1, user2:room.user2, qnId: room.qnId, attempt: room.code, date: new Date()}
-        axios.post('http://localhost:5003/history/saveAttempt', saveAttempt)
+        axios.post('http://localhost:5004/history/saveAttempt', saveAttempt)
         .then(response => console.log("save successfull")).
         catch(error => console.log("save unsuccessfull", error))
       }

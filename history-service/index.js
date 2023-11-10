@@ -21,6 +21,6 @@ app.get("/test", (req, res) => {
 //routes for user behaviour
 app.use("/history", require('./routes/history-route'));
 
-app.listen(5003, () => {console.log("History microservice is listening at port 5003")});
+app.listen(5004, () => {console.log("History microservice is listening at port 5003")});
 
 module.exports = app;

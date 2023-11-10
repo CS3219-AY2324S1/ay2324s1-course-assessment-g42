@@ -59,7 +59,7 @@ services:
     env_file:
       - ./history-service/.env
     ports:
-      - "5003:5003"
+      - "5004:5004"
 
   nginx:
     container_name: nginx
