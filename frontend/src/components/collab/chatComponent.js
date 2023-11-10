@@ -18,6 +18,7 @@ function ChatComponent({roomId, username}) {
 
 
     const sendMessage = (message) => {
+      message = message.replace(/&nbsp;/g,'');
       const updatedMessages = [...messages, {
         message,
         direction: 'outgoing',
@@ -31,6 +32,7 @@ function ChatComponent({roomId, username}) {
     }
 
     const receiveMessage = (message) => {
+      message = message.replace(/&nbsp;/g,'');
       const updatedMessages = [...messages, {
         message,
         direction: 'incoming',
@@ -81,11 +83,14 @@ function ChatComponent({roomId, username}) {
           <MessageList scrollBehavior="smooth">
             {messages.map((m, i) => 
               m.isNotification 
-              ? <div>
-              <span style={{
-                color: "grey"
-                  }}> {m.message} </span> 
-                  </div>
+              ? <Message key={'custom'} model={{
+                direction:"incoming",
+                type: "custom"
+              }}>
+                  <Message.CustomContent>
+                    <strong>{m.message}</strong>
+                </Message.CustomContent>
+                  </Message>
               : <Message key={i} model={{ direction: m.direction}} >
                 <Message.CustomContent>
                   <Linkify>
