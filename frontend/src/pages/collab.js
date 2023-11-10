@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
-import { Grid } from '@mui/material';
+import { Grid, Button, Tooltip } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import Editor from '@monaco-editor/react';
 
@@ -17,6 +17,8 @@ import { logout } from '../helpers';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
 
 import ChatComponent from '../components/collab/chatComponent';
+import LogoutIcon from '@mui/icons-material/Logout';
+
 
 function Collab() {
   const location = useLocation();
@@ -42,6 +44,18 @@ function Collab() {
     //save code changes to session storage
     sessionStorage.setItem(`codeEditor_${roomId}`, code);
     socketRef.current.emit('code-change', room, value);
+  }
+
+  const handleLeaveRoom = () => {
+    let roomId = room;
+    let username = JSON.parse(Cookies.get('user')).username;
+    sessionStorage.removeItem(`codeEditor_${roomId}`);
+    sessionStorage.removeItem(`matchedUser_${roomId}`);
+    sessionStorage.removeItem(`question_${roomId}`);
+
+    socketRef.current.emit('disconnect-client', roomId, username);
+    console.log("client disconnected")
+    navigate('/')
   }
 
   useEffect(() => { 
@@ -247,6 +261,11 @@ function Collab() {
           </div>
           <div className="collab-question-content">
             <b className="question-title">{storedQuestion.id}. {storedQuestion.title}</b>
+            <Tooltip title="Leave collaboration room">
+              <Button onClick={handleLeaveRoom} style={{marginBottom: '1%'}}>
+                <LogoutIcon sx={{ fontSize: 24 }}/>
+              </Button>
+            </Tooltip>
             <br />
             <DifficultyText difficulty={storedQuestion.complexity} />
             <br />
