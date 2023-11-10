@@ -11,7 +11,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
-import FormAddCategories from './formAddCategories';
+import FormCategoriesSelect from './formCategoriesSelect';
 import FormComplexitySelect from './formComplexitySelect';
 
 function FormDialog({ questions, categoryOptions, setQuestions, addQuestionToDb }) {
@@ -104,7 +104,11 @@ function FormDialog({ questions, categoryOptions, setQuestions, addQuestionToDb 
             variant="standard"
             inputRef={descRef}
           />
-          <FormAddCategories categories={categoryOptions} setCategories={setCategories} />
+          <FormCategoriesSelect
+            categories={categories}
+            categoryOptions={categoryOptions}
+            setCategories={setCategories}
+          />
           <FormComplexitySelect complexity={complexity} setComplexity={setComplexity} />
         </DialogContent>
 
