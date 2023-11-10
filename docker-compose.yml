@@ -51,6 +51,16 @@ services:
     ports:
       - "3000:3000"
 
+  history:
+    container_name: history
+    hostname: history
+    build:
+      context: ./history-service
+    env_file:
+      - ./history-service/.env
+    ports:
+      - "5003:5003"
+
   nginx:
     container_name: nginx
     hostname: nginx
