@@ -17,7 +17,7 @@ import { logout } from '../helpers';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
 
 import ChatComponent from '../components/collab/chatComponent';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 
 function Collab() {
@@ -263,7 +263,7 @@ function Collab() {
             <b className="question-title">{storedQuestion.id}. {storedQuestion.title}</b>
             <Tooltip title="Leave collaboration room">
               <Button onClick={handleLeaveRoom} style={{marginBottom: '1%'}}>
-                <ExitToAppIcon sx={{ fontSize: 24 }}/>
+                <LogoutIcon sx={{ fontSize: 24 }}/>
               </Button>
             </Tooltip>
             <br />
