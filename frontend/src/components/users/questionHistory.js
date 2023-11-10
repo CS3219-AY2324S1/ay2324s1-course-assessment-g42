@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom'; 
+import axios from "axios";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,19 +10,55 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-
+import { HISTORY_API_URL, QUESTION_API_URL } from '../../config';
+import Cookies from 'js-cookie';
 import '../../App.css';
 import '../../styles/userProfile.css';
 
-// TODO: example questions, to delete after history service is done
-const exampleQuestions = [
- { id: 1, title: "Two Sum", attempt: "something", date: "25 Dec 2023", collaborated: "some user" },
- { id: 2, title: "Three Sum", attempt: "some code", date: "29 Dec 2023", collaborated: "pp" },
- { id: 3, title: "idk", attempt: "yes", date: "30 Dec 2023", collaborated: "mod" },
- { id: 4, title: "another qn", attempt: "more code", date: "30 Dec 2023", collaborated: "yuh" }
-];
-
 function QuestionHistory() {
+  const [history, setHistory] = useState([]);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const loggedInUser = Cookies.get('user');
+    const user = JSON.parse(loggedInUser);
+    const username = user.username;
+
+    const getQuestionById = async (id) => {
+      axios.post(
+        QUESTION_API_URL + "/question/getQuestionById",
+        { id: id },
+        { withCredentials: true, credentials: 'include' }
+      )
+      .then(response => {
+        console.log(response.data);
+        return response.data.title
+      })
+    }
+    const getHistory = async () => {
+      axios.post(
+        HISTORY_API_URL + "/history/getHistory", {username})
+      .then(response => {
+        const historyList = response.data;
+        historyList.map(attempt => attempt = {...attempt, getQuestionById})
+        /*const qnIdList = historyList.map(question => question.qnId)
+        console.log(qnIdList);
+        const questionList = getQuestionTitles(qnIdList);
+        questionList.forEach(historyAttempt => {
+          const existingIndex = historyList.findIndex(qn => qn.qnId === historyAttempt.id);
+          if (existingIndex !== -1) {
+            historyList[existingIndex] = { ...historyList[existingIndex], title: historyAttempt.title };
+          } else {
+            historyList.push(historyAttempt);
+          }  
+        })*/
+        setHistory(historyList);
+        console.log("Get history successfully", username, response.data);
+      }).catch(error => console.log("Error getting history"));
+    }
+    if (username) {
+      getHistory();
+    }
+  }, [navigate]);
 
   return (
     <div className="history-wrapper">
@@ -33,7 +71,7 @@ function QuestionHistory() {
           <TableHead component={Paper} className="history-table-header">
             <TableRow key="header">
               <TableCell style={{ fontWeight: 'bold' }}>
-                Title
+                Question Title
               </TableCell>
               <TableCell align="center" style={{ fontWeight: 'bold' }}>
                 Attempt
@@ -49,16 +87,16 @@ function QuestionHistory() {
 
           {/* Insert table body content */}
           <TableBody>
-            {exampleQuestions.map((question) => (
+            {history.map((question) => (
               <TableRow
-                key={question.id}
+                key={question.title}
                 sx={{
                   '&:last-child td, &:last-child th': { border: 0 },
                 }}
               >
                 {/* Add table cells */}
                 <TableCell component="th" scope="row">
-                  {question.title}
+                  {question.qnId}
                 </TableCell>
                 <TableCell align="center">
                   {question.attempt}
