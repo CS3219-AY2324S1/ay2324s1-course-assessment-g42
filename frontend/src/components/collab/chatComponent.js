@@ -83,7 +83,7 @@ function ChatComponent({roomId, username}) {
           <MessageList scrollBehavior="smooth">
             {messages.map((m, i) => 
               m.isNotification 
-              ? <Message key={'custom'} model={{
+              ? <Message key={i} model={{
                 direction:"incoming",
                 type: "custom"
               }}>
