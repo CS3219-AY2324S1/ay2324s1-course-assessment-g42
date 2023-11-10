@@ -16,6 +16,8 @@
   padding: 5px;
   padding-left: 15px;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
 }
 
 .collab-question-content {

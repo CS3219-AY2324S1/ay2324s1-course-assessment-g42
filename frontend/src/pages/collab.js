@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
-import { Grid } from '@mui/material';
+import { Grid, Button, Tooltip } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import Editor from '@monaco-editor/react';
 
@@ -17,6 +17,8 @@ import { logout } from '../helpers';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
 
 import ChatComponent from '../components/collab/chatComponent';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+
 
 function Collab() {
   const location = useLocation();
@@ -42,6 +44,18 @@ function Collab() {
     //save code changes to session storage
     sessionStorage.setItem(`codeEditor_${roomId}`, code);
     socketRef.current.emit('code-change', room, value);
+  }
+
+  const handleLeaveRoom = () => {
+    let roomId = room;
+    let username = JSON.parse(Cookies.get('user')).username;
+    sessionStorage.removeItem(`codeEditor_${roomId}`);
+    sessionStorage.removeItem(`matchedUser_${roomId}`);
+    sessionStorage.removeItem(`question_${roomId}`);
+
+    socketRef.current.emit('disconnect-client', roomId, username);
+    console.log("client disconnected")
+    navigate('/')
   }
 
   useEffect(() => { 
@@ -261,6 +275,13 @@ function Collab() {
         <Grid item xs={7} style={{maxHeight: '85vh', overflow: 'auto'}}>
           <div className="collab-section-header">
             {language}
+            <div style={{marginLeft: '75%'}}>
+              <Tooltip title="Leave collaboration room">
+                <Button onClick={handleLeaveRoom}>
+                  <ExitToAppIcon sx={{ color: '#ffffff', fontSize: 20 }}/>
+                </Button>
+              </Tooltip>
+            </div>
           </div>
           <div className="collab-editor-content">
           <Editor
