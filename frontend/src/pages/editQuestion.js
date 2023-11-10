@@ -108,7 +108,7 @@ function EditQuestion() {
         return;
       } else {
         const user = JSON.parse(loggedInUser);
-        if (user.role !== "admin") {
+        if (user.role === "user") {
           navigate('/');
           toast.error("Unauthorised access!", {
             position: "top-center",
