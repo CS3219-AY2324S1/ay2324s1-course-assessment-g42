@@ -10,6 +10,7 @@ import Signup from './pages/signup';
 import NavBar from './components/navBar';
 import ViewUsers from './pages/viewUsers';
 import Collab from './pages/collab';
+import EditQuestion from './pages/editQuestion';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="userprofile" element={<UserProfile />}/>
         <Route path="viewusers" element={<ViewUsers />}/>
         <Route path="collab/" element={<Collab />}/>
+        <Route path="editquestion/:id" element={<EditQuestion />}/>
       </Routes>
     </>
   );

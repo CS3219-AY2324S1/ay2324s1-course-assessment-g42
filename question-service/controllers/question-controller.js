@@ -149,11 +149,44 @@ async function getQuestionByComplexity(req, res) {
   }
 }
 
+async function updateQuestion(req, res) {
+  try {
+    const { id, title, description, categories, complexity } = req.body;
+    
+    if (!id || !title || !description || !categories || !complexity) {
+      return res.status(400).json({ error: 'Incomplete or incorrect parameters provided' });
+    }
+
+    // Find and update the question based on its ID
+    const updatedQuestion = await QuestionModel.findOneAndUpdate(
+      { id: id }, // Search criteria based on the ID
+      {
+        title: title,
+        description: description,
+        categories: categories,
+        complexity: complexity
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedQuestion) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+
+    res.status(200).json(updatedQuestion); // Respond with the updated document
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+}
+
+
 module.exports = { 
   getQuestions,
   getQuestionById,
   getMaxQuestionId,
   addQuestion,
   deleteQuestion,
-  getQuestionByComplexity
+  getQuestionByComplexity,
+  updateQuestion
 };
