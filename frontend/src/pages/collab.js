@@ -12,7 +12,7 @@ import Chip from '@mui/material/Chip';
 import Editor from '@monaco-editor/react';
 
 import { standardToast } from '../styles/toastStyles';
-import { QUESTION_API_URL } from '../config';
+import { QUESTION_API_URL, HISTORY_API_URL } from '../config';
 import { logout } from '../helpers';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
 
@@ -64,6 +64,31 @@ function Collab() {
       }
     }
     
+    const handleSocketDisconnect = () => {
+      // Prepare the data to be saved
+      const saveData = {
+        id: room,
+        title: storedQuestion.title,
+        attempt: code,
+        date: new Date(),
+        collaborated: [username, storedUser],
+      };
+
+      // Send the saveData to HISTORY_API_URL/saveAttempt
+      axios.post(
+        HISTORY_API_URL + "/saveAttempt",
+        saveData,
+        { withCredentials: true, credentials: 'include' }
+      )
+        .then(response => {
+          console.log("Attempt saved!")
+        })
+        .catch(error => {
+          // Handle any errors
+          console.error(error);
+        });
+    };
+
     //handle refresh on code editor
     const storedCode = sessionStorage.getItem(`codeEditor_${roomId}`);
     const storedUser = sessionStorage.getItem(`matchedUser_${roomId}`);
@@ -210,8 +235,6 @@ function Collab() {
         toast.info("Partner has connected", standardToast);
       }
     })
-
-    // Clean up the socket connection on unmount
 
     return () => {
       socketRef.current.emit('disconnect-client', roomId, username);
