@@ -261,6 +261,11 @@ function Collab() {
           </div>
           <div className="collab-question-content">
             <b className="question-title">{storedQuestion.id}. {storedQuestion.title}</b>
+            <Tooltip title="Leave collaboration room">
+              <Button onClick={handleLeaveRoom} style={{marginBottom: '1%'}}>
+                <ExitToAppIcon sx={{ fontSize: 24 }}/>
+              </Button>
+            </Tooltip>
             <br />
             <DifficultyText difficulty={storedQuestion.complexity} />
             <br />
@@ -275,13 +280,6 @@ function Collab() {
         <Grid item xs={7} style={{maxHeight: '85vh', overflow: 'auto'}}>
           <div className="collab-section-header">
             {language}
-            <div style={{marginLeft: '75%'}}>
-              <Tooltip title="Leave collaboration room">
-                <Button onClick={handleLeaveRoom}>
-                  <ExitToAppIcon sx={{ color: '#ffffff', fontSize: 20 }}/>
-                </Button>
-              </Tooltip>
-            </div>
           </div>
           <div className="collab-editor-content">
           <Editor
