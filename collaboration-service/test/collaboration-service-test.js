@@ -12,6 +12,8 @@ var options = {
 describe("Test Collaboration Service", function() {
   let roomName = "testRoom";
   let language = "JavaScript";
+  let user1Str = "user1";
+  let user2Str = "user2";
   let user1;
   let user2;
 
@@ -19,16 +21,16 @@ describe("Test Collaboration Service", function() {
     user1 = io.connect(socketURL, options);
     
     user1.on('connect', () => {
-      user1.emit('join-room', roomName, 'user1', language);
+      user1.emit('join-room', roomName, user1Str, language);
       user2 = io.connect(socketURL, options);
 
       user2.on('connect', () => {
-        user2.emit('join-room', roomName, 'user2', language);
+        user2.emit('join-room', roomName, user2Str, language);
       })
     })
 
     user1.on('inform-connect', (username) => {
-      expect(username).to.equal('user2');
+      expect(username).to.equal(user2Str);
       done();
     })
   });
@@ -106,8 +108,8 @@ describe("Test Collaboration Service", function() {
     user2.on('get-info', (room) => {
       expect(room.language).to.equal(language);
       expect(room.qnId).to.equal(storedId);
-      expect(room.user1).to.equal('user1');
-      expect(room.user2).to.equal('user2');
+      expect(room.user1).to.equal(user1Str);
+      expect(room.user2).to.equal(user2Str);
       expect(room.isUser1Present).to.equal(true);
       expect(room.isUser2Present).to.equal(true);
       done();
@@ -117,7 +119,7 @@ describe("Test Collaboration Service", function() {
   });
 
   it('Should inform other user of disconnect', done => {
-    let disconnectedUser = 'user2';
+    let disconnectedUser = user2Str;
 
     user1.on('inform-disconnect', (username) => {
       expect(username).to.equal(disconnectedUser);
@@ -132,6 +134,7 @@ describe("Test Collaboration Service", function() {
 
     user1.on('get-info', (room) => {
       expect(room.isUser2Present).to.equal(false);
+      expect(room.user2).to.equal(user2Str);
       done();
     })
 
