@@ -135,6 +135,7 @@ describe("Test Collaboration Service", function() {
     user1.on('get-info', (room) => {
       expect(room.isUser2Present).to.equal(false);
       expect(room.user2).to.equal(user2Str);
+      externalUser.disconnect();
       done();
     })
 
