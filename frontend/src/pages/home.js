@@ -2,8 +2,8 @@ import '../App.css';
 import React, { useState, useLayoutEffect } from 'react'
 
 import Cookies from 'js-cookie';
-import HomePage from '../components/users/homePage';
-import LandingPage from '../components/users/landingPage';
+import HomePage from '../components/home/homePage';
+import LandingPage from '../components/home/landingPage';
 
 function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
