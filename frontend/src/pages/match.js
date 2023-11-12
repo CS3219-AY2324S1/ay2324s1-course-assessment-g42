@@ -1,21 +1,19 @@
 import '../App.css';
-import axios from "axios";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { standardToast } from '../styles/toastStyles';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import WarningIcon from '@mui/icons-material/Warning';
-import { logout } from '../helpers';
 
 import MatchLanguageSelect from '../components/match/matchLanguageSelect';
 import MatchComplexitySelect from '../components/match/matchComplexitySelect';
-import { MATCH_API_URL } from '../config';
 import { Grid } from '@mui/material';
 import matchingImage1 from '../images/matching_1.png';
+
+import io from 'socket.io-client';
 
 
 function Match() {
@@ -29,6 +27,7 @@ function Match() {
   const [timeLeft, setTimeLeft] = useState(30);
   const [isResponseReceived, setIsResponseReceived] = useState(false);
   const [roomId, setRoomId] = useState('');
+  const socketRef = useRef();
 
   useEffect(() => {
     const loggedInUser = Cookies.get('user');
@@ -48,47 +47,39 @@ function Match() {
   }, [navigate]);
 
   useEffect(() => {
-    if (isMatchingComplete && !isMatching && isResponseReceived && roomId !== null) {
-      navigate('/collab', {state : {roomId : roomId, complexity : complexity, language : language}})
+    // connect to socket
+    if (socketRef.current == null) {
+      socketRef.current = io('http://localhost:5001',  { transports : ['websocket'] });
     }
+    socketRef.current.on('match-found', (roomId, message) => {
+      setResponseMessage(message);
+      setRoomId(roomId);
+      setIsMatching(false);
+      setIsMatchingComplete(true);
+      setIsResponseReceived(true);
+      navigate('/collab', {state : {roomId : roomId, complexity : complexity, language : language}})
+    });
+    socketRef.current.on('duplicate-request', (message) => {
+      setResponseMessage(message);
+      setIsMatching(false);
+      setIsMatchingComplete(true);
+      setIsResponseReceived(true);
+    });
   }, [isMatchingComplete, isMatching, isResponseReceived, roomId, complexity, language, navigate]);
 
   const sendMatchingRequest = () => {
     if (isMatching) {
       return ;
     }
+    
     setResponseMessage('');
     setTimeLeft(30);
     setIsMatching(true);
     setIsResponseReceived(false);
     const timeOfReq = new Date().getTime();
+    
+    socketRef.current.emit('find-match', username, complexity, language, timeOfReq);
 
-    axios.post(MATCH_API_URL + '/match/find-match'
-                , { username, complexity, language, timeOfReq }
-                , { withCredentials: true, credentials: 'include' })
-        .then(response => { 
-          setIsMatching(false);
-          const res = response.data;
-          console.log(response.data)
-          console.log(response.data.roomId)
-          setResponseMessage(res.message);
-          setRoomId(res.roomId);
-          setIsMatchingComplete(true);
-          setIsResponseReceived(true);
-          
-        })
-        .catch(error => {
-          if (error.response.status === 401) {
-            navigate('/');
-            logout();
-    
-            console.log("Unauthorized access. Logged out.");
-            toast.error("Unauthorized access.", standardToast);
-    
-            return;
-          }
-          console.log('Ran into error while requesting match: ', error);
-        });
     const timer = setInterval(() => {
       setTimeLeft((prevTimeLeft) => {
         if (prevTimeLeft > 0) {
@@ -166,7 +157,7 @@ function Match() {
             </div>
           </div>
           <p className='match-sub-text'>
-            * Queue will be terminated if no match is found in 30 seconds.
+            * You will be redirected to a room if a match is found within 30 seconds.
           </p>
         </Grid>
       </Grid>

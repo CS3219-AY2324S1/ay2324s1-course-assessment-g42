@@ -11,7 +11,7 @@ import EditUser from '../components/users/editUser';
 import LogoutUser from '../components/users/logoutUser';
 import DeleteUser from '../components/users/deleteUser';
 import QuestionHistory from '../components/history/questionHistory';
-import { logout } from '../helpers';
+import { logout } from '../helpers/logout';
 import { USER_API_URL } from '../config';
 
 function UserProfile() {

@@ -9,7 +9,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 
 import QuestionsTable from '../components/questions/questionsTable.js';
-import { logout } from '../helpers';
+import { logout } from '../helpers/logout';
 import { standardToast } from '../styles/toastStyles';
 import { QUESTION_API_URL } from '../config';
 

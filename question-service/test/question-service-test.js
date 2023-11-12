@@ -108,6 +108,55 @@ describe("Test Question Service", function () {
         expect(response.status).to.equal(401);
     });
 
+    it("Should not edit question if not authenticated", async () => {
+      const updateQuestion = {
+          id: nextQuestionId,
+          title: 'New Question Title',
+          description: 'New Test Description',
+          categories: ['Data Structures', 'Algorithms'],
+          complexity: 'Easy'
+      };
+
+      const response = await chai
+          .request(index)
+          .post("/question/updateQuestion")
+          .send(updateQuestion);
+
+      expect(response.status).to.equal(401);
+    });
+
+    it("Should edit question with id", async () => {
+      const updateQuestion = {
+          id: nextQuestionId,
+          title: 'New Question Title',
+          description: 'New Test Description',
+          categories: ['Data Structures', 'Algorithms'],
+          complexity: 'Easy'
+      };
+
+      const response = await chai
+          .request(index)
+          .post("/question/updateQuestion")
+          .set('Cookie', `token=${authToken}`)
+          .send(updateQuestion);
+
+      expect(response.status).to.equal(200);
+    });
+
+    it("Should not edit question with empty parameters", async () => {
+        const emptyQuestion = {
+
+        };
+
+        const response = await chai
+            .request(index)
+            .post("/question/updateQuestion")
+            .set('Cookie', `token=${authToken}`)
+            .send(emptyQuestion);
+
+        expect(response.status).to.equal(400);
+    });
+
     it("Should not delete question if not authenticated", async () => {
         const dummyDelete = {
             id: nextQuestionId
@@ -147,6 +196,24 @@ describe("Test Question Service", function () {
             .send(deletedQuestion);
 
         expect(response.status).to.equal(404);
+    });
+
+    it("Should not edit question that doesn't exist", async () => {
+      const updateQuestion = {
+          id: nextQuestionId,
+          title: 'New Question Title',
+          description: 'New Test Description',
+          categories: ['Data Structures', 'Algorithms'],
+          complexity: 'Easy'
+      };
+
+      const response = await chai
+          .request(index)
+          .post("/question/updateQuestion")
+          .set('Cookie', `token=${authToken}`)
+          .send(updateQuestion);
+
+      expect(response.status).to.equal(404);
     });
 
     it("Should not get questions if not authenticated", async () => {
@@ -260,4 +327,22 @@ describe("Test Question Service", function () {
     
         expect(response.status).to.equal(402);
     });
+
+    it("Should not get categories if not authenticated", async () => {
+      const response = await chai
+          .request(index)
+          .get("/category/getCategories");
+
+      expect(response.status).to.equal(401);
+    });
+
+    it("Should get categories", async () => {
+      const response = await chai
+          .request(index)
+          .get("/category/getCategories")
+          .set('Cookie', `token=${authToken}`);
+
+      expect(response.status).to.equal(200);
+    });
+
 });

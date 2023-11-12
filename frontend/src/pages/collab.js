@@ -7,14 +7,16 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
-import { Button, Grid, Tooltip } from '@mui/material';
+import { Grid, Button, Tooltip } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import Editor from '@monaco-editor/react';
 import { standardToast } from '../styles/toastStyles';
 import { QUESTION_API_URL, HISTORY_API_URL } from '../config';
-import { logout } from '../helpers';
+import { logout } from '../helpers/logout';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
+import ChatComponent from '../components/collab/chatComponent';
 import LogoutIcon from '@mui/icons-material/Logout';
+
 
 function Collab() {
   const location = useLocation();
@@ -28,6 +30,7 @@ function Collab() {
   const [matchedUser, setMatchedUser] = useState(null);
   const [isPartner, setIsPartner] = useState(true);
   const [isSaved, setSave] = useState(false);
+  const [ownUsername, setOwnUsername] = useState(null);
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
     editor.focus();
@@ -43,6 +46,10 @@ function Collab() {
   const handleSave = () => {
     const loggedInUser = Cookies.get('user');
     const username = JSON.parse(loggedInUser).username;
+    sessionStorage.removeItem(`codeEditor_${roomId}`);
+    sessionStorage.removeItem(`matchedUser_${roomId}`);
+    sessionStorage.removeItem(`question_${roomId}`);
+
     console.log(code);
     const saveAttempt = {username: username, collaborated: matchedUser, title: storedQuestion.title, qnId: storedQuestion.id, difficulty: complexity, language: language, attempt: code, date: new Date()};
     axios.post(HISTORY_API_URL + "/history/saveAttempt", saveAttempt)
@@ -51,7 +58,6 @@ function Collab() {
     setSave(true);
     socketRef.current.emit('disconnect-client', room, username);
   }
-
   useEffect(() => { 
     // use local vars because state wont be set on first render
     let roomId = room;
@@ -101,8 +107,9 @@ function Collab() {
       navigate('/login');
       return;
     }
-    const username = JSON.parse(loggedInUser).username;
+    const username = (JSON.parse(loggedInUser).username);
     let randomId = null;
+    setOwnUsername(username);
   
     socketRef.current = io('http://localhost:5002',  { transports : ['websocket'] });
 
@@ -302,16 +309,10 @@ function Collab() {
               <div className="collab-section-header">
                 Chat
               </div>
-              {isPartner
-              ?
-              <div className="collab-chat-content">
-                u r matched with {matchedUser}
+              <div className="collab-chat-content" >
+                <ChatComponent roomId={room} username={ownUsername}>
+                </ChatComponent>
               </div>
-              : 
-              <div className="collab-chat-content">
-              {matchedUser} has disconnected
-              </div>
-              }
               
             </Grid>
             <Grid item xs={6} style={{marginTop: "10px", maxHeight: "94%"}}>
