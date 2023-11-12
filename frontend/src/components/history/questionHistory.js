@@ -23,7 +23,7 @@ function QuestionHistory() {
   const [targetAttempt, setTargetAttempt] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
-  const [page, setPage] = React.useState(2);
+  const [page, setPage] = React.useState(1);
   const maxNumberOfAttemptPerPage = 5;
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

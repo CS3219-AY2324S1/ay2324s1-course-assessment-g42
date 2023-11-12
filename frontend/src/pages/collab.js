@@ -46,9 +46,9 @@ function Collab() {
   const handleSave = () => {
     const loggedInUser = Cookies.get('user');
     const username = JSON.parse(loggedInUser).username;
-    sessionStorage.removeItem(`codeEditor_${roomId}`);
-    sessionStorage.removeItem(`matchedUser_${roomId}`);
-    sessionStorage.removeItem(`question_${roomId}`);
+    sessionStorage.removeItem(`codeEditor_${room}`);
+    sessionStorage.removeItem(`matchedUser_${room}`);
+    sessionStorage.removeItem(`question_${room}`);
 
     console.log(code);
     const saveAttempt = {username: username, collaborated: matchedUser, title: storedQuestion.title, qnId: storedQuestion.id, difficulty: complexity, language: language, attempt: code, date: new Date()};
