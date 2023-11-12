@@ -7,14 +7,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
-import { Button, Grid } from '@mui/material';
+import { Button, Grid, Tooltip } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import Editor from '@monaco-editor/react';
-
 import { standardToast } from '../styles/toastStyles';
 import { QUESTION_API_URL, HISTORY_API_URL } from '../config';
 import { logout } from '../helpers';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 function Collab() {
   const location = useLocation();
@@ -28,12 +28,11 @@ function Collab() {
   const [matchedUser, setMatchedUser] = useState(null);
   const [isPartner, setIsPartner] = useState(true);
   const [isSaved, setSave] = useState(false);
-
+  const [isLeaving, setLeaving] = useState(false);
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
     editor.focus();
   }
-
   const handleChange = (value, event) => {
     let roomId = room;
     setCode(value);
@@ -45,9 +44,8 @@ function Collab() {
   const handleSave = () => {
     const loggedInUser = Cookies.get('user');
     const username = JSON.parse(loggedInUser).username;
-    const storedCode = sessionStorage.getItem(`codeEditor_${room}`);
     console.log(code);
-    const saveAttempt = {username: username, collaborated: matchedUser, title: storedQuestion.title, qnId: storedQuestion.id, difficulty: complexity, language: language, attempt: storedCode, date: new Date()};
+    const saveAttempt = {username: username, collaborated: matchedUser, title: storedQuestion.title, qnId: storedQuestion.id, difficulty: complexity, language: language, attempt: code, date: new Date()};
     axios.post(HISTORY_API_URL + "/history/saveAttempt", saveAttempt)
       .then(response => console.log("save successfull"))
       .catch(error => console.log("save unsuccessfull", error));
@@ -61,8 +59,8 @@ function Collab() {
     let qnComplexity = complexity;
     let lang = language;
     if (isSaved) {
-      console.log("You have saved your collaboration attempt and leave");
-      toast.info("You have saved your collaboration attempt and leave", standardToast);
+      console.log("Attempt saved and left");
+      toast.info("Attempt saved and left", standardToast);
       navigate('/');
       return;
     }
@@ -229,16 +227,9 @@ function Collab() {
         toast.info("Partner has connected", standardToast);
       }
     })
-
     // Clean up the socket connection on unmount
 
     return () => {
-      window.addEventListener("beforeunload", (e) => {
-        let confirmationMessage = "You haven't saved your collaboration attempt, are you sure you want to leave?";
-        (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-        console.log("logout !");
-        return confirmationMessage; //Webkit, Safari, Chrome
-      });
       socketRef.current.emit('disconnect-client', roomId, username);
       console.log("client disconnected");
     }
@@ -249,11 +240,19 @@ function Collab() {
   // set body background color
   useEffect(()  => {
     document.body.classList.add('collab-bg');
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = 'Wanna leave?';
+    };
 
+    window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
         document.body.classList.remove('collab-bg');
+        window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  });
+  }, [location]);
+
+  
   return (
     <div>
     {
@@ -267,6 +266,11 @@ function Collab() {
           </div>
           <div className="collab-question-content">
             <b className="question-title">{storedQuestion.id}. {storedQuestion.title}</b>
+            <Tooltip title="Leave&Save">
+              <Button onClick={handleSave} style={{marginBottom: '1%'}}>
+                <LogoutIcon sx={{ fontSize: 24 }}/>
+              </Button>
+            </Tooltip>
             <br />
             <DifficultyText difficulty={storedQuestion.complexity} />
             <br />
@@ -323,7 +327,6 @@ function Collab() {
 
         </Grid>
       </Grid>
-      <Button variant="contained" onClick={handleSave}>Leave&Save</Button>
     </div>
     }
     </div>
