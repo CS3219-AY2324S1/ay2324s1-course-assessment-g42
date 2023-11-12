@@ -75,6 +75,7 @@ services:
     ports:
       - "80:80"
     depends_on:
+      - history
       - frontend
       - users
       - questions

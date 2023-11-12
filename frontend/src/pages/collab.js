@@ -43,7 +43,7 @@ function Collab() {
     socketRef.current.emit('code-change', room, value);
   }
 
-  const handleSave = () => {
+  const handleSaveThenLeave = () => {
     const loggedInUser = Cookies.get('user');
     const username = JSON.parse(loggedInUser).username;
     sessionStorage.removeItem(`codeEditor_${room}`);
@@ -273,7 +273,7 @@ function Collab() {
           <div className="collab-question-content">
             <b className="question-title">{storedQuestion.id}. {storedQuestion.title}</b>
             <Tooltip title="Leave&Save">
-              <Button onClick={handleSave} style={{marginBottom: '1%'}}>
+              <Button onClick={handleSaveThenLeave} style={{marginBottom: '1%'}}>
                 <LogoutIcon sx={{ fontSize: 24 }}/>
               </Button>
             </Tooltip>

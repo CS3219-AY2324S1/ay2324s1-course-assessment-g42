@@ -81,7 +81,7 @@ function QuestionHistory() {
           <Table sx={{ minWidth: 400 }} size="small" aria-label="simple table">
 
             {/* Insert table headers */}
-            <TableHead component={Paper} className="history-table-header">
+            <TableHead className="history-table-header">
               <TableRow key="header">
                 <TableCell style={{ fontWeight: 'bold' }}>
                   Question Title
