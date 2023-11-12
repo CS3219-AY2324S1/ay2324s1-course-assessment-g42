@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate, useParams } from 'react-router-dom'; 
 import axios from "axios";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -21,6 +21,13 @@ function QuestionHistory() {
   const [open, setOpen] = useState(false);
   const [targetQuestion, setTargetQuestion] = useState();
   const [targetAttempt, setTargetAttempt] = useState("");
+  const [totalPages, setTotalPages] = useState(0);
+  const navigate = useNavigate();
+  const [page, setPage] = React.useState(2);
+  const maxNumberOfAttemptPerPage = 5;
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
   const handleClickOpen = async (id) => {
     setOpen(true);
@@ -36,14 +43,14 @@ function QuestionHistory() {
     }).catch(error =>
       console.log("error handle click open", error))
     setTargetQuestion(targetQuestion);
-    setTargetAttempt(targetAttempt.attempt);
+    setTargetAttempt(targetAttempt);
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const navigate = useNavigate();
+  
   useEffect(() => {
     const loggedInUser = Cookies.get('user');
     const user = JSON.parse(loggedInUser);
@@ -55,6 +62,7 @@ function QuestionHistory() {
       .then(response => {
         const historyList = response.data;
         setHistory(historyList);
+        setTotalPages(Math.ceil(historyList.length/maxNumberOfAttemptPerPage))
         console.log("Get history successfully", username, response.data);
       }).catch(error => console.log("Error getting history"));
     }
@@ -66,85 +74,88 @@ function QuestionHistory() {
   return (
     <div>
       <AttemptInfo open={open} handleClose={handleClose} question={targetQuestion} attempt={targetAttempt}/>
+      <div className="history-wrapper">
+        <p className="history-title">Question History</p>
 
-    <div className="history-wrapper">
-      <p className="history-title">Question History</p>
+        <TableContainer>
+          <Table sx={{ minWidth: 400 }} size="small" aria-label="simple table">
 
-      <TableContainer>
-        <Table sx={{ minWidth: 400 }} size="small" aria-label="simple table">
-
-          {/* Insert table headers */}
-          <TableHead component={Paper} className="history-table-header">
-            <TableRow key="header">
-              <TableCell style={{ fontWeight: 'bold' }}>
-                Question Title
-              </TableCell>
-              <TableCell align="center" style={{ fontWeight: 'bold' }}>
-                Difficulty
-              </TableCell>
-              <TableCell align="center" style={{ fontWeight: 'bold' }}>
-                Language
-              </TableCell>
-              <TableCell align="center" style={{ fontWeight: 'bold' }}>
-                Date of Attempt
-              </TableCell>
-              <TableCell align="center" style={{ fontWeight: 'bold' }}>
-                Collaborated With
-              </TableCell>
-            </TableRow>
-          </TableHead>
-
-          {/* Insert table body content */}
-          <TableBody>
-            {history.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  You don't have any collaboration record.
+            {/* Insert table headers */}
+            <TableHead component={Paper} className="history-table-header">
+              <TableRow key="header">
+                <TableCell style={{ fontWeight: 'bold' }}>
+                  Question Title
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                  Difficulty
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                  Language
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                  Date of Attempt
+                </TableCell>
+                <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                  Collaborated With
                 </TableCell>
               </TableRow>
-            ) : (
-              history.map((question) => (
-                <TableRow
-                  key={question.id}
+            </TableHead>
+
+            {/* Insert table body content */}
+            <TableBody>
+              {history.length === 0 ? (
+                <TableRow 
                   sx={{
                     '&:last-child td, &:last-child th': { border: 0 },
-                  }}
-                  className="history-table-row"
-                  onClick={() => handleClickOpen(question.id)}
-                >
-                  {/* Add table cells */}
-                  <TableCell component="th" scope="row">
-                    {question.title}
+                  }}>
+                  <TableCell colSpan={5} align="center">
+                    You don't have any collaboration record.
                   </TableCell>
-                  <TableCell align="center">{question.difficulty}</TableCell>
-                  <TableCell align="center">{question.language}</TableCell>
-                  <TableCell align="center">{question.date}</TableCell>
-                  <TableCell align="center">{question.collaborated}</TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ) : (
+                history.slice(maxNumberOfAttemptPerPage*(page-1), maxNumberOfAttemptPerPage*page - 1).map((question) => ( 
+                  <TableRow
+                    key={question.id}
+                    sx={{
+                      '&:last-child td, &:last-child th': { border: 0 },
+                    }}
+                    className="history-table-row"
+                    onClick={() => handleClickOpen(question.id)}
+                  >
+                    {/* Add table cells */}
+                    <TableCell component="th" scope="row">
+                      {question.title}
+                    </TableCell>
+                    <TableCell align="center">{question.difficulty}</TableCell>
+                    <TableCell align="center">{question.language}</TableCell>
+                    <TableCell align="center">{question.date}</TableCell>
+                    <TableCell align="center">{question.collaborated}</TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      {/** Pagination */}
-      <div style={{ display: 'flex', justifyContent: 'center', margin: "10px" }}>
-        <Stack spacing={2}>
-          <Pagination
-            sx={{
-              '& .MuiPaginationItem-root': {
-                '&.Mui-selected': {
-                  background: '#F24E1E',
-                  color: '#ffffff',
-                },
-            },
-            }}
-            count={1}
-            page={1}
-          />
-        </Stack>
+        {/** Pagination */}
+        <div style={{ display: 'flex', justifyContent: 'center', margin: "10px" }}>
+          <Stack spacing={2}>
+            <Pagination
+              sx={{
+                '& .MuiPaginationItem-root': {
+                  '&.Mui-selected': {
+                    background: '#F24E1E',
+                    color: '#ffffff',
+                  },
+              },
+              }}
+              count={totalPages}
+              page={page}
+              onChange={handleChangePage}
+            />
+          </Stack>
+        </div>
       </div>
-    </div>
     </div>
   )
 }

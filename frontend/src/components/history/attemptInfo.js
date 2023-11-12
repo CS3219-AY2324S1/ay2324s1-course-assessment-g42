@@ -1,4 +1,5 @@
 import '../../App.css';
+import '../../styles/attemptinfo.css';
 import React from 'react';
 
 import Button from '@mui/material/Button';
@@ -11,6 +12,9 @@ import DialogActions from '@mui/material/DialogActions';
 import Typography from '@mui/material/Typography';
 
 import ComplexityChip from '../questions/complexityChip';
+import { Grid } from '@mui/material';
+import { DifficultyText, RenderedDescription } from '../../helpers/questionFormatters';
+import { Editor } from '@monaco-editor/react';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -28,118 +32,55 @@ function AttemptInfo({ open, handleClose, question, attempt }) {
     return null;
   }
 
-  const renderedParts = renderDescription(question.description);
-  const renderedAttempt = attempt;
-
   return (
     <div>
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
-        fullWidth
+        fullWidth='xl'
+        maxWidth='xl'
       >
         {/* Question title */}
-        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          {question.title}
-        </DialogTitle>
+      <div className="attempt-wrapper">
+        <Grid container spacing={2}>
+          {/* Left side of page */}
+          <Grid item xs={5} style={{height: '85vh'}}>
+            <div className="collab-section-header">
+              Description
+            </div>
+            <div className="collab-question-content">
+              <b className="question-title">{question.id}. {question.title}</b>
+              <br />
+              <DifficultyText difficulty={attempt.complexity} />
+              <br />
+              {question.categories.map((category) => (
+                <Chip key={category} label={category} style={{ height: "25px" }}></Chip>
+              ))}
+              <RenderedDescription text={question.description} />
+            </div>
+          </Grid>
 
-        {/* Rest of question contents in dialog box */}
-        <DialogContent dividers>
-          <Typography gutterBottom>
-            <b>ID:</b> {question.id}
-          </Typography>
-          <Typography gutterBottom sx={{ wordBreak: "break-word" }} component={'span'}>
-            <b>Category:</b> {question.categories.map((category) => (
-              <Chip key={category} label={category}></Chip>
-            ))}
-          </Typography>
-          <br />
-          <Typography gutterBottom sx={{ wordBreak: "break-word" }} component={'span'}>
-            <b>Complexity:</b> <ComplexityChip complexity={question.complexity} />
-          </Typography>
-          <Typography gutterBottom sx={{ whiteSpace: "pre-line" }} component="div">
-            {renderedParts}
-          </Typography>
-            <b>Your Attempt:
-            </b>
-            <Typography gutterBottom sx={{ whiteSpace: "pre-line" }} component="div">
-              {renderedAttempt}
-            </Typography>
-        </DialogContent>
-
-        {/* Action buttons in bottom right of the dialog */}
-        <DialogActions>
-          <Button onClick={handleClose}>
-            Close
-          </Button>
-        </DialogActions>
+          {/* Right side of page */}
+          <Grid item xs={7} style={{height: '85vh', overflow: 'auto'}}>
+            <div className="collab-section-header">
+              {attempt.language}
+            </div>
+            <div className="attempt-content">
+              <Editor
+                width="100%"
+                height="100%"
+                defaultLanguage={attempt.language.toLowerCase()}
+                value={attempt.attempt}
+                options={{readOnly:true}}
+              />
+            </div>
+          </Grid>
+        </Grid>
+      </div>
       </BootstrapDialog>
     </div>
   );
-}
-
-function renderDescription(text) {
-  const description = text.split(/\n\n|\n(?=-)|\n(?=[+|])/);
-
-  const renderedParts = [];
-  let bulletList = null;
-  let consolasText = ''; // To collect lines starting with + or |
-
-  description.forEach((part, index) => {
-    if (part.trim().startsWith('-')) {
-      // If it starts with a bullet point indicator, create a new <ul>
-      if (!bulletList) {
-        bulletList = <ul key={`bullet-${index}`} children={[]} />;
-        renderedParts.push(bulletList);
-      }
-
-      // Add the bullet point as an <li>
-      bulletList.props.children.push(<li key={`bullet-${index}`}>{part.trim().substring(1)}</li>);
-    } else if (part.trim().match(/^[+|]/)) {
-      // If it starts with + or |, add it to the consolasText
-      consolasText += part + '\n';
-    } else {
-      // If the part doesn't start with '-', '+', or '|', render it as a regular text paragraph
-      if (bulletList) {
-        // Close the previous <ul> if we were in a bullet point section
-        bulletList = null;
-      }
-      if (consolasText) {
-        // If there's consolas text collected, render it together with the white-space: pre CSS property
-        renderedParts.push(
-          <p
-            key={`consolas-${index}`}
-            style={{
-              fontFamily: 'Consolas, monospace',
-              whiteSpace: 'pre',
-            }}
-          >
-            {consolasText.trim()}
-          </p>
-        );
-        consolasText = ''; // Reset consolasText
-      }
-      renderedParts.push(<p key={`regular-${index}`}>{part}</p>);
-    }
-  });
-
-  // Check if there's remaining consolasText to render
-  if (consolasText) {
-    renderedParts.push(
-      <p
-        key={`consolas-${description.length}`}
-        style={{
-          fontFamily: 'Consolas, monospace',
-          whiteSpace: 'pre',
-        }}
-      >
-        {consolasText.trim()}
-      </p>
-    );
-  }
-
-  return <div>{renderedParts}</div>;
 }
 
 export default AttemptInfo;
