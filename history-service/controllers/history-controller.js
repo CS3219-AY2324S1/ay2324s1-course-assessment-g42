@@ -6,8 +6,6 @@ async function saveAttempt(req, res) {
     let { username, collaborated, title, qnId, difficulty, language, attempt, date } = req.body;
 
     console.log ("save!");
-
-    // Check if email already registered
     pool.query(
         `INSERT INTO history (username, collaborated, title, qnid, difficulty, language, attempt, date)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,[username, collaborated, title, qnId, difficulty, language, attempt, date])
@@ -26,6 +24,7 @@ async function getHistory(req, res) {
         ORDER BY date DESC;`, [username]
     ).then(response => {
         const formattedResults = response.rows.map(row => ({
+            id: row.id,
             qnId: row.qnid,
             attempt: row.attempt,
             date: row.date.toDateString(), // Assuming date is stored as a timestamp

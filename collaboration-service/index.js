@@ -8,7 +8,6 @@ const socketIo = require('socket.io');
 const { disconnect } = require('process');
 const server = http.createServer(app);
 const io = socketIo(server);
-const axios = require('axios');
 const rooms = {};
 
 
