@@ -57,15 +57,13 @@ function ChatComponent({roomId, username}) {
             chatSocketRef.current.emit('join-chat', roomId, username);
         }
 
+        const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
+        if (chatHistory) {
+          setMessages(JSON.parse(chatHistory));
+        }
+
         chatSocketRef.current.on('receive-message', (message) => {
             receiveMessage(message);
-        });
-
-        chatSocketRef.current.on('loadChatHistory', () => {
-            const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
-            if (chatHistory) {
-              setMessages(JSON.parse(chatHistory));
-            }
         });
 
         chatSocketRef.current.on('inform-connect', (username) => {
