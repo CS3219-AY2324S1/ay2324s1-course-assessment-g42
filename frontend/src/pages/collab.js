@@ -7,12 +7,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
-import { Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import Editor from '@monaco-editor/react';
 
 import { standardToast } from '../styles/toastStyles';
-import { QUESTION_API_URL } from '../config';
+import { QUESTION_API_URL, HISTORY_API_URL } from '../config';
 import { logout } from '../helpers';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
 
@@ -27,6 +27,7 @@ function Collab() {
   const [language, setLanguage] = useState(null);
   const [matchedUser, setMatchedUser] = useState(null);
   const [isPartner, setIsPartner] = useState(true);
+  const [isSaved, setSave] = useState(false);
 
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
@@ -41,11 +42,30 @@ function Collab() {
     socketRef.current.emit('code-change', room, value);
   }
 
+  const handleSave = () => {
+    const loggedInUser = Cookies.get('user');
+    const username = JSON.parse(loggedInUser).username;
+    const storedCode = sessionStorage.getItem(`codeEditor_${room}`);
+    console.log(code);
+    const saveAttempt = {username: username, collaborated: matchedUser, title: storedQuestion.title, qnId: storedQuestion.id, difficulty: complexity, language: language, attempt: storedCode, date: new Date()};
+    axios.post(HISTORY_API_URL + "/history/saveAttempt", saveAttempt)
+      .then(response => console.log("save successfull"))
+      .catch(error => console.log("save unsuccessfull", error));
+    setSave(true);
+    socketRef.current.emit('disconnect-client', room, username);
+  }
+
   useEffect(() => { 
     // use local vars because state wont be set on first render
     let roomId = room;
     let qnComplexity = complexity;
     let lang = language;
+    if (isSaved) {
+      console.log("You have saved your collaboration attempt and leave");
+      toast.info("You have saved your collaboration attempt and leave", standardToast);
+      navigate('/');
+      return;
+    }
 
     // have not set state yet
     if (roomId == null || qnComplexity == null || lang == null) {
@@ -200,7 +220,6 @@ function Collab() {
         console.log("partner has disconnected");
         toast.info("Partner has disconnected", standardToast);
       }
-      
     })
 
     socketRef.current.on('inform-connect', (connectedUser) => {
@@ -214,12 +233,18 @@ function Collab() {
     // Clean up the socket connection on unmount
 
     return () => {
+      window.addEventListener("beforeunload", (e) => {
+        let confirmationMessage = "You haven't saved your collaboration attempt, are you sure you want to leave?";
+        (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+        console.log("logout !");
+        return confirmationMessage; //Webkit, Safari, Chrome
+      });
       socketRef.current.emit('disconnect-client', roomId, username);
-      console.log("client disconnected")
-    };
+      console.log("client disconnected");
+    }
     // Do not remove the next line
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate, location.state])
+  }, [isSaved, navigate, location.state])
 
   // set body background color
   useEffect(()  => {
@@ -229,11 +254,10 @@ function Collab() {
         document.body.classList.remove('collab-bg');
     };
   });
-
   return (
     <div>
     {
-      storedQuestion &&
+      storedQuestion && !isSaved &&
       <div className="collab-wrapper">
       <Grid container spacing={2}>
         {/* Left side of page */}
@@ -299,6 +323,7 @@ function Collab() {
 
         </Grid>
       </Grid>
+      <Button variant="contained" onClick={handleSave}>Leave&Save</Button>
     </div>
     }
     </div>

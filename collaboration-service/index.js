@@ -94,13 +94,6 @@ io.on('connection', (socket) => {
     // if both users have disconnected
     if (!rooms[roomName].isUser1Present && !rooms[roomName].isUser2Present) {
       // disconnect room and clean up
-      if (rooms[roomName].user1 !== null && rooms[roomName].user2 !== null) {
-        const room = rooms[roomName];
-        const saveAttempt = {user1: room.user1, user2:room.user2, qnId: room.qnId, attempt: room.code, date: new Date()}
-        axios.post('http://localhost:5004/history/saveAttempt', saveAttempt)
-        .then(response => console.log("save successfull")).
-        catch(error => console.log("save unsuccessfull", error))
-      }
       rooms[roomName].qnId = null;
       rooms[roomName].user1 = null;
       rooms[roomName].user2 = null;

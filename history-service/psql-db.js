@@ -15,9 +15,12 @@ pool.connect()
 pool.query(
     `CREATE TABLE IF NOT EXISTS history (
         id SERIAL PRIMARY KEY,
-        user1 VARCHAR(255) NOT NULL,
-        user2 VARCHAR(255) NOT NULL,
+        username VARCHAR(255) NOT NULL,
+        collaborated VARCHAR(255) NOT NULL,
+        title TEXT NOT NULL,
         qnid INT NOT NULL,
+        difficulty VARCHAR(255) NOT NULL,
+        language VARCHAR(255) NOT NULL,
         attempt TEXT,
         date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
     );`).catch(error => console.log("cannot create"));
