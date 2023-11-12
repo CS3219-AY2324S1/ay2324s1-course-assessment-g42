@@ -1,4 +1,13 @@
 {
+  "name": "history-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --timeout 10000 --exit",
+    "start": "node server",
+    "dev": "nodemon server"
+  },
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
