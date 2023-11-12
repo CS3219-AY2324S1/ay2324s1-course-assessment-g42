@@ -10,6 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import AttemptInfo from './attemptInfo'
 import { HISTORY_API_URL, QUESTION_API_URL } from '../../config';
 import Cookies from 'js-cookie';
 import '../../App.css';
@@ -17,40 +18,42 @@ import '../../styles/userProfile.css';
 
 function QuestionHistory() {
   const [history, setHistory] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [targetQuestion, setTargetQuestion] = useState();
+  const [targetAttempt, setTargetAttempt] = useState("");
+
+  const handleClickOpen = async (id) => {
+    setOpen(true);
+    const targetAttempt = history.find(attempt => attempt.id === id);
+    const targetQuestion = await axios.post(
+      QUESTION_API_URL + "/question/getQuestionById",
+      { id: targetAttempt.qnId },
+      { withCredentials: true, credentials: 'include' }
+    )
+    .then(response => {
+      console.log(response.data)
+      return response.data;
+    }).catch(error =>
+      console.log("error handle click open", error))
+    setTargetQuestion(targetQuestion);
+    setTargetAttempt(targetAttempt.attempt);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const navigate = useNavigate();
   useEffect(() => {
     const loggedInUser = Cookies.get('user');
     const user = JSON.parse(loggedInUser);
     const username = user.username;
 
-    const getQuestionById = async (id) => {
-      axios.post(
-        QUESTION_API_URL + "/question/getQuestionById",
-        { id: id },
-        { withCredentials: true, credentials: 'include' }
-      )
-      .then(response => {
-        console.log(response.data);
-        return response.data.title
-      })
-    }
     const getHistory = async () => {
       axios.post(
         HISTORY_API_URL + "/history/getHistory", {username})
       .then(response => {
         const historyList = response.data;
-        historyList.map(attempt => attempt = {...attempt, getQuestionById})
-        /*const qnIdList = historyList.map(question => question.qnId)
-        console.log(qnIdList);
-        const questionList = getQuestionTitles(qnIdList);
-        questionList.forEach(historyAttempt => {
-          const existingIndex = historyList.findIndex(qn => qn.qnId === historyAttempt.id);
-          if (existingIndex !== -1) {
-            historyList[existingIndex] = { ...historyList[existingIndex], title: historyAttempt.title };
-          } else {
-            historyList.push(historyAttempt);
-          }  
-        })*/
         setHistory(historyList);
         console.log("Get history successfully", username, response.data);
       }).catch(error => console.log("Error getting history"));
@@ -61,6 +64,9 @@ function QuestionHistory() {
   }, [navigate]);
 
   return (
+    <div>
+      <AttemptInfo open={open} handleClose={handleClose} question={targetQuestion} attempt={targetAttempt}/>
+
     <div className="history-wrapper">
       <p className="history-title">Question History</p>
 
@@ -74,7 +80,10 @@ function QuestionHistory() {
                 Question Title
               </TableCell>
               <TableCell align="center" style={{ fontWeight: 'bold' }}>
-                Attempt
+                Difficulty
+              </TableCell>
+              <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                Language
               </TableCell>
               <TableCell align="center" style={{ fontWeight: 'bold' }}>
                 Date of Attempt
@@ -87,30 +96,34 @@ function QuestionHistory() {
 
           {/* Insert table body content */}
           <TableBody>
-            {history.map((question) => (
-              <TableRow
-                key={question.title}
-                sx={{
-                  '&:last-child td, &:last-child th': { border: 0 },
-                }}
-              >
-                {/* Add table cells */}
-                <TableCell component="th" scope="row">
-                  {question.qnId}
-                </TableCell>
-                <TableCell align="center">
-                  {question.attempt}
-                </TableCell>
-                <TableCell align="center">
-                  {question.date}
-                </TableCell>
-                <TableCell align="center">
-                  {question.collaborated}
+            {history.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  You don't have any collaboration record.
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              history.map((question) => (
+                <TableRow
+                  key={question.id}
+                  sx={{
+                    '&:last-child td, &:last-child th': { border: 0 },
+                  }}
+                  className="history-table-row"
+                  onClick={() => handleClickOpen(question.id)}
+                >
+                  {/* Add table cells */}
+                  <TableCell component="th" scope="row">
+                    {question.title}
+                  </TableCell>
+                  <TableCell align="center">{question.difficulty}</TableCell>
+                  <TableCell align="center">{question.language}</TableCell>
+                  <TableCell align="center">{question.date}</TableCell>
+                  <TableCell align="center">{question.collaborated}</TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
-
         </Table>
       </TableContainer>
 
@@ -131,6 +144,7 @@ function QuestionHistory() {
           />
         </Stack>
       </div>
+    </div>
     </div>
   )
 }
