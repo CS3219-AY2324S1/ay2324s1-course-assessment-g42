@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { USER_API_URL } from './config';
+import { USER_API_URL } from '../config';
 
 export function logout() {
 
