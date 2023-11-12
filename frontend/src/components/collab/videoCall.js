@@ -1,176 +1,76 @@
 import React, { useEffect, useRef, useState } from "react";
-import Peer from "simple-peer";
 import { io } from "socket.io-client";
+import Peer from "peerjs";
 
-// replace your server endpoint here
-const socket = io("http://localhost:5004");
 
-function VideoCall({roomId}) {
-  const [me, setMe] = useState("");
-  const [stream, setStream] = useState();
-  const [receivingCall, setReceivingCall] = useState(false);
-  const [caller, setCaller] = useState("");
-  const [callerSignal, setCallerSignal] = useState();
-  const [callAccepted, setCallAccepted] = useState(false);
-  const [idToCall, setIdToCall] = useState("");
-  const [callEnded, setCallEnded] = useState(false);
-  const [name, setName] = useState("");
+function VideoCall({roomId, username}) {
+  const [peerId, setPeerId] = useState(null);
+  const socketRef = useRef();
+  const [myPeer, setMyPeer] = useState(null);
 
-  const userVideo = useRef();
-  const connectionRef = useRef();
-  const myVideo = useRef();
 
   useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-      setStream(stream);
-      if(myVideo) {
-        myVideo.current.srcObject = stream;
-      }
-    });
+    const id = `${username}_${roomId}`;
+    var peer = myPeer;
+    if (!myPeer) {
+      peer = new Peer();
+      setMyPeer(peer);
+    }
 
-    socket.on("me", (id) => {
-      setMe(id);
-    });
+    if (!socketRef.current) {
+      socketRef.current = io('http://localhost:5005',  { transports : ['websocket'] });
+    }
 
-    socket.on("callUser", (data) => {
-      setReceivingCall(true);
-      setCaller(data.from);
-      setName(data.name);
-      setCallerSignal(data.signal);
-    });
-  }, [myVideo]);
-
-  const callUser = (id) => {
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream: stream,
-    });
-
-    peer.on("signal", (data) => {
-      socket.emit("callUser", {
-        userToCall: id,
-        signalData: data,
-        from: me,
-        name: name,
+    peer.on('open', function(id) {
+      console.log('My peer ID is: ' + id);
+      socketRef.current.emit('inform-id', roomId, id);
       });
-    });
+    
+    peer.on('call', (call) => {
+      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+      getUserMedia({ video: true, audio: true }, (stream) => {
+        this.myVideo.srcObject = stream;
+        this.myVideo.play();
+        
+        call.answer(stream);
+        call.on('stream', (remoteStream) => {
+          this.friendVideo.srcObject = remoteStream;
+          this.friendVideo.play();
+        });
+      }, err => { console.log('Error!') });
+      console.log('got call');
+      });
 
-    peer.on("stream", (stream) => {
-      userVideo.current.srcObject = stream;
-    });
+    const videoCall = (partnerId) => {
+      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+      getUserMedia({ video: true, audio: true }, (stream) => {
+        this.myVideo.srcObject = stream;
+        this.myVideo.play();
+        const call = myPeer.call(partnerId, stream);
+        call.on('stream', (remoteStream) => {
+          this.friendVideo.srcObject = remoteStream;
+          this.friendVideo.play();
+        });
+      }, err => { console.log('Error!') });
+      console.log('initiated call');
+      };
 
-    socket.on("callAccepted", (signal) => {
-      setCallAccepted(true);
-      peer.signal(signal);
-    });
+    socketRef.current.on('initiate-call', (partnerId) => {
+      videoCall(partnerId);
+    })
 
-    connectionRef.current = peer;
-  };
 
-  const answerCall = () => {
-    setCallAccepted(true);
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream: stream,
-    });
 
-    peer.on("signal", (data) => {
-      socket.emit("answerCall", { signal: data, to: caller });
-    });
 
-    peer.on("stream", (stream) => {
-      userVideo.current.srcObject = stream;
-    });
+  })
+  
 
-    peer.signal(callerSignal);
-    connectionRef.current = peer;
-  };
-
-  const leaveCall = () => {
-    setCallEnded(true);
-    connectionRef.current.destroy();
-  };
 
   return (
     <>
-      <div>
-        <div className="flex flex-row h-full w-full justify-center gap-[15%] h-screen z-">
-          <div>
-            <div class="flex-grow flex flex-col items-center justify-center h-[90%]">
-              <div class="flex flex-row gap-32">
-                <div class="flex flex-col items-center justify-center w-full">
-                  <div className="video">
-                    {stream && (
-                      <video
-                        className="rounded-full"
-                        playsInline
-                        muted
-                        ref={myVideo}
-                        autoPlay
-                        style={{ width: "300px" }}
-                      />
-                    )}
-                  </div>
-                  <span className="text-white font-bold text-lg mb-4">{caller}</span>
-                  <p className="text-white">{me}</p>
-                </div>
-
-                <div class="flex flex-col items-center justify-center w-full">
-                  {callAccepted && !callEnded ? (
-                    <video
-                      className="rounded-full"
-                      playsInline
-                      ref={userVideo}
-                      autoPlay
-                      style={{ width: "300px" }}
-                    />
-                  ) : (
-                    <div className="flex flex-col justify-center items-center">
-                      <span class="text-white font-bold text-lg">{idToCall}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <textarea
-                className="text-black"
-                defaultValue={idToCall}
-                onChange={(e) => {
-                  setIdToCall(e.target.value);
-                }}
-              />
-              <div>
-                {callAccepted && !callEnded ? (
-                  <button className="text-black hover:text-gray-400 mr-6 font-bold bg-white rounded-md m-4 px-2" onClick={leaveCall}>
-                    End Call
-                  </button>
-                ) : (
-                  <button
-                    className="text-black hover:text-gray-400 mr-6 font-bold bg-white rounded-md m-4 px-2"
-                    onClick={() => callUser(idToCall)}
-                  >
-                    Call
-                  </button>
-                )}
-              </div>
-              <div className="text-white">
-                {receivingCall && !callAccepted ? (
-                  <div className="caller flex flex-col">
-                    <h1 className="text-white">{caller} is calling...</h1>
-                    <button
-                      className="text-black text-xl hover:text-gray-400 mr-6 font-bold bg-white rounded-md m-4 px-2"
-                      onClick={answerCall}
-                    >
-                      Answer
-                    </button>
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <h1>hey yo</h1>
+      <video ref={ref => this.myVideo = ref} />
+      <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
     </>
   );
 }

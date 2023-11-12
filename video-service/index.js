@@ -2,9 +2,13 @@ const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
+const socketIo = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
+const io = socketIo(server);
+
+var rooms = {};
 
 app.use(
     cors({
@@ -17,33 +21,22 @@ app.use(
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
 
-const io = require("socket.io")(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
+  io.on('connection', (socket) => {
+    console.log('User connected:', socket.id);
 
-io.on("connection", (socket) => {
-  socket.emit("me", socket.id);
+    socket.on('inform-id', (roomId, id) => {
+      socket.join(roomId);
+      console.log(`[${id}] joined chat: ${roomId}`);
 
-  socket.on("disconnect", () => {
-    socket.broadcast.emit("callEnded");
-  });
-
-  socket.on("callUser", (data) => {
-    console.log(`Incoming call from ${data.from}`);
-    io.to(data.userToCall).emit("callUser", {
-      signal: data.signalData,
-      from: data.from,
-      name: data.name,
+      if (rooms[roomId]) {
+        // second user to arrive
+        socket.emit('initiate-call', rooms[roomId]);
+        console.log('second user');
+      } else {
+        rooms[roomId] = id;
+      }
     });
+    
   });
 
-  socket.on("answerCall", (data) => {
-    console.log(`Answering call from ${data.from}`);
-    io.to(data.to).emit("callAccepted", data.signal);
-  });
-});
-
-server.listen(5004, () => console.log("video server is running on port 5004"));
+  server.listen(5005, () => console.log("Video server started on Port 5005"));

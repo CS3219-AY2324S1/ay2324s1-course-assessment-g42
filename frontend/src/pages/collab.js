@@ -311,7 +311,8 @@ function Collab() {
                 Video Call
               </div>
               <div className="collab-chat-content">
-                <VideoCall roomId={room} />
+              
+                <VideoCall roomId={room} username={ownUsername} />
               </div>
             </Grid>
           </Grid>
