@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../../helpers';
+import { logout } from '../../helpers/logout';
 import { USER_API_URL } from '../../config';
 import EditIcon from '@mui/icons-material/Edit';
 

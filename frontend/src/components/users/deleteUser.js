@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { Button } from '@mui/material';
 import Cookies from 'js-cookie';
 
-import { logout } from '../../helpers';
+import { logout } from '../../helpers/logout';
 import { USER_API_URL } from '../../config';
 
 function DeleteUser({ user }) {

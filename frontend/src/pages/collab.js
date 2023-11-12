@@ -13,7 +13,7 @@ import Editor from '@monaco-editor/react';
 
 import { standardToast } from '../styles/toastStyles';
 import { QUESTION_API_URL } from '../config';
-import { logout } from '../helpers';
+import { logout } from '../helpers/logout';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
 
 import ChatComponent from '../components/collab/chatComponent';
