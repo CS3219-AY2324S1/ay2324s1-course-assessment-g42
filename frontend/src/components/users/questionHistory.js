@@ -19,7 +19,7 @@ const exampleQuestions = [
  { id: 4, title: "another qn", attempt: "more code", date: "30 Dec 2023", collaborated: "yuh" }
 ];
 
-function QuestionHistory() {
+function QuestionHistory(history) {
 
   return (
     <div className="history-wrapper">
@@ -48,7 +48,7 @@ function QuestionHistory() {
 
           {/* Insert table body content */}
           <TableBody>
-            {exampleQuestions.map((question) => (
+            {[].map((question) => (
               <TableRow
                 key={question.id}
                 sx={{
