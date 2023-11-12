@@ -2,16 +2,9 @@ import '../../App.css';
 import '../../styles/attemptinfo.css';
 import React from 'react';
 
-import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Typography from '@mui/material/Typography';
-
-import ComplexityChip from '../questions/complexityChip';
 import { Grid } from '@mui/material';
 import { DifficultyText, RenderedDescription } from '../../helpers/questionFormatters';
 import { Editor } from '@monaco-editor/react';

@@ -28,7 +28,6 @@ function Collab() {
   const [matchedUser, setMatchedUser] = useState(null);
   const [isPartner, setIsPartner] = useState(true);
   const [isSaved, setSave] = useState(false);
-  const [isLeaving, setLeaving] = useState(false);
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
     editor.focus();
