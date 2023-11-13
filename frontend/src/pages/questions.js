@@ -26,36 +26,42 @@ function Questions() {
   const questionsPerPage = 10;
 
   const handleDelete = (questionId) => {
-    const updatedQuestions = questions.filter((question) => question.id !== questionId);
+    const confirmed = window.confirm("Are you sure you want to delete this question?");
 
-    axios.post(
-      QUESTION_API_URL + "/question/deleteQuestion",
-      { id: questionId },
-      { withCredentials: true, credentials: 'include' }
-    )
-      .then((response) => console.log(response.status))
-      .catch(error => {
-        if (error.response.status === 401) {
-          navigate('/');
-          logout();
+    if (confirmed) {
+      const updatedQuestions = questions.filter((question) => question.id !== questionId);
 
-          console.log("Unauthorized access. Logged out.");
-          toast.error("Unauthorized access.", standardToast);
+      axios.post(
+        QUESTION_API_URL + "/question/deleteQuestion",
+        { id: questionId },
+        { withCredentials: true, credentials: 'include' }
+      )
+        .then((response) => console.log(response.status))
+        .catch(error => {
+          if (error.response.status === 401) {
+            navigate('/');
+            logout();
 
-          return;
-        }
+            console.log("Unauthorized access. Logged out.");
+            toast.error("Unauthorized access.", standardToast);
 
-        if (error.response.status === 500) {
-          navigate('/');
-          logout();
+            return;
+          }
 
-          console.log("An error occurred.");
-          toast.error("An error occurred.", standardToast);
-          
-          return;
-        }
-      console.error(error)});
-    setQuestions(updatedQuestions);
+          if (error.response.status === 500) {
+            navigate('/');
+            logout();
+
+            console.log("An error occurred.");
+            toast.error("An error occurred.", standardToast);
+            
+            return;
+          }
+        console.error(error)});
+      setQuestions(updatedQuestions);
+    } else {
+      // Do nothing if cancel
+    }
   };
 
   // do setQuestions and also save the questions to database
