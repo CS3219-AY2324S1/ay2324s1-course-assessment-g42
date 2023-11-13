@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: history
+  name: history
+  namespace: default
+spec:
+  ports:
+  - name: "5004"
+    port: 5004
+    targetPort: 5004
+  selector:
+    service: history
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: history
+  name: history
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: history
+  template:
+    metadata:
+      labels:
+        service: history
+    spec:
+      containers:
+      - image: asia-docker.pkg.dev/peerpre-g42/peerprep/history
+        imagePullPolicy: Always
+        name: history
+        ports:
+        - containerPort: 5004

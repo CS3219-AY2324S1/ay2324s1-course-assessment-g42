@@ -4,10 +4,11 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const http = require('http');
-const socketIo = require('socket.io');
 const { disconnect } = require('process');
-const server = http.createServer(app);
-const io = socketIo(server);
+var server = http.createServer(app);
+var IO = require('socket.io')(server);
+
+const io = IO.of("/collaboration");
 const rooms = {};
 
 
@@ -114,5 +115,7 @@ io.on('connection', (socket) => {
   });
 
 });
-
+app.get("/", (req, res) => {
+  res.json("You connected to collaboration service");
+});
 server.listen(5002, () => console.log("Collaboration server Started on Port 5002"));

@@ -8,6 +8,7 @@ import {
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import io from 'socket.io-client';
 import Linkify from 'react-linkify';
+import { CHAT_API_URL } from "../../config";
 
 function ChatComponent({roomId, username}) {
     const chatSocketRef = useRef();
@@ -51,7 +52,7 @@ function ChatComponent({roomId, username}) {
 
     useEffect(() => {
         if (!chatSocketRef.current) {
-            chatSocketRef.current = io('http://localhost:5003',  { transports : ['websocket'] });
+            chatSocketRef.current = io(CHAT_API_URL,  { transports : ['websocket'] });
             chatSocketRef.current.emit('join-chat', roomId, username);
         }
 

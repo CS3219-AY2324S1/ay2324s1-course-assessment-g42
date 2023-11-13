@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: match
+  name: match
+  namespace: default
+spec:
+  ports:
+  - name: "5001"
+    port: 5001
+    targetPort: 5001
+  selector:
+    service: match
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: match
+  name: match
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: match
+  template:
+    metadata:
+      labels:
+        service: match
+    spec:
+      containers:
+      - image: asia-docker.pkg.dev/peerpre-g42/peerprep/match
+        imagePullPolicy: Always
+        name: match
+        ports:
+        - containerPort: 5001

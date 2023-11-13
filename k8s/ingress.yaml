@@ -1,0 +1,64 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+      - path: /user/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: users
+            port:
+              number: 5000
+      - path: /question/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: questions
+            port:
+              number: 8030
+      - path: /category/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: questions
+            port:
+              number: 8030
+      - path: /match/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: match
+            port:
+              number: 5001
+      - path: /collaboration/.*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: collaboration
+            port:
+              number: 5002
+      - path: /chat/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: chat
+            port:
+              number: 5003
+      - path: /history/*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: history
+            port:
+              number: 5004

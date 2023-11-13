@@ -4,10 +4,11 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const http = require('http');
-const socketIo = require('socket.io');
 const { disconnect } = require('process');
 const server = http.createServer(app);
-const io = socketIo(server);
+var IO = require('socket.io')(server);
+
+const io = IO.of("/chat");
 
 const rooms = {};
 const usernames = {};
@@ -67,5 +68,7 @@ io.on('connection', (socket) => {
     }
   });
 });
-
+app.get("/", (req, res) => {
+  res.json("You connected to chat service");
+});
 server.listen(5003, () => console.log("Chat server started on Port 5003"));

@@ -14,6 +14,7 @@ import { Grid } from '@mui/material';
 import matchingImage1 from '../images/matching_1.png';
 
 import io from 'socket.io-client';
+import { MATCH_API_URL } from '../config';
 
 
 function Match() {
@@ -49,7 +50,7 @@ function Match() {
   useEffect(() => {
     // connect to socket
     if (socketRef.current == null) {
-      socketRef.current = io('http://localhost:5001',  { transports : ['websocket'] });
+      socketRef.current = io(MATCH_API_URL,  { transports : ['websocket'] });
     }
     socketRef.current.on('match-found', (roomId, message) => {
       setResponseMessage(message);
