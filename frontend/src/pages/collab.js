@@ -10,12 +10,10 @@ import io from 'socket.io-client';
 import { Grid, Button, Tooltip } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import Editor from '@monaco-editor/react';
-
 import { standardToast } from '../styles/toastStyles';
-import { QUESTION_API_URL } from '../config';
+import { QUESTION_API_URL, HISTORY_API_URL } from '../config';
 import { logout } from '../helpers/logout';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
-
 import ChatComponent from '../components/collab/chatComponent';
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -31,13 +29,12 @@ function Collab() {
   const [language, setLanguage] = useState(null);
   const [matchedUser, setMatchedUser] = useState(null);
   const [isPartner, setIsPartner] = useState(true);
+  const [isSaved, setSave] = useState(false);
   const [ownUsername, setOwnUsername] = useState(null);
-
   const editorDidMount = (editor, monaco) => {
     console.log('editorDidMount', editor);
     editor.focus();
   }
-
   const handleChange = (value, event) => {
     let roomId = room;
     setCode(value);
@@ -46,23 +43,32 @@ function Collab() {
     socketRef.current.emit('code-change', room, value);
   }
 
-  const handleLeaveRoom = () => {
-    let roomId = room;
-    let username = JSON.parse(Cookies.get('user')).username;
-    sessionStorage.removeItem(`codeEditor_${roomId}`);
-    sessionStorage.removeItem(`matchedUser_${roomId}`);
-    sessionStorage.removeItem(`question_${roomId}`);
+  const handleSaveThenLeave = () => {
+    const loggedInUser = Cookies.get('user');
+    const username = JSON.parse(loggedInUser).username;
+    sessionStorage.removeItem(`codeEditor_${room}`);
+    sessionStorage.removeItem(`matchedUser_${room}`);
+    sessionStorage.removeItem(`question_${room}`);
 
-    socketRef.current.emit('disconnect-client', roomId, username);
-    console.log("client disconnected")
-    navigate('/')
+    console.log(code);
+    const saveAttempt = {username: username, collaborated: matchedUser, title: storedQuestion.title, qnId: storedQuestion.id, difficulty: complexity, language: language, attempt: code, date: new Date()};
+    axios.post(HISTORY_API_URL + "/history/saveAttempt", saveAttempt)
+      .then(response => console.log("save successfull"))
+      .catch(error => console.log("save unsuccessfull", error));
+    setSave(true);
+    socketRef.current.emit('disconnect-client', room, username);
   }
-
   useEffect(() => { 
     // use local vars because state wont be set on first render
     let roomId = room;
     let qnComplexity = complexity;
     let lang = language;
+    if (isSaved) {
+      console.log("Attempt saved and left");
+      toast.info("Attempt saved and left", standardToast);
+      navigate('/');
+      return;
+    }
 
     // have not set state yet
     if (roomId == null || qnComplexity == null || lang == null) {
@@ -218,7 +224,6 @@ function Collab() {
         console.log("partner has disconnected");
         toast.info("Partner has disconnected", standardToast);
       }
-      
     })
 
     socketRef.current.on('inform-connect', (connectedUser) => {
@@ -228,30 +233,36 @@ function Collab() {
         toast.info("Partner has connected", standardToast);
       }
     })
-
     // Clean up the socket connection on unmount
 
     return () => {
       socketRef.current.emit('disconnect-client', roomId, username);
-      console.log("client disconnected")
-    };
+      console.log("client disconnected");
+    }
     // Do not remove the next line
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate, location.state])
+  }, [isSaved, navigate, location.state])
 
   // set body background color
   useEffect(()  => {
     document.body.classList.add('collab-bg');
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = 'Wanna leave?';
+    };
 
+    window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
         document.body.classList.remove('collab-bg');
+        window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  });
+  }, [location]);
 
+  
   return (
     <div>
     {
-      storedQuestion &&
+      storedQuestion && !isSaved &&
       <div className="collab-wrapper">
       <Grid container spacing={2}>
         {/* Left side of page */}
@@ -261,8 +272,8 @@ function Collab() {
           </div>
           <div className="collab-question-content">
             <b className="question-title">{storedQuestion.id}. {storedQuestion.title}</b>
-            <Tooltip title="Leave collaboration room">
-              <Button onClick={handleLeaveRoom} style={{marginBottom: '1%'}}>
+            <Tooltip title="Leave&Save">
+              <Button onClick={handleSaveThenLeave} style={{marginBottom: '1%'}}>
                 <LogoutIcon sx={{ fontSize: 24 }}/>
               </Button>
             </Tooltip>

@@ -8,7 +8,6 @@ const socketIo = require('socket.io');
 const { disconnect } = require('process');
 const server = http.createServer(app);
 const io = socketIo(server);
-
 const rooms = {};
 
 
@@ -31,10 +30,9 @@ io.on('connection', (socket) => {
   // Create a room for each pair of users based on user IDs
   socket.on('join-room', (roomName, username, language) => {
     if (!rooms[roomName] || rooms[roomName] === null) {
-      rooms[roomName] = {user1 : null, user2: null, isUser1Present : false, isUser2Present : false, qnId : null, language : null};
+      rooms[roomName] = {user1 : null, user2: null, isUser1Present : false, isUser2Present : false, qnId : null, language : null, code : null};
     } 
     roomId = roomName;
-
     // set user info if joining for the first time, else verify access
     if (rooms[roomName].user1 === null) {
       rooms[roomName].user1 = username;
@@ -63,6 +61,7 @@ io.on('connection', (socket) => {
 
   // Handle code changes within the room
   socket.on('code-change', (roomName, code) => {
+    rooms[roomName].code = code;
     socket.to(roomName).emit('code-change', code);
   });
 
@@ -98,6 +97,7 @@ io.on('connection', (socket) => {
       rooms[roomName].user1 = null;
       rooms[roomName].user2 = null;
       rooms[roomName].language = null;
+      rooms[roomName].code = null;
       rooms[roomName] = null;
 
     } else {
