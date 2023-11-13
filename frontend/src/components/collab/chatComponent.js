@@ -50,6 +50,13 @@ function ChatComponent({roomId, username}) {
       setMessages(updatedMessages);
     }
 
+    useEffect(() => {
+      const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
+        if (chatHistory) {
+          setMessages(JSON.parse(chatHistory));
+        }
+    }, []);
+
 
     useEffect(() => {
         if (!chatSocketRef.current) {
@@ -57,10 +64,6 @@ function ChatComponent({roomId, username}) {
             chatSocketRef.current.emit('join-chat', roomId, username);
         }
 
-        const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
-        if (chatHistory) {
-          setMessages(JSON.parse(chatHistory));
-        }
 
         chatSocketRef.current.on('receive-message', (message) => {
             receiveMessage(message);
