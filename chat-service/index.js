@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 
 const http = require('http');
 const { disconnect } = require('process');
-const server = http.createServer(app);
+const server = http.createServer();
 var IO = require('socket.io')(server);
 
 const io = IO.of("/chat");

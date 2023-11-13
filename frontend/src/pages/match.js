@@ -50,7 +50,7 @@ function Match() {
   useEffect(() => {
     // connect to socket
     if (socketRef.current == null) {
-      socketRef.current = io(MATCH_API_URL,  { transports : ['websocket'] });
+      socketRef.current = io(MATCH_API_URL + '/match',  { transports : ['websocket'] });
     }
     socketRef.current.on('match-found', (roomId, message) => {
       setResponseMessage(message);

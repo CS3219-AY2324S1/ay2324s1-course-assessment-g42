@@ -111,7 +111,7 @@ function Collab() {
     let randomId = null;
     setOwnUsername(username);
   
-    socketRef.current = io(COLLABORATION_API_URL,  { transports : ['websocket'] });
+    socketRef.current = io(COLLABORATION_API_URL + ':5002',  { transports : ['websocket'] });
 
     console.log(roomId);
     socketRef.current.emit('join-room', roomId, username, lang);

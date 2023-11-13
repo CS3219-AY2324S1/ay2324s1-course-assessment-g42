@@ -52,7 +52,7 @@ function ChatComponent({roomId, username}) {
 
     useEffect(() => {
         if (!chatSocketRef.current) {
-            chatSocketRef.current = io(CHAT_API_URL,  { transports : ['websocket'] });
+            chatSocketRef.current = io(CHAT_API_URL + ':5003',  { transports : ['websocket'] });
             chatSocketRef.current.emit('join-chat', roomId, username);
         }
 
