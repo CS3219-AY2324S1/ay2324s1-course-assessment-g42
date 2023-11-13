@@ -132,7 +132,7 @@ function runServer(channel) {
     }
 
     // connect to socket
-    socket = io('http://34.117.214.12:5001',  { transports : ['websocket'] });
+    socket = io('http://34.117.214.12/match',  { transports : ['websocket'] });
     console.log(' [server] Connected to socket');
 }
 
