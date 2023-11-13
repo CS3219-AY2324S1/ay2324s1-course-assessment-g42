@@ -57,6 +57,16 @@ services:
     ports:
       - "3000:3000"
 
+  history:
+    container_name: history
+    hostname: history
+    build:
+      context: ./history-service
+    env_file:
+      - ./history-service/.env
+    ports:
+      - "5004:5004"
+
   nginx:
     container_name: nginx
     hostname: nginx
@@ -65,6 +75,7 @@ services:
     ports:
       - "80:80"
     depends_on:
+      - history
       - frontend
       - users
       - questions

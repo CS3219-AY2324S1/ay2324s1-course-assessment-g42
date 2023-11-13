@@ -1,6 +1,6 @@
 import '../../App.css';
 import React from 'react';
-import QuestionHistory from "./questionHistory";
+import QuestionHistory from "../history/questionHistory";
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Grid } from '@mui/material';
