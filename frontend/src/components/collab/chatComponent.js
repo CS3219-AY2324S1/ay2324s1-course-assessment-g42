@@ -18,6 +18,7 @@ function ChatComponent({roomId, username}) {
 
 
     const sendMessage = (message) => {
+      message = message.replace(/&nbsp;/g,'');
       const updatedMessages = [...messages, {
         message,
         direction: 'outgoing',
@@ -31,6 +32,7 @@ function ChatComponent({roomId, username}) {
     }
 
     const receiveMessage = (message) => {
+      message = message.replace(/&nbsp;/g,'');
       const updatedMessages = [...messages, {
         message,
         direction: 'incoming',
@@ -55,15 +57,13 @@ function ChatComponent({roomId, username}) {
             chatSocketRef.current.emit('join-chat', roomId, username);
         }
 
+        const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
+        if (chatHistory) {
+          setMessages(JSON.parse(chatHistory));
+        }
+
         chatSocketRef.current.on('receive-message', (message) => {
             receiveMessage(message);
-        });
-
-        chatSocketRef.current.on('loadChatHistory', () => {
-            const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
-            if (chatHistory) {
-              setMessages(JSON.parse(chatHistory));
-            }
         });
 
         chatSocketRef.current.on('inform-connect', (username) => {
@@ -81,11 +81,14 @@ function ChatComponent({roomId, username}) {
           <MessageList scrollBehavior="smooth">
             {messages.map((m, i) => 
               m.isNotification 
-              ? <div>
-              <span style={{
-                color: "grey"
-                  }}> {m.message} </span> 
-                  </div>
+              ? <Message key={i} model={{
+                direction:"incoming",
+                type: "custom"
+              }}>
+                  <Message.CustomContent>
+                    <strong>{m.message}</strong>
+                </Message.CustomContent>
+                  </Message>
               : <Message key={i} model={{ direction: m.direction}} >
                 <Message.CustomContent>
                   <Linkify>

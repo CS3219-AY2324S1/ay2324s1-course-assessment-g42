@@ -5,7 +5,6 @@ const cookieParser = require('cookie-parser');
 
 const http = require('http');
 const socketIo = require('socket.io');
-const { disconnect } = require('process');
 const server = http.createServer(app);
 const io = socketIo(server);
 
@@ -31,7 +30,6 @@ io.on('connection', (socket) => {
     socket.join(roomId);
     console.log(`[${username}] joined chat: ${roomId}`);
     
-    socket.emit('loadChatHistory');
 
     if (!rooms[roomId]) {
       rooms[roomId] = [socket.id];
