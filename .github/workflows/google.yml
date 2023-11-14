@@ -6,8 +6,8 @@ on:
       - '*'
 
 env:
-  PROJECT_ID: ${{ secrets.peerpre-g42 }}
-  GAR_LOCATION: asia
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  GAR_LOCATION: asia-southeast1
   GKE_CLUSTER: peerprep-cluster  
   GKE_ZONE: asia-southeast1 
   REPOSITORY: peerprep
