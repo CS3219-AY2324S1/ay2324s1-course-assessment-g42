@@ -71,7 +71,7 @@ jobs:
     - name: Run collaboration service test cases
       run: npm test
   
-  test-history-service
+  test-history-service:
     runs-on: ubuntu-latest
 
     defaults:
