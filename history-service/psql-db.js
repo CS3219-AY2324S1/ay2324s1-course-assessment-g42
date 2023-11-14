@@ -23,7 +23,7 @@ const createHistoryTableQueryIfNotExist = `
         CREATE TABLE history (
             id SERIAL PRIMARY KEY,
             username VARCHAR(255) NOT NULL,
-            collaborated VARCHAR(255) NOT NULL,
+            collaborated VARCHAR(255),
             title TEXT NOT NULL,
             qnid INT NOT NULL,
             difficulty VARCHAR(255) NOT NULL,
@@ -31,7 +31,7 @@ const createHistoryTableQueryIfNotExist = `
             attempt TEXT,
             date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (username) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
-            FOREIGN KEY (collaborated) REFERENCES users(username)
+            FOREIGN KEY (collaborated) REFERENCES users(username) ON UPDATE CASECADE ON DELETE SET NULL,
         );
       END IF;
     END $$;

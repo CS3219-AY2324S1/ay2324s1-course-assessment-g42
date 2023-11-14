@@ -24,7 +24,7 @@ async function getHistory(username) {
                 qnId: row.qnid,
                 attempt: row.attempt,
                 date: row.date.toDateString(), // Assuming date is stored as a timestamp
-                collaborated: row.collaborated,
+                collaborated: row.collaborated === null ? "Deleted User" : row.collaborated,
                 title: row.title,
                 difficulty: row.difficulty,
                 language: row.language
