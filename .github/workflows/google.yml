@@ -39,14 +39,15 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    - name: Display Auth Output
+    - name: Get Access Token
       run: |
-        echo "Auth Output: ${{ toJson(steps.auth.outputs) }}"
+        ACCESS_TOKEN=$(gcloud auth print-access-token)
+        echo "::set-output name=access_token::${ACCESS_TOKEN}"
 
     - name: Docker configuration
       run: |
         echo "Logging into Docker registry..."
-        DOCKER_TOKEN=${{ steps.auth.outputs.access_token }}
+        DOCKER_TOKEN=${{ steps.GetAccessToken.outputs.access_token }}
     
         if [ -z "$DOCKER_TOKEN" ]; then
           echo "Error: Docker login failed. Access token is empty."
