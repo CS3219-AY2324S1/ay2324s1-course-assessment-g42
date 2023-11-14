@@ -7,7 +7,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
-  GAR_LOCATION: asia-southeast1
+  GAR_LOCATION: asia
   GKE_CLUSTER: peerprep-cluster  
   GKE_ZONE: asia-southeast1 
   REPOSITORY: peerprep
@@ -67,7 +67,7 @@ jobs:
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/chat"
         docker build history-service \
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/history"
-          
+
     # Push the Docker image to Google Artifact Registry
     - name: Push
       run: |-
