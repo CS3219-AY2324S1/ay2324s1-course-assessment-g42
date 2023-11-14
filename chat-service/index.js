@@ -44,8 +44,28 @@ io.on('connection', (socket) => {
   });
 
   socket.on('send-message', (message, roomId, username) => {
-    console.log(`[${username}] sent message: ${message}`);
-    socket.broadcast.to(roomId).emit('receive-message', message);
+    const otherUser = rooms[roomId].find(id => id !== socket.id);
+    if (otherUser) {
+      console.log(`[${username}] sent message: ${message}`);
+      socket.to(otherUser).emit('receive-message', message);
+    }
+  });
+
+  socket.on('leave-chat', () => {
+    console.log('User left chat:', socket.id);
+    const roomId = Object.keys(rooms).find(roomId => rooms[roomId].includes(socket.id));
+    if (roomId) {
+      const otherUser = rooms[roomId].find(id => id !== socket.id);
+      if (otherUser) {
+        socket.to(otherUser).emit('inform-disconnect', usernames[socket.id]);
+        rooms[roomId] = rooms[roomId].filter(id => id !== socket.id);
+      } else {
+        // remove roomId from rooms
+        delete rooms[roomId];
+        console.log(`removed room ${roomId}`);
+      }
+      delete usernames[socket.id];
+    }
   });
 
 

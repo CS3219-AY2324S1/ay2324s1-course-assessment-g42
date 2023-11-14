@@ -51,20 +51,20 @@ function ChatComponent({roomId, username}) {
 
     useEffect(() => {
       const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
-        if (chatHistory & chatHistory != messages) {
-          console.log('loaded chat history');
-          setMessages(JSON.parse(chatHistory));
-        }
-    }, []);
+      if (chatHistory) {
+        console.log('loaded chat history');
+        setMessages(JSON.parse(chatHistory));
+      }
+      chatSocketRef.current = io('http://localhost:5003',  { transports : ['websocket'] });
+      chatSocketRef.current.emit('join-chat', roomId, username);
+
+      return () => {
+        chatSocketRef.current.emit('leave-chat');
+      }
+    }, [roomId, username]);
 
 
     useEffect(() => {
-        if (!chatSocketRef.current) {
-            chatSocketRef.current = io('http://localhost:5003',  { transports : ['websocket'] });
-            chatSocketRef.current.emit('join-chat', roomId, username);
-        }
-
-
         chatSocketRef.current.on('receive-message', (message) => {
             receiveMessage(message);
         });
