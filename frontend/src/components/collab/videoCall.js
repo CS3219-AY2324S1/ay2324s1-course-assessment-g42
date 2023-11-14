@@ -17,8 +17,10 @@ function VideoCall({roomId}) {
     socketRef.current = io('http://localhost:5005',  { transports : ['websocket'] });
 
     var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    var myStream = null;
     getUserMedia({ video: true, audio: true }, (stream) => {
       setStream(stream);
+      myStream = stream;
       const video = document.querySelector("video");
       video.srcObject = stream;
       video.onloadedmetadata = (e) => {
@@ -28,9 +30,10 @@ function VideoCall({roomId}) {
     
 
     return () => {
-      if (stream) {
+      if (myStream) {
         console.log('closed stream');
-        const tracks = stream.getTracks();
+        mypeer.destroy();
+        const tracks = myStream.getTracks();
         tracks.forEach((track) => {
           track.stop();
         });
@@ -47,7 +50,6 @@ function VideoCall({roomId}) {
         });
       
       peer.on('call', (call) => {
-        // var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         if (stream) {
           call.answer(stream);
         }
