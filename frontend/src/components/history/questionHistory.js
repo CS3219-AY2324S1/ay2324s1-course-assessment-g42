@@ -57,7 +57,9 @@ function QuestionHistory() {
 
     const getHistory = async () => {
       axios.post(
-        HISTORY_API_URL + "/history/getHistory", {username})
+        HISTORY_API_URL + "/history/getHistory",
+        {username},
+        { withCredentials: true, credentials: 'include' })
       .then(response => {
         const historyList = response.data;
         setHistory(historyList);

@@ -12,7 +12,7 @@ pool.connect()
     .then(() => console.log('Connected to the database'))
     .catch(err => console.error('Error connecting to the database', err));
 
-const createHistoryTableQuery = `
+const createHistoryTableQueryIfNotExist = `
     DO $$ 
     BEGIN
       IF NOT EXISTS (
@@ -37,7 +37,7 @@ const createHistoryTableQuery = `
     END $$;
   `;
   
-pool.query(createHistoryTableQuery)
+pool.query(createHistoryTableQueryIfNotExist)
 .then((res) => {
     console.log('Table creation successful:', res);
 })

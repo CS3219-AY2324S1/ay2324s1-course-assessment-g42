@@ -52,7 +52,10 @@ function Collab() {
 
     console.log(code);
     const saveAttempt = {username: username, collaborated: matchedUser, title: storedQuestion.title, qnId: storedQuestion.id, difficulty: complexity, language: language, attempt: code, date: new Date()};
-    axios.post(HISTORY_API_URL + "/history/saveAttempt", saveAttempt)
+    axios.post(
+      HISTORY_API_URL + "/history/saveAttempt",
+      saveAttempt,
+      { withCredentials: true, credentials: 'include' })
       .then(response => console.log("save successfull"))
       .catch(error => console.log("save unsuccessfull", error));
     setSave(true);
