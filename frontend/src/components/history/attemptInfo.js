@@ -31,8 +31,14 @@ function AttemptInfo({ open, handleClose, question, attempt }) {
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
-        fullWidth='xl'
-        maxWidth='xl'
+        sx={{
+          "& .MuiDialog-container": {
+            "& .MuiPaper-root": {
+              width: "100%",
+              maxWidth: "1000px",
+            },
+          },
+        }}
       >
         {/* Question title */}
       <div className="attempt-wrapper">

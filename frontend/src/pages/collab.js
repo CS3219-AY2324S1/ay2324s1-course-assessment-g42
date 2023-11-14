@@ -30,7 +30,6 @@ function Collab() {
   const [complexity, setComplexity] = useState(null);
   const [language, setLanguage] = useState(null);
   const [matchedUser, setMatchedUser] = useState(null);
-  const [isPartner, setIsPartner] = useState(true);
   const [isSaved, setSave] = useState(false);
   const [ownUsername, setOwnUsername] = useState(null);
   const editorDidMount = (editor, monaco) => {
@@ -58,8 +57,8 @@ function Collab() {
       HISTORY_API_URL + "/history/saveAttempt",
       saveAttempt,
       { withCredentials: true, credentials: 'include' })
-      .then(response => console.log("save successfull"))
-      .catch(error => console.log("save unsuccessfull", error));
+      .then(response => console.log("save successful"))
+      .catch(error => console.log("save unsuccessful", error));
     setSave(true);
     socketRef.current.emit('disconnect-client', room, username);
   }
@@ -69,8 +68,8 @@ function Collab() {
     let qnComplexity = complexity;
     let lang = language;
     if (isSaved) {
-      console.log("Attempt saved and left");
-      toast.info("Attempt saved and left", standardToast);
+      console.log("Attempt saved. You have left the room.");
+      toast.info("Attempt saved. You have left the room.", standardToast);
       navigate('/');
       return;
     }
@@ -172,11 +171,9 @@ function Collab() {
       if (room.user1 !== null && room.user1 !== username) {
         sessionStorage.setItem(`matchedUser_${roomId}`, room.user1);
         setMatchedUser(room.user1);
-        setIsPartner(room.isUser1Present);
       } else if (room.user2 !== null && room.user2 !== username) {
         sessionStorage.setItem(`matchedUser_${roomId}`, room.user2);
         setMatchedUser(room.user2);
-        setIsPartner(room.isUser2Present);
       }
 
     })
@@ -227,7 +224,6 @@ function Collab() {
     socketRef.current.on('inform-disconnect', (disconnectedUser) => {
       // handle prompt on matched user disconnect
       if (disconnectedUser !== username) {
-        setIsPartner(false);
         console.log("partner has disconnected");
         toast.info("Partner has disconnected", standardToast);
       }
@@ -235,7 +231,6 @@ function Collab() {
 
     socketRef.current.on('inform-connect', (connectedUser) => {
       if (connectedUser !== username) {
-        setIsPartner(true);
         console.log("partner has connected");
         toast.info("Partner has connected", standardToast);
       }
@@ -255,7 +250,7 @@ function Collab() {
     document.body.classList.add('collab-bg');
     const handleBeforeUnload = (event) => {
       event.preventDefault();
-      event.returnValue = 'Wanna leave?';
+      event.returnValue = 'Would you like to leave?';
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -279,7 +274,7 @@ function Collab() {
           </div>
           <div className="collab-question-content">
             <b className="question-title">{storedQuestion.id}. {storedQuestion.title}</b>
-            <Tooltip title="Leave&Save">
+            <Tooltip title="Save attempt and leave collaboration room">
               <Button onClick={handleSaveThenLeave} style={{marginBottom: '1%'}}>
                 <LogoutIcon sx={{ fontSize: 24 }}/>
               </Button>

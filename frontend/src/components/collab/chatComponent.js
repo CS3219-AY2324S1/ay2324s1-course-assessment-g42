@@ -15,7 +15,6 @@ function ChatComponent({roomId, username}) {
     const inputRef = useRef();
     const [msgInputValue, setMsgInputValue] = useState("");
     const [messages, setMessages] = useState([]);
-    const [isPartnerConnected, setIsPartnerConnected] = useState(false);
 
 
     const sendMessage = (message) => {
@@ -51,20 +50,26 @@ function ChatComponent({roomId, username}) {
       setMessages(updatedMessages);
     }
 
+    useEffect(() => {
+      const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
+      if (chatHistory) {
+        console.log('loaded chat history');
+        setMessages(JSON.parse(chatHistory));
+      }
+      
+      chatSocketRef.current = io(CHAT_API_URL, {
+        path: "/chat/socket.io",
+        transports : ['websocket'] });
+      chatSocketRef.current.emit('join-chat', roomId, username);
+
+      return () => {
+        sessionStorage.removeItem(`chat_${roomId}`);
+        chatSocketRef.current.emit('leave-chat');
+      }
+    }, [roomId, username]);
+
 
     useEffect(() => {
-        if (!chatSocketRef.current) {
-            chatSocketRef.current = io(CHAT_API_URL, {
-              path: "/chat/socket.io",
-              transports : ['websocket'] });
-            chatSocketRef.current.emit('join-chat', roomId, username);
-        }
-
-        const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
-        if (chatHistory) {
-          setMessages(JSON.parse(chatHistory));
-        }
-
         chatSocketRef.current.on('receive-message', (message) => {
             receiveMessage(message);
         });
