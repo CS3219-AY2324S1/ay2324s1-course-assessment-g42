@@ -5,6 +5,7 @@ var io = require('socket.io-client');
 var socketURL = 'http://0.0.0.0:5002';
 
 var options = {
+  path: "/collaboration/socket.io",
   transports: ['websocket'],
   'force new connection': true
 };
