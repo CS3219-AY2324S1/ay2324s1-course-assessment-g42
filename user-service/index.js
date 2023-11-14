@@ -19,7 +19,7 @@ app.get("/test", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-    res.json("You connected to users service");
+    res.json("Connected to user service");
 });
 
 //routes for user behaviour

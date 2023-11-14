@@ -117,6 +117,6 @@ io.on('connection', (socket) => {
 
 });
 app.get("/", (req, res) => {
-  res.json("You connected to collaboration service");
+  res.json("Connected to collaboration service");
 });
 server.listen(5002, () => console.log("Collaboration server Started on Port 5002"));
