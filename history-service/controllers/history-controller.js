@@ -23,7 +23,20 @@ async function getHistory(req, res) {
     }
 }
 
+//for testing
+async function deleteHistory(req, res) {
+    let { username, collaborated, title } = req.body;
+
+    try {
+        const result = await history.deleteHistory(username, collaborated, title);
+        return res.status(200).json(result);
+    } catch (err) {
+        return res.status(500);
+    }
+}
+
 module.exports = {
     saveAttempt,
     getHistory,
+    deleteHistory
 };
