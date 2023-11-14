@@ -70,3 +70,20 @@ jobs:
       run: npm install
     - name: Run collaboration service test cases
       run: npm test
+  
+  test-history-service:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./history-service/
+    
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    - name: Download Dependencies
+      run: npm install
+    - name: Run history service test cases
+      run: npm test
