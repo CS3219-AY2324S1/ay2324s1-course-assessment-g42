@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: questions
+  name: questions
+  namespace: default
+spec:
+  ports:
+  - name: "8030"
+    port: 8030
+    targetPort: 8030
+  selector:
+    service: questions
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: questions
+  name: questions
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: questions
+  template:
+    metadata:
+      labels:
+        service: questions
+    spec:
+      containers:
+      - image: asia-docker.pkg.dev/peerpre-g42/peerprep/questions
+        imagePullPolicy: Always
+        name: questions
+        ports:
+        - containerPort: 8030

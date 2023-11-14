@@ -18,6 +18,10 @@ app.get("/test", (req, res) => {
     res.json("backend connected to frontend")
 });
 
+app.get("/", (req, res) => {
+    res.json("You connected to users service");
+});
+
 //routes for user behaviour
 app.use("/user", require('./routes/user-route'));
 

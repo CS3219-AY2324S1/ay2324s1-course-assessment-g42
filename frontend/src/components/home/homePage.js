@@ -23,7 +23,7 @@ function HomePage() {
               <div style={{marginBottom: "10px"}}>
                 <Button
                   variant="contained"
-                  component={Link} to="/match"
+                  component={Link} to="/matching"
                   style={{ backgroundColor: '#F24E1E', color: 'black', padding: '10px' }}
                 >
                   Start Collaborating!
