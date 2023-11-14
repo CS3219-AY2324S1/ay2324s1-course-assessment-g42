@@ -46,6 +46,14 @@ services:
     ports:
       - "5003:5003"
 
+  video:
+    container_name: video
+    hostname: video
+    build:
+      context: ./video-service
+    ports:
+      - "5005:5005"
+
   frontend:
     container_name: frontend
     hostname: frontend
