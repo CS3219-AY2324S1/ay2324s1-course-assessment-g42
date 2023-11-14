@@ -13,7 +13,7 @@ async function saveAttempt(req, res) {
 async function getHistory(req, res) {
     let {username} = req.body;
     const result = await history.getHistory(username);
-    return result;
+    return res.json(result);
 }
 
 module.exports = {

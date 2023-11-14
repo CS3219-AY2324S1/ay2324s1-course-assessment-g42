@@ -28,8 +28,8 @@ async function getHistory(username) {
             difficulty: row.difficulty,
             language: row.language
         }));
-        res.json(formattedResults);
         console.log("Getting history from database successfully", username, formattedResults);
+        return formattedResults;
     }).catch(error => {
         console.log("Error getting history from database", error);
     })
