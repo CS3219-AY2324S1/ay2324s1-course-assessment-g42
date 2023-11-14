@@ -11,8 +11,9 @@ const io = new Server(server, {
   path: "/chat/socket.io"
 });
 
-const rooms = {};
-const usernames = {};
+const rooms = {};  // links rooms to socket.id
+const usernames = {}; // links socket.id to username
+const roomFilled = {}; // whether room has been filled
 
 app.use(
   cors({
@@ -35,10 +36,20 @@ io.on('connection', (socket) => {
     
 
     if (!rooms[roomId]) {
+      // first user to join room, first time
       rooms[roomId] = [socket.id];
       usernames[socket.id] = username;
-    } else {
+    } else if (roomFilled[roomId]) {
+      // one of the users refreshed the page
       rooms[roomId].push(socket.id);
+      roomFilled[roomId] = true;
+      const otherUser = rooms[roomId].find(id => id !== socket.id);
+      socket.to(otherUser).emit('inform-connect', username);
+      usernames[socket.id] = username;
+    } else {
+      // two user joined room, first time
+      rooms[roomId].push(socket.id);
+      roomFilled[roomId] = true;
       const otherUser = rooms[roomId].find(id => id !== socket.id);
       socket.to(otherUser).emit('inform-connect', username);
       socket.emit('inform-connect', usernames[otherUser]);
@@ -47,9 +58,32 @@ io.on('connection', (socket) => {
   });
 
   socket.on('send-message', (message, roomId, username) => {
-    console.log(`[${username}] sent message: ${message}`);
-    socket.broadcast.to(roomId).emit('receive-message', message);
+    const otherUser = rooms[roomId].find(id => id !== socket.id);
+    if (otherUser) {
+      console.log(`[${username}] sent message: ${message}`);
+      socket.to(otherUser).emit('receive-message', message);
+    }
   });
+
+  socket.on('leave-chat', () => {
+    console.log('User left chat:', socket.id);
+    const roomId = Object.keys(rooms).find(roomId => rooms[roomId].includes(socket.id));
+    if (roomId) {
+      const otherUser = rooms[roomId].find(id => id !== socket.id);
+      if (otherUser) {
+        // another user still in room
+        socket.to(otherUser).emit('inform-disconnect', usernames[socket.id]);
+        rooms[roomId] = rooms[roomId].filter(id => id !== socket.id);
+      } else {
+        // remove roomId from rooms when both users have disconnected
+        delete rooms[roomId];
+        delete roomFilled[roomId];
+        console.log(`removed room ${roomId}`);
+      }
+      delete usernames[socket.id];
+    }
+  });
+
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
@@ -57,11 +91,13 @@ io.on('connection', (socket) => {
     if (roomId) {
       const otherUser = rooms[roomId].find(id => id !== socket.id);
       if (otherUser) {
+        // another user still in room
         socket.to(otherUser).emit('inform-disconnect', usernames[socket.id]);
         rooms[roomId] = rooms[roomId].filter(id => id !== socket.id);
       } else {
-        // remove roomId from rooms
+        // remove roomId from rooms when both users have disconnected
         delete rooms[roomId];
+        delete roomFilled[roomId];
         console.log(`removed room ${roomId}`);
       }
       delete usernames[socket.id];
