@@ -50,12 +50,7 @@ jobs:
       with:
         cluster_name: ${{ env.GKE_CLUSTER }}
         location: ${{ env.GKE_ZONE }}
-
-    - name: Check IAM Policy Bindings
-      run: |
-        gcloud auth activate-service-account --key-file=<(echo "${{ secrets.GCP_CREDENTIALS }}")
-        gcloud projects get-iam-policy $PROJECT_ID
-
+        
     - name: Set up environment variable
       run: |
         docker build frontend \
