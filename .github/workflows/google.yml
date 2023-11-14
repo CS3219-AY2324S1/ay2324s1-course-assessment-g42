@@ -1,0 +1,105 @@
+name: Build and Deploy to GKE
+
+on:
+  push:
+    branches: 
+      - '*'
+
+env:
+  PROJECT_ID: ${{ secrets.peerpre-g42 }}
+  GAR_LOCATION: asia 
+  GKE_CLUSTER: peerprep-cluster  
+  GKE_ZONE: asia-southeast1 
+  REPOSITORY: peerprep
+  INGRESS_URL: http://34.128.128.210
+  JWT_SECRET_KEY: '${{ secrets.JWT_SECRET_KEY }}'
+  PSQL_USERNAME: '${{ secrets.PSQL_USERNAME }}'
+  PSQL_HOSTNAME: '${{ secrets.PSQL_HOSTNAME }}'
+  PSQL_PASSWORD: '${{ secrets.PSQL_PASSWORD }}'
+  PSQL_PORT: '${{ secrets.PSQL_PORT }}'
+  MONGODB_URI: '${{ secrets.MONGODB_URI }}'
+  CLOUDAMQP_URL: '${{ secrets.CLOUDAMQP_URL }}'
+
+jobs:
+  setup-build-push-deploy:
+    name: Setup, Build, push, and Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        token_format: 'access_token'
+        workload_identity_provider: 'projects/60962409020/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+        service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
+
+    # Alternative option - authentication via credentials json
+    # - id: 'auth'
+    #   uses: 'google-github-actions/auth@v0'
+    #   with:
+    #     credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: Docker configuration
+      run: |-
+        echo ${{steps.auth.outputs.access_token}} | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
+
+    # Get the GKE credentials so we can deploy to the cluster
+    - name: Set up GKE credentials
+      uses: google-github-actions/get-gke-credentials@v0
+      with:
+        cluster_name: ${{ env.GKE_CLUSTER }}
+        location: ${{ env.GKE_ZONE }}
+
+    - name: Set up environment variable
+      run: |
+        docker build /frontend
+          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/frontend" \
+          .
+        docker build /user-service
+          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/users" \
+          .
+        docker build /question-service
+          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/questions" \
+          .
+        docker build /matching-service
+          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/match" \
+          .
+        docker build /collaboration-service
+          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/collaboration" \
+          .
+        docker build /chat-service
+          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/chat" \
+          .
+        docker build /history-service
+          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/history" \
+          .
+    # Push the Docker image to Google Artifact Registry
+    - name: Push
+      run: |-
+        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/frontend"
+        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/users"
+        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/questions"
+        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/match"
+        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/collaboration"
+        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/chat"
+        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/history"
+
+    # Deploy the Docker image to the GKE cluster
+    - name: Deploy
+      run: |-
+        kubectl apply -f ./k8s/frontend.yaml
+        kubectl apply -f ./k8s/users.yaml
+        kubectl apply -f ./k8s/questions.yaml
+        kubectl apply -f ./k8s/match.yaml
+        kubectl apply -f ./k8s/collaboration.yaml
+        kubectl apply -f ./k8s/chat.yaml
+        kubectl apply -f ./k8s/history.yaml
