@@ -36,7 +36,7 @@ spec:
         service: frontend
     spec:
       containers:
-      - image: asia-docker.pkg.dev/peerpre-g42/peerprep/frontend2
+      - image: asia-docker.pkg.dev/peerpre-g42/peerprep/frontend
         imagePullPolicy: Always
         name: frontend
         ports:
