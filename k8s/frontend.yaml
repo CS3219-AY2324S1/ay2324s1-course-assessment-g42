@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    service: frontend2
-  name: frontend2
+    service: frontend
+  name: frontend
   namespace: default
   annotations:
     cloud.google.com/backend-config: '{"default": "ccai-backendconfig"}'
@@ -14,14 +14,14 @@ spec:
     port: 3000
     targetPort: 3000
   selector:
-    service: frontend2
+    service: frontend
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    service: frontend2
-  name: frontend2
+    service: frontend
+  name: frontend
   namespace: default
   annotations:
     cloud.google.com/backend-config: '{"default": "ccai-backendconfig"}'
@@ -29,15 +29,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      service: frontend2
+      service: frontend
   template:
     metadata:
       labels:
-        service: frontend2
+        service: frontend
     spec:
       containers:
       - image: asia-docker.pkg.dev/peerpre-g42/peerprep/frontend2
         imagePullPolicy: Always
-        name: frontend2
+        name: frontend
         ports:
         - containerPort: 3000

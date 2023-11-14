@@ -2,8 +2,7 @@ name: Build and Deploy to GKE
 
 on:
   push:
-    branches: 
-      - '*'
+    branches: [ "master" ]
 
 env:
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
@@ -54,7 +53,7 @@ jobs:
     - name: Set up environment variable
       run: |
         docker build frontend \
-          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/frontend2"
+          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/frontend"
         docker build user-service \
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/users"
         docker build question-service \
@@ -71,7 +70,7 @@ jobs:
     # Push the Docker image to Google Artifact Registry
     - name: Push
       run: |-
-        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/frontend2"
+        docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/frontend"
         docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/users"
         docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/questions"
         docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/match"
