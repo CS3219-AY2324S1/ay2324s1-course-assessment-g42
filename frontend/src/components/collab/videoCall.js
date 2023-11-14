@@ -7,6 +7,7 @@ import "../../styles/videoCall.css";
 function VideoCall({roomId}) {
   const socketRef = useRef();
   const [peer, setPeer] = useState(null);
+  const [stream, setStream] = useState();
 
   useEffect(() => {
     var mypeer = new Peer();
@@ -14,8 +15,29 @@ function VideoCall({roomId}) {
     setPeer(mypeer);
     
     socketRef.current = io('http://localhost:5005',  { transports : ['websocket'] });
-    }
-  , [])
+
+    var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    getUserMedia({ video: true, audio: true }, (stream) => {
+      setStream(stream);
+      const video = document.querySelector("video");
+      video.srcObject = stream;
+      video.onloadedmetadata = (e) => {
+        video.play();
+      };
+    }, err => { console.log('Error!') });
+    
+
+    return () => {
+      if (stream) {
+        console.log(' closed');
+        const tracks = stream.getTracks();
+        tracks.forEach((track) => {
+          track.stop();
+        });
+      }
+          
+    };
+  }, []);
 
   useEffect(() => {
     if (peer) {
@@ -25,42 +47,47 @@ function VideoCall({roomId}) {
         });
       
       peer.on('call', (call) => {
-        var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-        getUserMedia({ video: true, audio: true }, (stream) => {
+        // var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        if (stream) {
+          call.answer(stream);
+        }
+        
+        // getUserMedia({ video: true, audio: true }, (stream) => {
+        //   const video = document.querySelector("video");
+        //   video.srcObject = stream;
+        //   video.onloadedmetadata = (e) => {
+        //     video.play();
+        //   };
+          
+        // }, err => { console.log('Error!') });
+
+        call.on('stream', (remoteStream) => {
           const video = document.querySelector("video");
-          video.srcObject = stream;
+          video.srcObject = remoteStream;
           video.onloadedmetadata = (e) => {
             video.play();
           };
-          call.answer(stream);
-        }, err => { console.log('Error!') });
-        console.log('got call');
         });
+      
+
+        call.on('close', () => {
+          console.log('call closed');
+          const tracks = stream.getTracks();
+          tracks.stop();
+        });
+      });
 
       const videoCall = (partnerId) => {
         console.log('initiated call');
-        var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-        getUserMedia({ video: true, audio: true }, (stream) => {
-
-          const video = document.querySelector("video");
-          video.srcObject = stream;
-          video.onloadedmetadata = (e) => {
-            video.play();
-          };
-          
-          peer.call(partnerId, stream);
-          
-        }, err => { console.log('Error!') });
-        };
+        peer.call(partnerId, stream);
+      };
 
       socketRef.current.on('initiate-call', (partnerId) => {
         videoCall(partnerId);
-      })
-    }
-  }, [roomId, peer])
+      });
 
+    }}, [roomId, peer]);
   
-
 
   return (
     <div >
