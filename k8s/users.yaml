@@ -31,7 +31,7 @@ spec:
         service: users
     spec:
       containers:
-      - image: asia-docker.pkg.dev/peerpre-g42/peerprep/userss
+      - image: asia-docker.pkg.dev/peerpre-g42/peerprep/users
         imagePullPolicy: Always
         name: users
         ports:

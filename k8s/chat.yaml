@@ -5,6 +5,9 @@ metadata:
     service: chat
   name: chat
   namespace: default
+  annotations:
+    cloud.google.com/backend-config: '{"default": "ccai-backendconfig"}'
+    cloud.google.com/app-protocols: '{"my-https-port":"HTTPS","my-http-port":"HTTP"}'
 spec:
   ports:
   - name: "5003"
@@ -20,6 +23,8 @@ metadata:
     service: chat
   name: chat
   namespace: default
+  annotations:
+    cloud.google.com/backend-config: '{"default": "ccai-backendconfig"}'
 spec:
   replicas: 1
   selector:
