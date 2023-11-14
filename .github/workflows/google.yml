@@ -37,23 +37,12 @@ jobs:
     - id: 'auth'
       uses: 'google-github-actions/auth@v0'
       with:
-        token_format: 'access_token'
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    - name: Docker configuration
-      run: |
-        echo "Logging into Docker registry..."
-        DOCKER_TOKEN=${{ steps.auth.outputs.access_token }}
-    
-        if [ -z "$DOCKER_TOKEN" ]; then
-          echo "Error: Docker login failed. Access token is empty."
-          exit 1
-        fi
-    
-        echo "$DOCKER_TOKEN" | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev || \
-          { echo "Error: Docker login failed."; exit 1; }
-
-        echo "Docker login successful."
+    - name: Configure Docker Client
+      run: |-
+        gcloud auth configure-docker --quiet
+        gcloud auth configure-docker $GAR_LOCATION-docker.pkg.dev --quiet
     
     # Get the GKE credentials so we can deploy to the cluster
     - name: Set up GKE credentials
