@@ -40,8 +40,19 @@ jobs:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
     - name: Docker configuration
-      run: |-
-        echo ${{steps.auth.outputs.access_token}} | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
+      run: |
+        echo "Logging into Docker registry..."
+        DOCKER_TOKEN=${{ steps.auth.outputs.access_token }}
+    
+        if [ -z "$DOCKER_TOKEN" ]; then
+          echo "Error: Docker login failed. Access token is empty."
+          exit 1
+        fi
+    
+        echo "$DOCKER_TOKEN" | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev || \
+          { echo "Error: Docker login failed."; exit 1; }
+
+        echo "Docker login successful."
     
     # Get the GKE credentials so we can deploy to the cluster
     - name: Set up GKE credentials
