@@ -34,20 +34,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - id: auth
+    - id: 'auth'
       uses: 'google-github-actions/auth@v0'
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    - name: Get Access Token
-      run: |
-        ACCESS_TOKEN=$(gcloud auth print-access-token)
-        echo "::set-output name=access_token::${ACCESS_TOKEN}"
-
+    - name: "Setup Cloud SDK"
+      uses: "google-github-actions/setup-gcloud@v1"
+  
     - name: Docker configuration
       run: |
         echo "Logging into Docker registry..."
-        DOCKER_TOKEN=${{ steps.GetAccessToken.outputs.access_token }}
+        DOCKER_TOKEN=${{ steps.auth.outputs.access_token }}
     
         if [ -z "$DOCKER_TOKEN" ]; then
           echo "Error: Docker login failed. Access token is empty."
