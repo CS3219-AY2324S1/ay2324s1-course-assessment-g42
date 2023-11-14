@@ -53,25 +53,25 @@ jobs:
 
     - name: Set up environment variable
       run: |
-        docker build /frontend
+        docker build ../frontend
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/frontend" \
           .
-        docker build /user-service
+        docker build ../user-service
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/users" \
           .
-        docker build /question-service
+        docker build ../question-service
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/questions" \
           .
-        docker build /matching-service
+        docker build ../matching-service
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/match" \
           .
-        docker build /collaboration-service
+        docker build ../collaboration-service
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/collaboration" \
           .
-        docker build /chat-service
+        docker build ../chat-service
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/chat" \
           .
-        docker build /history-service
+        docker build ../history-service
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/history" \
           .
     # Push the Docker image to Google Artifact Registry
