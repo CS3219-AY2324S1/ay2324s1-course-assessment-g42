@@ -15,17 +15,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.get("/test", (req, res) => {
-    res.json("backend connected to frontend")
+    res.json("history microservice connected")
 });
 
 app.get("/", (req, res) => {
-  res.json("You connected to questions service");
+  res.json("You connected to history service");
 });
 
-// routes for questions
-app.use("/question", require('./routes/question-route'));
-app.use("/category", require('./routes/category-route'));
+//routes for user behaviour
+app.use("/history", require('./routes/history-route'));
 
-app.listen(8030, () => {console.log("Question server started on Port 8030")});
+app.listen(5004, () => {console.log("History microservice is listening at port 5003")});
 
 module.exports = app;

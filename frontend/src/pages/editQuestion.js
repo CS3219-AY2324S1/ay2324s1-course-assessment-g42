@@ -10,7 +10,7 @@ import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 
-import { logout } from '../helpers';
+import { logout } from '../helpers/logout';
 import { standardToast } from '../styles/toastStyles';
 import { QUESTION_API_URL } from '../config';
 

@@ -1,6 +1,6 @@
 import '../../App.css';
 import React from 'react';
-import QuestionHistory from '../users/questionHistory';
+import QuestionHistory from "../history/questionHistory";
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Grid } from '@mui/material';
@@ -23,7 +23,7 @@ function HomePage() {
               <div style={{marginBottom: "10px"}}>
                 <Button
                   variant="contained"
-                  component={Link} to="/match"
+                  component={Link} to="/matching"
                   style={{ backgroundColor: '#F24E1E', color: 'black', padding: '10px' }}
                 >
                   Start Collaborating!

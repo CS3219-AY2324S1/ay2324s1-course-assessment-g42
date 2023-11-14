@@ -132,7 +132,9 @@ function runServer(channel) {
     }
 
     // connect to socket
-    socket = io('http://localhost:5001',  { transports : ['websocket'] });
+    socket = io('http://localhost:5001',  { 
+        path: "/match/socket.io",
+        transports : ['websocket'] });
     console.log(' [server] Connected to socket');
 }
 

@@ -14,7 +14,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 
-import { logout } from '../helpers';
+import { logout } from '../helpers/logout';
 import { USER_API_URL } from '../config';
 
 function ViewUsers() {

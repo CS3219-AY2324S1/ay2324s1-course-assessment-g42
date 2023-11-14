@@ -2,7 +2,7 @@ import '../../App.css';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
-import { logout } from '../../helpers';
+import { logout } from '../../helpers/logout';
 
 function LogoutUser({ color }) {
     const navigate = useNavigate();
