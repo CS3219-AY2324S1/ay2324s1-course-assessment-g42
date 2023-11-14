@@ -7,9 +7,9 @@ async function saveAttempt(req, res) {
     let { username, collaborated, title, qnId, difficulty, language, attempt, date } = req.body;
     try {
         const result = await history.saveAttempt(username, collaborated, title, qnId, difficulty, language, attempt, date);
-        return res.status(200).json(result)
+        return res.status(200).json(result);
     } catch (err) {
-        return res.status(500).json(err)
+        return res.status(500).json(err);
     }
 }
 
@@ -17,7 +17,7 @@ async function getHistory(req, res) {
     let {username} = req.body;
     try {
         const result = await history.getHistory(username);
-        return res.status(200).json(result)
+        return res.status(200).json(result);
     } catch (err) {
         return res.status(500).json(err);
     }
