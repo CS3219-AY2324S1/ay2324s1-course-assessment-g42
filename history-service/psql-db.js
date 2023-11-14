@@ -31,7 +31,7 @@ const createHistoryTableQueryIfNotExist = `
             attempt TEXT,
             date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (username) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
-            FOREIGN KEY (collaborated) REFERENCES users(username) ON UPDATE CASCADE ON DELETE SET NULL,
+            FOREIGN KEY (collaborated) REFERENCES users(username) ON UPDATE CASCADE ON DELETE SET NULL
         );
       END IF;
     END $$;
