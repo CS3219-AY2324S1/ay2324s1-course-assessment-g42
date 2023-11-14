@@ -4,11 +4,12 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const http = require('http');
+const { Server } = require('socket.io');
 const { disconnect } = require('process');
-const server = http.createServer();
-var IO = require('socket.io')(server);
-
-const io = IO.of("/chat");
+const server = http.createServer(app);
+const io = new Server(server, {
+  path: "/chat/socket.io"
+});
 
 const rooms = {};
 const usernames = {};
@@ -32,7 +33,6 @@ io.on('connection', (socket) => {
     socket.join(roomId);
     console.log(`[${username}] joined chat: ${roomId}`);
     
-    socket.emit('loadChatHistory');
 
     if (!rooms[roomId]) {
       rooms[roomId] = [socket.id];

@@ -30,8 +30,8 @@ const createHistoryTableQuery = `
             language VARCHAR(255) NOT NULL,
             attempt TEXT,
             date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (username) REFERENCES user_table(username),
-            FOREIGN KEY (collaborated) REFERENCES user_table(username)
+            FOREIGN KEY (username) REFERENCES users(username),
+            FOREIGN KEY (collaborated) REFERENCES users(username)
         );
       END IF;
     END $$;

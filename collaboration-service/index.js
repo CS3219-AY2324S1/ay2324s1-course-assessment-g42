@@ -4,11 +4,12 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const http = require('http');
+const { Server } = require('socket.io');
 const { disconnect } = require('process');
-var server = http.createServer(app);
-var IO = require('socket.io')(server);
-
-const io = IO.of("/collaboration");
+const server = http.createServer(app);
+const io = new Server(server, {
+  path: "/collaboration/socket.io"
+});
 const rooms = {};
 
 
