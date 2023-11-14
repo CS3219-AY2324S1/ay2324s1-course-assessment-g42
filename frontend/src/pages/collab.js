@@ -28,7 +28,6 @@ function Collab() {
   const [complexity, setComplexity] = useState(null);
   const [language, setLanguage] = useState(null);
   const [matchedUser, setMatchedUser] = useState(null);
-  const [isPartner, setIsPartner] = useState(true);
   const [isSaved, setSave] = useState(false);
   const [ownUsername, setOwnUsername] = useState(null);
   const editorDidMount = (editor, monaco) => {
@@ -165,11 +164,9 @@ function Collab() {
       if (room.user1 !== null && room.user1 !== username) {
         sessionStorage.setItem(`matchedUser_${roomId}`, room.user1);
         setMatchedUser(room.user1);
-        setIsPartner(room.isUser1Present);
       } else if (room.user2 !== null && room.user2 !== username) {
         sessionStorage.setItem(`matchedUser_${roomId}`, room.user2);
         setMatchedUser(room.user2);
-        setIsPartner(room.isUser2Present);
       }
 
     })
@@ -220,7 +217,6 @@ function Collab() {
     socketRef.current.on('inform-disconnect', (disconnectedUser) => {
       // handle prompt on matched user disconnect
       if (disconnectedUser !== username) {
-        setIsPartner(false);
         console.log("partner has disconnected");
         toast.info("Partner has disconnected", standardToast);
       }
@@ -228,7 +224,6 @@ function Collab() {
 
     socketRef.current.on('inform-connect', (connectedUser) => {
       if (connectedUser !== username) {
-        setIsPartner(true);
         console.log("partner has connected");
         toast.info("Partner has connected", standardToast);
       }
