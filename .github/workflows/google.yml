@@ -39,18 +39,17 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    - name: Print debug information
-      run: |
-        echo "Access Token: ${{ steps.auth.outputs.access_token }}"
-        echo "Docker Registry URL: https://$GAR_LOCATION-docker.pkg.dev"
-
+    - name: Docker configuration
+      run: |-
+        echo ${{steps.auth.outputs.access_token}} | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
+    
     # Get the GKE credentials so we can deploy to the cluster
     - name: Set up GKE credentials
       uses: google-github-actions/get-gke-credentials@v0
       with:
         cluster_name: ${{ env.GKE_CLUSTER }}
         location: ${{ env.GKE_ZONE }}
-        
+
     - name: Set up environment variable
       run: |
         docker build frontend \
