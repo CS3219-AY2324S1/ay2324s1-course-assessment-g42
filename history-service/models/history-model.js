@@ -41,13 +41,11 @@ async function getHistory(username) {
 
 async function deleteHistory(username, collaborated, title) {
     try {
-        console.log("reached");
         const result = await pool.query(
             `DELETE FROM history 
              WHERE username = $1 AND collaborated = $2 AND title = $3`,
             [username, collaborated, title]
         );
-        console.log("reached");
 
         return result;
     } catch (err) {
