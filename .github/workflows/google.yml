@@ -39,13 +39,9 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    - name: Display Access Token
+    - name: Display Auth Output
       run: |
-        echo "Access Token: ${{ steps.auth.outputs.access_token }}"
-        if [ -z "${{ steps.auth.outputs.access_token }}" ]; then
-          echo "Error: Access token is empty."
-          exit 1
-        fi
+        echo "Auth Output: ${{ toJson(steps.auth.outputs) }}"
 
     - name: Docker configuration
       run: |
