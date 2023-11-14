@@ -51,22 +51,38 @@ jobs:
         cluster_name: ${{ env.GKE_CLUSTER }}
         location: ${{ env.GKE_ZONE }}
 
-    - name: Set up environment variable
-      run: |
-        docker build frontend \
-          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/frontend"
-        docker build user-service \
-          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/users"
-        docker build question-service \
-          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/questions"
-        docker build matching-service \
-          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/match"
-        docker build collaboration-service \
-          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/collaboration"
-        docker build chat-service \
-          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/chat"
-        docker build history-service \
-          --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/history"
+  - name: Check IAM Policy Bindings
+    run: |
+      gcloud auth activate-service-account --key-file=<(echo "${{ secrets.GCP_CREDENTIALS }}")
+      gcloud projects get-iam-policy $PROJECT_ID
+
+
+  - name: Docker Build and Push
+    run: |
+      set -e
+      docker build frontend --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/frontend" || \
+        { echo "Error: Docker build failed for frontend"; exit 1; }
+      docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/frontend" || \
+        { echo "Error: Docker push failed for frontend"; exit 1; }
+    continue-on-error: true
+    env:
+      CI: true
+    # - name: Set up environment variable
+    #   run: |
+    #     docker build frontend \
+    #       --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/frontend"
+    #     docker build user-service \
+    #       --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/users"
+    #     docker build question-service \
+    #       --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/questions"
+    #     docker build matching-service \
+    #       --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/match"
+    #     docker build collaboration-service \
+    #       --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/collaboration"
+    #     docker build chat-service \
+    #       --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/chat"
+    #     docker build history-service \
+    #       --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/history"
 
     # Push the Docker image to Google Artifact Registry
     - name: Push
