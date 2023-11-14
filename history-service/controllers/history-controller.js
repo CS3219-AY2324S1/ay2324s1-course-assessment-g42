@@ -17,7 +17,7 @@ async function getHistory(req, res) {
     let {username} = req.body;
     try {
         const result = await history.getHistory(username);
-        return res.staatus(200).json(result)
+        return res.status(200).json(result)
     } catch (err) {
         return res.satus(500).json(err);
     }
