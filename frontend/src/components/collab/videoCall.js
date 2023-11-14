@@ -29,7 +29,7 @@ function VideoCall({roomId}) {
 
     return () => {
       if (stream) {
-        console.log(' closed');
+        console.log('closed stream');
         const tracks = stream.getTracks();
         tracks.forEach((track) => {
           track.stop();
@@ -51,15 +51,6 @@ function VideoCall({roomId}) {
         if (stream) {
           call.answer(stream);
         }
-        
-        // getUserMedia({ video: true, audio: true }, (stream) => {
-        //   const video = document.querySelector("video");
-        //   video.srcObject = stream;
-        //   video.onloadedmetadata = (e) => {
-        //     video.play();
-        //   };
-          
-        // }, err => { console.log('Error!') });
 
         call.on('stream', (remoteStream) => {
           const video = document.querySelector("video");
