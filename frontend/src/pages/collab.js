@@ -11,7 +11,7 @@ import { Grid, Button, Tooltip } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import Editor from '@monaco-editor/react';
 import { standardToast } from '../styles/toastStyles';
-import { QUESTION_API_URL, HISTORY_API_URL } from '../config';
+import { QUESTION_API_URL, HISTORY_API_URL, COLLAB_API_URL } from '../config';
 import { logout } from '../helpers/logout';
 import { RenderedDescription, DifficultyText } from '../helpers/questionFormatters';
 import ChatComponent from '../components/collab/chatComponent';
@@ -51,7 +51,10 @@ function Collab() {
 
     console.log(code);
     const saveAttempt = {username: username, collaborated: matchedUser, title: storedQuestion.title, qnId: storedQuestion.id, difficulty: complexity, language: language, attempt: code, date: new Date()};
-    axios.post(HISTORY_API_URL + "/history/saveAttempt", saveAttempt)
+    axios.post(
+      HISTORY_API_URL + "/history/saveAttempt",
+      saveAttempt,
+      { withCredentials: true, credentials: 'include' })
       .then(response => console.log("save successfull"))
       .catch(error => console.log("save unsuccessfull", error));
     setSave(true);
@@ -110,7 +113,9 @@ function Collab() {
     let randomId = null;
     setOwnUsername(username);
   
-    socketRef.current = io('http://localhost:5002',  { transports : ['websocket'] });
+    socketRef.current = io(COLLAB_API_URL, {
+      path: "/collaboration/socket.io",
+      transports : ['websocket'] });
 
     console.log(roomId);
     socketRef.current.emit('join-room', roomId, username, lang);

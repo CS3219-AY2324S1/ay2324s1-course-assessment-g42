@@ -8,6 +8,7 @@ import {
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import io from 'socket.io-client';
 import Linkify from 'react-linkify';
+import { CHAT_API_URL } from "../../config";
 
 function ChatComponent({roomId, username}) {
     const chatSocketRef = useRef();
@@ -50,6 +51,18 @@ function ChatComponent({roomId, username}) {
     }
 
     useEffect(() => {
+        if (!chatSocketRef.current) {
+            chatSocketRef.current = io(CHAT_API_URL, {
+              path: "/chat/socket.io",
+              transports : ['websocket'] });
+            chatSocketRef.current.emit('join-chat', roomId, username);
+        }
+
+        const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
+        if (chatHistory) {
+          setMessages(JSON.parse(chatHistory));
+        }
+
       const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
       if (chatHistory) {
         console.log('loaded chat history');

@@ -12,7 +12,7 @@ pool.connect()
     .then(() => console.log('Connected to the database'))
     .catch(err => console.error('Error connecting to the database', err));
 
-const createHistoryTableQuery = `
+const createHistoryTableQueryIfNotExist = `
     DO $$ 
     BEGIN
       IF NOT EXISTS (
@@ -23,21 +23,21 @@ const createHistoryTableQuery = `
         CREATE TABLE history (
             id SERIAL PRIMARY KEY,
             username VARCHAR(255) NOT NULL,
-            collaborated VARCHAR(255) NOT NULL,
+            collaborated VARCHAR(255),
             title TEXT NOT NULL,
             qnid INT NOT NULL,
             difficulty VARCHAR(255) NOT NULL,
             language VARCHAR(255) NOT NULL,
             attempt TEXT,
             date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (username) REFERENCES user_table(username),
-            FOREIGN KEY (collaborated) REFERENCES user_table(username)
+            FOREIGN KEY (username) REFERENCES users(username) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (collaborated) REFERENCES users(username) ON UPDATE CASCADE ON DELETE SET NULL
         );
       END IF;
     END $$;
   `;
   
-pool.query(createHistoryTableQuery)
+pool.query(createHistoryTableQueryIfNotExist)
 .then((res) => {
     console.log('Table creation successful:', res);
 })

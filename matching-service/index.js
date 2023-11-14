@@ -7,10 +7,12 @@ const matchingClient = require('./client.js');
 var amqp = require('amqplib/callback_api');
 
 const http = require('http');
-const socketIo = require('socket.io');
+const { Server } = require('socket.io');
 const { disconnect } = require('process');
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = new Server(server, {
+  path: "/match/socket.io"
+});
 
 app.use(
   cors({
