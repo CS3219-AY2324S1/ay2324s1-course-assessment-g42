@@ -40,7 +40,7 @@ jobs:
       with:
         token_format: 'access_token'
         workload_identity_provider: 'projects/60962409020/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-        service_account: 'my-service-account@peerpre-g42.iam.gserviceaccount.com '
+        service_account: 'peerpre-g42@appspot.gserviceaccount.com'
 
     # Alternative option - authentication via credentials json
     # - id: 'auth'
