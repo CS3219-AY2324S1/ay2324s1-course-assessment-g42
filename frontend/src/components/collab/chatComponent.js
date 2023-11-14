@@ -14,7 +14,6 @@ function ChatComponent({roomId, username}) {
     const inputRef = useRef();
     const [msgInputValue, setMsgInputValue] = useState("");
     const [messages, setMessages] = useState([]);
-    const [isPartnerConnected, setIsPartnerConnected] = useState(false);
 
 
     const sendMessage = (message) => {
@@ -52,7 +51,8 @@ function ChatComponent({roomId, username}) {
 
     useEffect(() => {
       const chatHistory = sessionStorage.getItem(`chat_${roomId}`);
-        if (chatHistory) {
+        if (chatHistory & chatHistory != messages) {
+          console.log('loaded chat history');
           setMessages(JSON.parse(chatHistory));
         }
     }, []);
