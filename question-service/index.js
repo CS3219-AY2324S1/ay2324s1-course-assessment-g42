@@ -19,7 +19,7 @@ app.get("/test", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.json("You connected to questions service");
+  res.json("Connected to question service");
 });
 
 // routes for questions

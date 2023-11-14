@@ -19,7 +19,7 @@ app.get("/test", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.json("You connected to history service");
+  res.json("Connected to history service");
 });
 
 //routes for user behaviour

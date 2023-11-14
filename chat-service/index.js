@@ -69,6 +69,6 @@ io.on('connection', (socket) => {
   });
 });
 app.get("/", (req, res) => {
-  res.json("You connected to chat service");
+  res.json("Connected to chat service");
 });
 server.listen(5003, () => console.log("Chat server started on Port 5003"));

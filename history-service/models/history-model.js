@@ -4,7 +4,7 @@ async function saveAttempt(username, collaborated, title, qnId, difficulty, lang
     try {
         const result = await pool.query(
             `INSERT INTO history (username, collaborated, title, qnid, difficulty, language, attempt, date)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,[username, collaborated, title, qnId, difficulty, language, attempt, date])
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`, [username, collaborated, title, qnId, difficulty, language, attempt, date])
         return result;
     } catch (err) {
         throw err;
@@ -29,7 +29,7 @@ async function getHistory(username) {
                 difficulty: row.difficulty,
                 language: row.language
             }));
-            console.log("Getting history from database successfully", username, formattedResults);
+            console.log("Got history from database successfully", username, formattedResults);
             return formattedResults;
         })
         return result;
@@ -41,14 +41,12 @@ async function getHistory(username) {
 
 async function deleteHistory(username, collaborated, title) {
     try {
-        console.log("reached");
         const result = await pool.query(
             `DELETE FROM history 
              WHERE username = $1 AND collaborated = $2 AND title = $3`,
             [username, collaborated, title]
         );
-        console.log("reached");
-
+        console.log("History deleted");
         return result;
     } catch (err) {
         throw err;

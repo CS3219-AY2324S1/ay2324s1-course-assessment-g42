@@ -56,8 +56,8 @@ function Collab() {
       HISTORY_API_URL + "/history/saveAttempt",
       saveAttempt,
       { withCredentials: true, credentials: 'include' })
-      .then(response => console.log("save successfull"))
-      .catch(error => console.log("save unsuccessfull", error));
+      .then(response => console.log("save successful"))
+      .catch(error => console.log("save unsuccessful", error));
     setSave(true);
     socketRef.current.emit('disconnect-client', room, username);
   }
@@ -67,8 +67,8 @@ function Collab() {
     let qnComplexity = complexity;
     let lang = language;
     if (isSaved) {
-      console.log("Attempt saved and left");
-      toast.info("Attempt saved and left", standardToast);
+      console.log("Attempt saved. You have left the room.");
+      toast.info("Attempt saved. You have left the room.", standardToast);
       navigate('/');
       return;
     }
@@ -253,7 +253,7 @@ function Collab() {
     document.body.classList.add('collab-bg');
     const handleBeforeUnload = (event) => {
       event.preventDefault();
-      event.returnValue = 'Wanna leave?';
+      event.returnValue = 'Would you like to leave?';
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -277,7 +277,7 @@ function Collab() {
           </div>
           <div className="collab-question-content">
             <b className="question-title">{storedQuestion.id}. {storedQuestion.title}</b>
-            <Tooltip title="Leave&Save">
+            <Tooltip title="Save attempt and leave collaboration room">
               <Button onClick={handleSaveThenLeave} style={{marginBottom: '1%'}}>
                 <LogoutIcon sx={{ fontSize: 24 }}/>
               </Button>
