@@ -19,7 +19,7 @@ async function getHistory(req, res) {
         const result = await history.getHistory(username);
         return res.status(200).json(result)
     } catch (err) {
-        return res.satus(500).json(err);
+        return res.status(500).json(err);
     }
 }
 
