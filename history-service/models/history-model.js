@@ -46,6 +46,7 @@ async function deleteHistory(username, collaborated, title) {
              WHERE username = $1 AND collaborated = $2 AND title = $3`,
             [username, collaborated, title]
         );
+
         console.log("History deleted");
         return result;
     } catch (err) {
