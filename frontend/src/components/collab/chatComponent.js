@@ -59,6 +59,7 @@ function ChatComponent({roomId, username}) {
       chatSocketRef.current.emit('join-chat', roomId, username);
 
       return () => {
+        sessionStorage.removeItem(`chat_${roomId}`);
         chatSocketRef.current.emit('leave-chat');
       }
     }, [roomId, username]);
