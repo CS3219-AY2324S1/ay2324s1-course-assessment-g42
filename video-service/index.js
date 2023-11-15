@@ -32,7 +32,7 @@ app.use(
         if (rooms[roomId] && rooms[roomId].firstPeerId != id && rooms[roomId].secondPeerId === null) {
           // second user to arrive
           rooms[roomId].secondPeerId = id;
-          io.to(roomId).emit('initiate-call', rooms[roomId].firstPeerId);
+          socket.emit('initiate-call', rooms[roomId].firstPeerId);
           console.log(`[${id}] initiated call with ${rooms[roomId].firstPeerId}`);
         } else {
           rooms[roomId] = {firstPeerId: id, firstSocketId: socket.id, secondPeerId: null, secondSocketId: null};

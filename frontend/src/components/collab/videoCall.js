@@ -6,41 +6,30 @@ import "../../styles/videoCall.css";
 
 function VideoCall({roomId}) {
   const socketRef = useRef();
-  const [peer, setPeer] = useState(null);
+  // const [peer, setPeer] = useState(null);
   const [stream, setStream] = useState();
+  const myStream = useRef();
+
+  const getStream = async () => {
+    var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    const stream = await getUserMedia({ video: true, audio: true }, (stream) => {
+      console.log('got stream');
+      setStream(stream);
+      return stream;
+    }, (err) => {console.log(err);});; 
+    
+  };
 
   useEffect(() => {
     var mypeer = new Peer();
-    console.log(mypeer);
+    console.log(peer);
     setPeer(mypeer);
     
     socketRef.current = io('http://localhost:5005',  { transports : ['websocket'] });
 
-    var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    var myStream = null;
-    getUserMedia({ video: true, audio: true }, (stream) => {
-      setStream(stream);
-      myStream = stream;
-      const video = document.querySelector("video");
-      video.srcObject = stream;
-      video.onloadedmetadata = (e) => {
-        video.play();
-      };
-    }, err => { console.log('Error!') });
-    
+    getStream();
+  }, [])
 
-    return () => {
-      if (myStream) {
-        console.log('closed stream');
-        mypeer.destroy();
-        const tracks = myStream.getTracks();
-        tracks.forEach((track) => {
-          track.stop();
-        });
-      }
-          
-    };
-  }, []);
 
   useEffect(() => {
     if (peer) {
@@ -50,9 +39,8 @@ function VideoCall({roomId}) {
         });
       
       peer.on('call', (call) => {
-        if (stream) {
-          call.answer(stream);
-        }
+        call.answer(stream);
+        
 
         call.on('stream', (remoteStream) => {
           const video = document.querySelector("video");
@@ -65,21 +53,52 @@ function VideoCall({roomId}) {
 
         call.on('close', () => {
           console.log('call closed');
+          const video = document.querySelector("video");
+          video.remove();
           const tracks = stream.getTracks();
-          tracks.stop();
+          tracks.forEach((track) => {
+            track.stop();
+          });
         });
       });
 
       const videoCall = (partnerId) => {
-        console.log('initiated call');
-        peer.call(partnerId, stream);
+        console.log(`initiated call with ${partnerId}`);
+        const call = peer.call(partnerId, stream);
+        if (call) {
+          call.on('stream', (remoteStream) => {
+            const video = document.querySelector("video");
+            video.srcObject = remoteStream;
+            video.onloadedmetadata = (e) => {
+              video.play();
+            };
+          });
+        }
+        
       };
 
       socketRef.current.on('initiate-call', (partnerId) => {
         videoCall(partnerId);
       });
 
-    }}, [roomId, peer]);
+      return () => {
+        if (stream) {
+          console.log('closed stream');
+          peer.destroy();
+          const video = document.querySelector("video");
+          if (video) {
+            video.remove();
+          }
+          
+          const tracks = stream.getTracks();
+          tracks.forEach((track) => {
+            track.stop();
+          });
+        }
+            
+      };
+
+    }}, [peer, stream, roomId]);
   
 
   return (
