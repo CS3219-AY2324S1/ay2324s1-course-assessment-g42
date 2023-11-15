@@ -1,0 +1,71 @@
+.collab-bg {
+  background-color: black;
+}
+
+.collab-wrapper {
+  padding: 20px;
+}
+
+.collab-section-header {
+  width: 100%;
+  height: 30px;
+  background-color: #949494;
+  color: #ffffff;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 5px;
+  padding-left: 15px;
+  box-sizing: border-box;
+}
+
+.collab-question-content {
+  width: 100%;
+  height: 94%;
+  border: 1px solid rgb(255, 255, 255);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  overflow: auto; 
+  padding: 5px;
+  box-sizing: border-box;
+  background-color: rgb(255, 255, 255);
+}
+
+.collab-editor-content {
+  width: 100%;
+  height: 60%;
+  border: 1px solid rgb(255, 255, 255);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  overflow: auto; 
+  padding: 5px;
+  box-sizing: border-box;
+  background-color: rgb(255, 255, 255);
+}
+
+.collab-chat-content {
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgb(255, 255, 255);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  overflow: auto; 
+  padding: 5px;
+  box-sizing: border-box;
+  background-color: rgb(255, 255, 255);
+}
+
+.question-title {
+  font-size: 20px;
+}
+
+.green-text {
+  color: green;
+}
+
+.orange-text {
+  color: orange;
+}
+
+.red-text {
+  color: red;
+}
