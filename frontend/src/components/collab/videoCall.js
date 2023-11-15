@@ -6,9 +6,8 @@ import "../../styles/videoCall.css";
 
 function VideoCall({roomId}) {
   const socketRef = useRef();
-  // const [peer, setPeer] = useState(null);
+  const [peer, setPeer] = useState(null);
   const [stream, setStream] = useState();
-  const myStream = useRef();
 
   const getStream = async () => {
     var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
