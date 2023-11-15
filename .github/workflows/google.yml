@@ -18,6 +18,7 @@ env:
   PSQL_PORT: '${{ secrets.PSQL_PORT }}'
   MONGODB_URI: '${{ secrets.MONGODB_URI }}'
   CLOUDAMQP_URL: '${{ secrets.CLOUDAMQP_URL }}'
+  WDS_SOCKET_PORT: 0
 
 jobs:
   setup-build-push-deploy:
