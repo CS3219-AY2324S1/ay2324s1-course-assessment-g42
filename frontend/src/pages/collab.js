@@ -303,9 +303,9 @@ function Collab() {
           />
           </div>
 
-          {/* Chat and video call */}
-          <Grid container spacing={2} style={{height: "31%"}}>
-            <Grid item xs={6} style={{marginTop: "10px", maxHeight: "94%"}}>
+          {/* Chat */}
+          <Grid container style={{height: "30%"}}>
+            <Grid item xs={12} style={{marginTop: "10px", maxHeight: "94%"}}>
               <div className="collab-section-header">
                 Chat
               </div>
@@ -313,18 +313,8 @@ function Collab() {
                 <ChatComponent roomId={room} username={ownUsername}>
                 </ChatComponent>
               </div>
-              
-            </Grid>
-            <Grid item xs={6} style={{marginTop: "10px", maxHeight: "94%"}}>
-              <div className="collab-section-header">
-                Video Call
-              </div>
-              <div className="collab-chat-content">
-                :)
-              </div>
             </Grid>
           </Grid>
-
         </Grid>
       </Grid>
     </div>
