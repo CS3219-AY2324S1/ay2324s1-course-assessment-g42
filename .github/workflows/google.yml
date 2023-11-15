@@ -10,7 +10,7 @@ env:
   GKE_CLUSTER: peerprep-cluster  
   GKE_ZONE: asia-southeast1 
   REPOSITORY: peerprep
-  INGRESS_URL: http://34.128.128.210
+  INGRESS_URL: '${{ secrets.INGRESS_URL }}'
   JWT_SECRET_KEY: '${{ secrets.JWT_SECRET_KEY }}'
   PSQL_USERNAME: '${{ secrets.PSQL_USERNAME }}'
   PSQL_HOSTNAME: '${{ secrets.PSQL_HOSTNAME }}'
